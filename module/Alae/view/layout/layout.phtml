@@ -1,0 +1,41 @@
+<?php echo $this->doctype(); ?>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<?php echo $this->headTitle('ZF2 ' . $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+	<?php
+	echo $this->headMeta()
+		->appendName('viewport', 'width=device-width, initial-scale=1.0')
+		->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+	?>
+	<!-- Le styles -->
+	<?php
+	echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+		->prependStylesheet($this->basePath() . '/css/style.css')
+		->prependStylesheet($this->basePath() . '/css/alae.css')
+	?>
+	<!-- Scripts -->
+	<?php
+	echo $this->headScript()
+		->prependFile($this->basePath() . '/js/script.js')
+		->prependFile($this->basePath() . '/js/additional-methods.min.js')
+		->prependFile($this->basePath() . '/js/jquery.validate.min.js')
+		->prependFile($this->basePath() . '/js/ajax.js')
+		->prependFile($this->basePath() . '/js/jquery.js')
+		->prependFile($this->basePath() . '/public/css/style.css');
+	?>
+	<script>
+	    var basePath = '<?php echo $this->basePath() ?>';
+	</script>
+
+    </head>
+    <body>
+	<div class="container">
+	    <?php echo $this->content; ?>
+	</div>
+    </body>
+</html>
+
+
+
