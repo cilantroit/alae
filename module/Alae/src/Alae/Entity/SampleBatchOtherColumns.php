@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SampleBatchOtherColums
  *
- * @ORM\Table(name="alae_sample_batch_other_colums")
+ * @ORM\Table(name="alae_sample_batch_other_columns")
  * @ORM\Entity
  */
-class SampleBatchOtherColums
+class SampleBatchOtherColumns
 {
 
     /**
@@ -109,7 +109,7 @@ class SampleBatchOtherColums
      *
      * @ORM\Column(name="acquisition_date", type="datetime", nullable=false)
      */
-    protected $acquisitionDate = 'CURRENT_TIMESTAMP';
+    protected $acquisitionDate;
 
     /**
      * @var string
@@ -622,9 +622,10 @@ class SampleBatchOtherColums
         return $this->acquisitionDate;
     }
 
-    public function setAcquisitionDate(\DateTime $acquisitionDate)
+    public function setAcquisitionDate($acquisitionDate)
     {
-        $this->acquisitionDate = $acquisitionDate;
+        $date = new \DateTime($acquisitionDate);
+        $this->acquisitionDate = $date;
     }
 
     public function getAnalytePeakAreaForDad()

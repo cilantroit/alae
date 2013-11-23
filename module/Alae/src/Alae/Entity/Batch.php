@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Batch
  *
- * @ORM\Table(name="alae_batch", indexes={@ORM\Index(name="fk_parameter", columns={"fk_parameter"}), @ORM\Index(name="fk_analyte", columns={"fk_analyte"}), @ORM\Index(name="fk_user", columns={"fk_user"})})
+ * @ORM\Table(name="alae_batch", indexes={@ORM\Index(name="fk_parameter", columns={"fk_parameter"}), @ORM\Index(name="fk_analyte", columns={"fk_analyte"}), @ORM\Index(name="fk_user", columns={"fk_user"}), @ORM\Index(name="fk_study", columns={"fk_study"})})
  * @ORM\Entity
  */
 class Batch
@@ -41,14 +41,14 @@ class Batch
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $createdAt = 'CURRENT_TIMESTAMP';
+    protected $createdAt;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    protected $updatedAt = '0000-00-00 00:00:00';
+    protected $updatedAt;
 
     /**
      * @var boolean
@@ -76,7 +76,7 @@ class Batch
      *
      * @ORM\Column(name="validation_date", type="datetime", nullable=false)
      */
-    protected $validationDate = '0000-00-00 00:00:00';
+    protected $validationDate;
 
     /**
      * @var string
@@ -198,6 +198,21 @@ class Batch
      * })
      */
     protected $fkUser;
+
+    /**
+     * @var \Alae\Entity\Study
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\Study")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_study", referencedColumnName="pk_study")
+     * })
+     */
+    protected $fkStudy;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime('now');
+    }
 
     public function getPkBatch()
     {
@@ -447,6 +462,16 @@ class Batch
     public function setFkUser(\Alae\Entity\User $fkUser)
     {
         $this->fkUser = $fkUser;
+    }
+
+    public function getFkStudy()
+    {
+        return $this->fkStudy;
+    }
+
+    public function setFkStudy(\Alae\Entity\Study $fkStudy)
+    {
+        $this->fkStudy = $fkStudy;
     }
 
 }

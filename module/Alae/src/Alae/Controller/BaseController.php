@@ -84,14 +84,14 @@ abstract class BaseController extends AbstractActionController
         return $this->getRepository("\\Alae\\Entity\\User")->find(1);
     }
 
-    protected function transactionError($description, $message, $section, $system = false)
+    protected function transactionError($data, $system = false)
     {
         $user = $system ? $this->_getSystem() : $this->_getSession();
 
         $audit = new \Alae\Entity\AuditTransactionError();
-        $audit->setDescription($description);
-        $audit->setMessage($message);
-        $audit->setSection($section);
+        $audit->setDescription($data['description']);
+        $audit->setMessage($data['message']);
+        $audit->setSection($data['section']);
         $audit->setFkUser($user);
         $this->getEntityManager()->persist($audit);
         $this->getEntityManager()->flush();
