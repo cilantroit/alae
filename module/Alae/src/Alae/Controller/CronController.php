@@ -10,9 +10,7 @@
 
 namespace Alae\Controller;
 
-use Zend\View\Model\ViewModel,
-    Alae\Controller\BaseController,
-    Zend\View\Model\JsonModel,
+use Alae\Controller\BaseController,
     Alae\Service\Helper as Helper;
 
 class CronController extends BaseController
@@ -22,6 +20,23 @@ class CronController extends BaseController
     protected $_Analyte = null;
     protected $_error = false;
 
+    private function isRepeatedBatch($fileName)
+    {
+        $query = $this->getEntityManager()->createQuery("SELECT COUNT(b.pkBatch) FROM Alae\Entity\Batch b WHERE b.fileName = '" . Helper::getVarsConfig("batch_directory") . "/" . $fileName . "'");
+        $count = $query->getSingleScalarResult();
+
+        if ($count == 0)
+        {
+            return true;
+        }
+        else
+        {
+            $this->setErrorTransaction('Repeated batch', $fileName);
+        }
+
+        return false;
+    }
+
     private function validateFile($fileName)
     {
         $string = substr($fileName, 0, -4);
@@ -29,15 +44,12 @@ class CronController extends BaseController
         list($codeStudy, $shortening) = explode("_", $aux);
         $this->_Study = $this->_Analyte = null;
 
-        $query = $this->getEntityManager()->createQuery("SELECT COUNT(b.pkBatch) FROM Alae\Entity\Batch b WHERE b.fileName = '" . $fileName . "'");
-        $count = $query->getSingleScalarResult();
-
-        if ($count == 0)
+        if ($this->isRepeatedBatch($fileName))
         {
             $studies = $this->getRepository("\\Alae\\Entity\\Study")
                     ->findBy(array('code' => $codeStudy));
 
-            if (count($studies) == 1 && $studies[0]->getCloseFlag() == false)
+            if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
             {
                 $qb = $this->getEntityManager()->createQueryBuilder()
                         ->select("a")
@@ -61,15 +73,12 @@ class CronController extends BaseController
                 $this->setErrorTransaction('The_lot_is_not_associated_with_a_registered_study', $fileName);
             }
         }
-        else
-        {
-            $this->setErrorTransaction('Repeated batch', $fileName);
-        }
     }
 
     private function setErrorTransaction($msgError, $value)
     {
-        $error = Helper::getError($msgError);
+        $error =
+                Helper::getError($msgError);
         $error['description'] = sprintf($error['description'], $value);
         $this->transactionError($error, true);
         $this->_error = true;
@@ -89,12 +98,11 @@ class CronController extends BaseController
                 }
                 else
                 {
+                    $this->isRepeatedBatch($file);
                     $this->setErrorTransaction('Invalid_file_name_in_the_export_process_batches_of_analytes', $file);
                 }
 
-                $this->insertBatch(Helper::getVarsConfig("batch_directory") . "/" . $file, $this->_Study, $this->_Analyte);
-
-                //break;
+                $this->insertBatch(Helper:: getVarsConfig("batch_directory") . "/" . $file, $this->_Study, $this->_Analyte);
             }
         }
     }
@@ -102,7 +110,6 @@ class CronController extends BaseController
     private function insertBatch($fileName, $Study, $Analyte)
     {
         $data = $this->getData($fileName, $Study, $Analyte);
-        //var_dump($data);
         $Batch = $this->saveBatch($fileName, $Analyte, $Study);
         $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
     }
@@ -110,6 +117,7 @@ class CronController extends BaseController
     private function cleanHeaders($headers)
     {
         $newsHeaders = array();
+
         foreach ($headers as $header)
         {
             $newsHeaders[] = preg_replace('/\s\(([a-zA-Z]|\s|\/|%)+\)/i', '', $header);
@@ -211,6 +219,7 @@ class CronController extends BaseController
 
     private function saveSampleBatchOtherColumns($headers, $row, $SampleBatch)
     {
+
         $setters = $this->setter($headers, $this->getSampleBatchOtherColumns());
 
         $SampleBatchOtherColumns = new \Alae\Entity\SampleBatchOtherColumns();
@@ -219,6 +228,7 @@ class CronController extends BaseController
         {
             if (isset($setters[$key]))
             {
+
                 $SampleBatchOtherColumns->$setters[$key]($value);
             }
         }
@@ -320,4 +330,5 @@ class CronController extends BaseController
     }
 
 }
+
 ?>
