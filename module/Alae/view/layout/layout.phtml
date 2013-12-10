@@ -27,8 +27,15 @@
 	?>
 	<script>
 	    var basePath = '<?php echo $this->basePath() ?>';
-	</script>
-
+        </script>
+        <script src="http://yui.yahooapis.com/3.14.0/build/yui/yui-min.js"></script>
+        <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+        <style>
+            span, a{ margin-right: 5px; }
+            .form-datatable-remove{ display:none; }
+            .clone .form-datatable-add{ display:none; }
+            .clone .form-datatable-remove{ display:block; }
+        </style>
     </head>
     <body>
 	<div class="container">

@@ -77,8 +77,7 @@ class CronController extends BaseController
 
     private function setErrorTransaction($msgError, $value)
     {
-        $error =
-                Helper::getError($msgError);
+        $error = Helper::getError($msgError);
         $error['description'] = sprintf($error['description'], $value);
         $this->transactionError($error, true);
         $this->_error = true;
@@ -90,6 +89,7 @@ class CronController extends BaseController
 
         foreach ($files as $file)
         {
+            //echo $file . "\n";
             if (!is_dir($file))
             {
                 if (preg_match("/^(\d+-\d+\_[a-zA-Z0-9]+\.txt)$/i", $file))
@@ -103,6 +103,7 @@ class CronController extends BaseController
                 }
 
                 $this->insertBatch(Helper:: getVarsConfig("batch_directory") . "/" . $file, $this->_Study, $this->_Analyte);
+                //unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
             }
         }
     }
@@ -110,8 +111,14 @@ class CronController extends BaseController
     private function insertBatch($fileName, $Study, $Analyte)
     {
         $data = $this->getData($fileName, $Study, $Analyte);
-        $Batch = $this->saveBatch($fileName, $Analyte, $Study);
+        $Batch = $this->saveBatch($fileName);
         $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
+
+        if (!is_null($Analyte) && !is_null($Study))
+        {
+            $this->batchVerify($Batch, $fileName);
+            $this->updateBatch($Batch, $Analyte, $Study);
+        }
     }
 
     private function cleanHeaders($headers)
@@ -170,23 +177,31 @@ class CronController extends BaseController
         return $orderHeader;
     }
 
-    private function saveBatch($fileName, $Analyte, $Study)
+    private function saveBatch($fileName)
     {
         $Batch = new \Alae\Entity\Batch();
         $Batch->setFileName($fileName);
         $Batch->setFkUser($this->_getSystem());
-
-        if (!is_null($Analyte))
-            $Batch->setFkAnalyte($Analyte);
-
-        if (!is_null($Study))
-            $Batch->setFkStudy($Study);
-
-
         $this->getEntityManager()->persist($Batch);
         $this->getEntityManager()->flush();
 
         return $Batch;
+    }
+
+    private function updateBatch($Batch, $Analyte, $Study)
+    {
+        $Batch->setFkAnalyte($Analyte);
+        $Batch->setFkStudy($Study);
+        $this->getEntityManager()->persist($Batch);
+        $this->getEntityManager()->flush();
+    }
+
+    private function batchVerify($Batch, $Analyte, $fileName)
+    {
+        $string = substr($fileName, 0, -4);
+        list($pkBatch, $aux) = explode("-", $string);
+        $this->execute(Verification::updateFk("s.analytePeakName <> '" . $Analyte->getShortening() . " AND s.fkBatch = " . $Batch->getPkBatch() . "'", "V1"));
+        $this->execute(Verification::updateFk("SUBSTRING(s.fileName, 0, 2) <> '" . $pkBatch . " AND s.fkBatch = " . $Batch->getPkBatch() . "'", "V2"));
     }
 
     private function saveSampleBatch($headers, $data, $Batch)

@@ -8,7 +8,8 @@ return array(
             'Alae\Controller\Alae' => 'Alae\Controller\AlaeController',
             'Alae\Controller\Index' => 'Alae\Controller\IndexController',
             'Alae\Controller\User' => 'Alae\Controller\UserController',
-            'Alae\Controller\Cron' => 'Alae\Controller\CronController',
+            'Alae\Controller\Cron'    => 'Alae\Controller\CronController',
+            'Alae\Controller\Analyte' => 'Alae\Controller\AnalyteController',
         ),
     ),
     // The following section is new and should be added to your file
@@ -53,6 +54,19 @@ return array(
                     'defaults' => array(
                         'controller' => 'Alae\Controller\Index',
                         'action' => 'index',
+                    ),
+                ),
+            ),
+            'analyte' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'       => '/analyte[/][:action][/:id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults'    => array(
+                        'controller' => 'Alae\Controller\Analyte',
+                        'action'     => 'index',
                     ),
                 ),
             ),

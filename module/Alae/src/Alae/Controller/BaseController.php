@@ -101,5 +101,11 @@ abstract class BaseController extends AbstractActionController
     {
 
     }
+    
+    protected function execute($sql)
+    {
+        $query = $this->getEntityManager()->createQuery($sql);
+        $response = $query->execute();
+    }
 
 }

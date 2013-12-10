@@ -1,0 +1,96 @@
+<form action="#" method="POST">
+    <div id="datatable"></div>
+</form>
+<script>
+    YUI().use('datatable', function(Y) {
+        var data = <?php echo json_encode($data); ?>;
+        var table = new Y.DataTable({
+            columns: <?php echo json_encode($columns); ?>,
+            data: data,
+            scrollable: "y",
+            height: "200px",
+            width: "600px"
+        }).render("#datatable");
+
+        //table.data.add({id: '004', name: '4-Hidroxyanapharina', shortname: 'OHANA', edit: 'xyz.com'});
+
+        getDataFilters(<?php echo json_encode($filters) ?>);
+
+        var filters = getDataFilters(<?php echo json_encode($filters) ?>);
+        $('.yui3-datatable-message').html(filters);
+        $('.yui3-datatable-message').show();
+
+        $(".yui3-datatable-filter").on("change", function() {
+            $('.yui3-datatable-data  > tr').show();
+
+            var elementId = $(this).attr('id');
+            var element = '#' + elementId + ' option:selected';
+
+            if ($(element).val() != "-1")
+            {
+                $('.yui3-datatable-data > tr').hide();
+                $('.yui3-datatable-data  > tr > td').each(function(k, v) {
+                    if ($(element).text() == $(this).text())
+                        $(this).parent().show();
+                });
+            }
+
+            $('.yui3-datatable-filter').each(function(k, v) {
+                if ($(this).attr('id') != elementId)
+                    $(this).children().removeAttr("selected");
+            });
+        });
+
+        function getDataFilters(data) {
+            var select = '<tr>';
+            $.each(data, function(key, value) {
+                select += '<td><select id="yui3-datatable-filter-' + key + '" class="yui3-datatable-filter">' + getOptions(value) + '</select></td>';
+            });
+            select += '<td><a href="excel.php?data=<?php echo urlencode('http://www.salir.me/data.php'); ?>&filename=<?php echo urlencode('listado_de_analitos'); ?>">excel</a><a href="pdf.php?data=<?php echo urlencode('http://www.salir.me/data.php'); ?>&filename=<?php echo urlencode('listado_de_analitos'); ?>">pdf</a><input type="submit"/></td>';
+            return select + getInputs(data) + '</tr>';
+        }
+
+        function getOptions(data) {
+            var options = '<option value="-1">autofiltro</option>';
+            $.each(data, function(key, value) {
+                options += '<option value="' + key + '">' + value + '</option>'
+            });
+            return options;
+        }
+
+        function getInputs(data) {
+            var input = '<tr>';
+            $.each(data, function(key, value) {
+                input += '<td><input type="text" class="form-datatable-input" name="create-' + key + '[]"/></td>';
+            });
+            input += '<td><span class="form-datatable-add">agregar</span><span class="form-datatable-remove">eliminar</span></td>';
+            return input + '</tr>';
+        }
+
+        $('.form-datatable-add').on("click", function() {
+            $(this).parent().parent().clone().addClass('clone').appendTo('.yui3-datatable-message');
+
+            $('.form-datatable-remove').on("click", function() {
+                $(this).parent().parent().remove();
+            });
+        });
+
+        $("input[name='create-id[]']").prop('disabled', true);
+    });
+
+    function changeElement(element, pk) {
+        var data = <?php echo json_encode($editable) ?>;
+        var parentId = '#' + $(element).parent().parent().attr('id');
+        var input = '';
+
+        $.each(data, function(key, value) {
+            input = '<input type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" class="form-datatable-input" name="update-' + value + '-' + pk + '"/>';
+            $(parentId + ' .yui3-datatable-col-' + value).html(input);
+        });
+    }
+
+    function removeElement(element, pk) {
+        //ajax
+        $(element).parent().parent().remove();
+    }
+</script>
