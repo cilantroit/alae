@@ -25,6 +25,7 @@
         "zendframework/zend-text": ">=2.2.2",
         "zendframework/zend-version": ">=2.2.2",
         "zendframework/zend-view": ">=2.2.2",
-        "doctrine/doctrine-orm-module": "0.7.*"
+        "doctrine/doctrine-orm-module": "0.7.*",
+        "CodePlex/PHPExcel": "1.7.8"
     }
 }

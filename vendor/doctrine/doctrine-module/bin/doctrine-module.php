@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,15 +25,13 @@ chdir(__DIR__);
 
 $previousDir = '.';
 
-while (!file_exists('config/application.config.php'))
-{
+while (!file_exists('config/application.config.php')) {
     $dir = dirname(getcwd());
 
-    if ($previousDir === $dir)
-    {
+    if ($previousDir === $dir) {
         throw new RuntimeException(
-        'Unable to locate "config/application.config.php": ' .
-        'is DoctrineModule in a subdir of your application skeleton?'
+            'Unable to locate "config/application.config.php": ' .
+            'is DoctrineModule in a subdir of your application skeleton?'
         );
     }
 
@@ -42,8 +39,7 @@ while (!file_exists('config/application.config.php'))
     chdir($dir);
 }
 
-if (!(@include_once __DIR__ . '/../vendor/autoload.php') && !(@include_once __DIR__ . '/../../../autoload.php'))
-{
+if (!(@include_once __DIR__ . '/../vendor/autoload.php') && !(@include_once __DIR__ . '/../../../autoload.php')) {
     throw new RuntimeException('Error: vendor/autoload.php could not be found. Did you run php composer.phar install?');
 }
 

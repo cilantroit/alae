@@ -10,57 +10,27 @@ namespace Alae\Service;
 
 class Datatable
 {
-
-    protected function getAnalyteColumns()
+    protected function getAnalyteColumns($data)
     {
+        $filters = self::getFilters($data, array("id", "name", "shortname"));
+
         return array(
-            array("key" => "id", "label" => "Id", "sortable" => true),
-            array("key" => "name", "label" => "Nombre Analito", "sortable" => true, "allowHTML" => true),
-            array("key" => "shortname", "label" => "Abreviatura", "sortable" => true, "allowHTML" => true),
-            array("key" => "edit", "allowHTML" => true, "formatter" => '<span onclick="changeElement(this, {value});">edit</span><span onclick="removeElement(this, {value});">delete</span>')
+            "data"     => (!empty($data)) ? json_encode($data) : 0,
+            "columns"  => json_encode(array(
+                array("key" => "id", "label" => "Id", "sortable" => true),
+                array("key" => "name", "label" => "Nombre Analito", "sortable" => true, "allowHTML" => true),
+                array("key" => "shortname", "label" => "Abreviatura", "sortable" => true, "allowHTML" => true),
+                array("key" => "edit", "allowHTML" => true, "formatter" => '<span onclick="changeElement(this, {value});">edit</span><span onclick="removeElement(this, {value});">delete</span>')
+            )),
+            "editable" => json_encode(array("name", "shortname")),
+            "filters"  => (!empty($filters)) ? json_encode($filters) : 0
         );
     }
 
-    protected function filters($datatable)
-    {
-        switch ($datatable)
-        {
-            case 'analyte':
-                $filters = array("id", "name", "shortname");
-                break;
-        }
-
-        return $filters;
-    }
-
-    public static function editable($datatable)
-    {
-        switch ($datatable)
-        {
-            case 'analyte':
-                $editable = array("name", "shortname");
-                break;
-        }
-
-        return $editable;
-    }
-
-    public static function getColumns($datatable)
-    {
-        switch ($datatable)
-        {
-            case 'analyte':
-                $columns = self::getAnalyteColumns();
-                break;
-        }
-
-        return $columns;
-    }
-
-    public static function getFilters($data, $datatable)
+    protected function getFilters($data, $filters)
     {
         $options = array();
-        $filters = self::filters($datatable);
+
         foreach ($filters as $filter)
         {
             foreach ($data as $row)
@@ -69,5 +39,19 @@ class Datatable
             }
         }
         return $options;
+    }
+
+    public static function getDatatable($data, $datatable)
+    {
+        $response = array();
+
+        switch ($datatable)
+        {
+            case 'analyte':
+                $response = self::getAnalyteColumns($data);
+                break;
+        }
+
+        return $response;
     }
 }

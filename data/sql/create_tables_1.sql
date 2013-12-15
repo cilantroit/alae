@@ -11,20 +11,17 @@
 -- )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 
---  Section: units
 CREATE TABLE IF NOT EXISTS alae_unit(
 	pk_unit	int	NOT NULL auto_increment,
 	name	varchar(25),
 	PRIMARY KEY (pk_unit)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
---  OJO: Colocar todas las unidades
 INSERT INTO alae_unit (name) VALUES
 	('mg/mL');
 
---  Section: users and profiles
 CREATE TABLE IF NOT EXISTS alae_profile(
-	pk_profile	int			NOT NULL auto_increment,
+	pk_profile	int		NOT NULL auto_increment,
 	name		varchar(25)	NOT NULL,
 	PRIMARY KEY (pk_profile)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
@@ -51,44 +48,43 @@ CREATE TABLE IF NOT EXISTS alae_user(
 INSERT INTO alae_user (username, email, password, active_flag, fk_profile) VALUES
     ('alae_system', 'alae@cilantroit.com', 'c360723e2f01ccc2a7bd08176ac62d14', 1, 6);
 
---  Section: studies
 CREATE TABLE IF NOT EXISTS alae_study(
-	pk_study			bigint(20) 		unsigned NOT NULL auto_increment,
-	code				varchar(20),
-	created_at			timestamp 		NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at			timestamp,
-	description			text,
+	pk_study		bigint(20) 		unsigned NOT NULL auto_increment,
+	code			varchar(20),
+	created_at		timestamp 		NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at		timestamp,
+	description		text,
 	observation 		text,
-	close_flag			boolean			NOT NULL DEFAULT 0,
-	fk_user				bigint(20)		unsigned NOT NULL,
-    fk_dilution_tree 	bigint(20)		NOT NULL DEFAULT 1,
+	close_flag		boolean			NOT NULL DEFAULT 0,
+	fk_user			bigint(20)		unsigned NOT NULL,
+        fk_dilution_tree 	bigint(20)		NOT NULL DEFAULT 1,
 	PRIMARY KEY (pk_study),
 	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS alae_analyte(
-	pk_analyte	bigint(20) 		unsigned NOT NULL auto_increment,
+	pk_analyte	bigint(20) 	unsigned NOT NULL auto_increment,
 	name 		varchar(30),
 	shortening	varchar(15),
-	updated_at	timestamp		NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-	fk_user		bigint(20)		unsigned NOT NULL,
+	updated_at	timestamp	NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+        status		boolean		NOT NULL DEFAULT 1,
+	fk_user		bigint(20)	unsigned NOT NULL,
 	PRIMARY KEY (pk_analyte),
    	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
---  OJO: Queda pendiente definicion de valores para los cs y qc. Si se cambia para que en la pantalla de definicion de estudios, se elijan las unidades.
 CREATE TABLE IF NOT EXISTS alae_analyte_study(
-	cs_number			int				NOT NULL DEFAULT 8,
-	qc_number			int				NOT NULL DEFAULT 4,
-	cs_values			varchar(100),
-	qc_values			varchar(100),
+	cs_number		int		NOT NULL DEFAULT 8,
+	qc_number		int		NOT NULL DEFAULT 4,
+	cs_values		varchar(100),
+	qc_values		varchar(100),
 	internal_standard	decimal(19,4)	NOT NULL DEFAULT 0,
-	is_flag				boolean			NOT NULL DEFAULT 0,
-	imported_flag		boolean			NOT NULL DEFAULT 0,
-	fk_study			bigint(20)		unsigned NOT NULL,
-	fk_analyte			bigint(20)		unsigned NOT NULL,
-	fk_analyte_is		bigint(20)		unsigned NOT NULL,
-	fk_unit				int				NOT NULL,
+	is_flag			boolean		NOT NULL DEFAULT 0,
+	imported_flag		boolean		NOT NULL DEFAULT 0,
+	fk_study		bigint(20)	unsigned NOT NULL,
+	fk_analyte		bigint(20)	unsigned NOT NULL,
+	fk_analyte_is		bigint(20)	unsigned NOT NULL,
+	fk_unit			int		NOT NULL,
 	PRIMARY KEY (fk_study, fk_analyte),
    	FOREIGN KEY (fk_study)      REFERENCES alae_study   (pk_study),
    	FOREIGN KEY (fk_analyte)    REFERENCES alae_analyte (pk_analyte),
@@ -96,19 +92,17 @@ CREATE TABLE IF NOT EXISTS alae_analyte_study(
 	FOREIGN KEY (fk_unit)       REFERENCES alae_unit    (pk_unit)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
---  Section: parameters
 CREATE TABLE IF NOT EXISTS alae_parameter(
 	pk_parameter		int			NOT NULL auto_increment,
-	rule				varchar(10),
+	rule			varchar(10),
 	verification		text,
-	min_value			int 		NOT NULL DEFAULT 0,
-	max_value			int 		NOT NULL DEFAULT 0,
-	code_error			varchar(10),
+	min_value		int 		NOT NULL DEFAULT 0,
+	max_value		int 		NOT NULL DEFAULT 0,
+	code_error		varchar(10),
 	message_error		text,
 	PRIMARY KEY (pk_parameter)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
---  Section: batch
 CREATE TABLE IF NOT EXISTS alae_batch(
 	pk_batch                bigint(20) 	unsigned NOT NULL auto_increment,
 	serial			int,
@@ -143,7 +137,6 @@ CREATE TABLE IF NOT EXISTS alae_batch(
         FOREIGN KEY (fk_study)      REFERENCES alae_study     (pk_study)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
---  NOTA: En cada una de las validaciones, debe descartar la fila (pasar el valid_flag = 0)
 CREATE TABLE IF NOT EXISTS alae_sample_batch(
 	pk_sample_batch			bigint(20) 	unsigned NOT NULL auto_increment,
 	sample_name			varchar(250)	NOT NULL,
@@ -242,54 +235,39 @@ CREATE TABLE IF NOT EXISTS alae_sample_batch_other_columns(
 	FOREIGN KEY (fk_sample_batch) REFERENCES alae_sample_batch (pk_sample_batch)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
--- 	Section: audit trail
--- 		NOTA: Las dos primeras tablas, son las que se mostrarán en los reportes.
--- 		Mostrando las transacciones realizadas por los usuarios del sistema.
---
--- 		Las ultimas dos tablas, son mas informativas para los administradores de sistemas,
--- 		para que puedan tener una traza de ¿cuando?, ¿que?, ¿como? y ¿quien? produjo el error en el sistema.
-
---  Audit session
 CREATE TABLE IF NOT EXISTS alae_audit_session (
   	pk_audit_session 	bigint(20) 	unsigned NOT NULL auto_increment,
-	created_at			timestamp	NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-	fk_user				bigint(20)	unsigned NOT NULL,
+	created_at		timestamp	NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+	fk_user			bigint(20)	unsigned NOT NULL,
 	PRIMARY KEY (pk_audit_session),
 	FOREIGN KEY (fk_user)  REFERENCES alae_user  (pk_user)
 );
 
---  Audit transaction
 CREATE TABLE IF NOT EXISTS alae_audit_transaction (
-  	pk_audit_session 	bigint(20) 		unsigned NOT NULL auto_increment,
-	created_at			timestamp		NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-	section				varchar(50) 	NOT NULL,
-	description			varchar(250)	NOT NULL,
-	fk_user				bigint(20)		unsigned NOT NULL,
+  	pk_audit_session 	bigint(20) 	unsigned NOT NULL auto_increment,
+	created_at		timestamp	NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+	section			varchar(250) 	NOT NULL,
+	description		varchar(250)	NOT NULL,
+	fk_user			bigint(20)	unsigned NOT NULL,
 	PRIMARY KEY (pk_audit_session),
 	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)
 );
 
--- Ejemplo: Colocar todas las tareas.
--- INSERT INTO alae_audit_task (section, description, fk_user) VALUES
--- 	('Administración de usuarios', 'activación del usuario XYZ', 3);
-
---  Audit session error
 CREATE TABLE IF NOT EXISTS alae_audit_session_error (
-  	pk_audit_session 	bigint(20) 		unsigned NOT NULL auto_increment,
-	created_at			timestamp		NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-	username			varchar(25)		NOT NULL,
-	message				varchar(500)	NOT NULL,
+  	pk_audit_session 	bigint(20) 	unsigned NOT NULL auto_increment,
+	created_at		timestamp	NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+	username		varchar(25)	NOT NULL,
+	message			varchar(500)	NOT NULL,
 	PRIMARY KEY (pk_audit_session)
 );
 
---  Audit transaction error
 CREATE TABLE IF NOT EXISTS alae_audit_transaction_error (
-  	pk_audit_session 	bigint(20) 		unsigned NOT NULL auto_increment,
-	created_at			timestamp		NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-	section				varchar(50) 	NOT NULL,
-	description			varchar(250)	NOT NULL,
-	message				varchar(500)	NOT NULL,
-	fk_user				bigint(20)		unsigned NOT NULL,
+  	pk_audit_session 	bigint(20) 	unsigned NOT NULL auto_increment,
+	created_at		timestamp	NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+	section			varchar(50) 	NOT NULL,
+	description		varchar(250)	NOT NULL,
+	message			varchar(500)	NOT NULL,
+	fk_user			bigint(20)	unsigned NOT NULL,
 	PRIMARY KEY (pk_audit_session),
 	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)
 );

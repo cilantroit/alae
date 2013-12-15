@@ -12,11 +12,12 @@ namespace Alae\Controller;
 
 use Zend\View\Model\ViewModel,
     Alae\Controller\BaseController,
-    Alae\Service\Helper as Helper;
+    Zend\View\Model\JsonModel;
 
 class AnalyteController extends BaseController
 {
     protected $_datatable = 'analyte';
+    protected $_document  = '\\Alae\\Entity\\Analyte';
 
     public function indexAction()
     {
@@ -24,26 +25,183 @@ class AnalyteController extends BaseController
 
         if ($request->isPost())
         {
-            //$request->getPost('campo')
-            echo "captura el POST";
-            var_dump($_POST);
+            $createNames      = $request->getPost('create-name');
+            $createShortnames = $request->getPost('create-shortname');
+            $updateNames      = $request->getPost('update-name');
+            $updateShortnames = $request->getPost('update-shortname');
+
+            if (!empty($createNames))
+            {
+                $User = $this->_getSession();
+
+                foreach ($createNames as $key => $value)
+                {
+                    try
+                    {
+                        $Analyte = new \Alae\Entity\Analyte();
+                        $Analyte->setName($value);
+                        $Analyte->setShortening($createShortnames[$key]);
+                        $Analyte->setFkUser($User);
+                        $this->getEntityManager()->persist($Analyte);
+                        $this->getEntityManager()->flush();
+                        $this->transaction(__METHOD__, "Ingreso de analitos", json_encode(array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())));
+                    }
+                    catch (Exception $e)
+                    {
+                        $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("User" => $User->getUsername(), "Name" => $value, "Shortening" => $createShortnames[$key])));
+                        /*
+                         * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
+                         */
+                        $error   = array(
+                            "description" => $message,
+                            "message"     => $e,
+                            "section"     => __METHOD__
+                        );
+
+                        $this->transactionError($error);
+                    }
+                }
+            }
+
+            if (!empty($updateNames))
+            {
+                $User = $this->_getSession();
+
+                foreach ($updateNames as $key => $value)
+                {
+                    $Analyte = $this->getRepository()->find($key);
+
+                    if ($Analyte && $Analyte->getPkAnalyte())
+                    {
+                        try
+                        {
+                            $older = array("User" => $Analyte->getFkUser()->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening());
+
+                            $Analyte->setName($updateNames[$key]);
+                            $Analyte->setShortening($updateShortnames[$key]);
+                            $Analyte->setFkUser($User);
+                            $this->getEntityManager()->persist($Analyte);
+                            $this->getEntityManager()->flush();
+
+                            $audit = array(
+                                "Antiguos valores" => $older,
+                                "Nuevos valores"   => array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())
+                            );
+
+                            $this->transaction(__METHOD__, sprintf("Actualización de datos del analito con identificador #%d", $Analyte->getPkAnalyte()), json_encode($audit));
+                        }
+                        catch (Exception $e)
+                        {
+                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Analyte->getPkAnalyte(), "User" => $User->getUsername(), "Name" => $updateNames[$key], "Shortening" => $updateShortnames[$key])));
+                            /*
+                             * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
+                             */
+                            $error   = array(
+                                "description" => $message,
+                                "message"     => $e,
+                                "section"     => __METHOD__
+                            );
+
+                            $this->transactionError($error);
+                        }
+                    }
+                }
+            }
         }
 
-        $data = array(
-            array("id" => "1", "name" => "Anapharina", "shortname" => "ANA", "edit" => "1"),
-            array("id" => "2", "name" => "Anapharina-d5", "shortname" => "ANA-d5", "edit" => "2"),
-            array("id" => "3", "name" => "4-Hidroxyanapharina", "shortname" => "OHANA", "edit" => "3")
-        );
+        $data     = array();
+        $elements = $this->getRepository()->findBy(array("status" => true));
 
-        $view = new ViewModel(array(
-            'data' => $data,
-            'columns'  => \Alae\Service\Datatable::getColumns($this->_datatable),
-            'filters'  => \Alae\Service\Datatable::getFilters($data, $this->_datatable),
-            'editable' => \Alae\Service\Datatable::editable($this->_datatable)
-        ));
+        foreach ($elements as $analyte)
+        {
+            $data[] = array(
+                "id"        => $analyte->getPkAnalyte(),
+                "name"      => $analyte->getName(),
+                "shortname" => $analyte->getShortening(),
+                "edit"      => $analyte->getPkAnalyte()
+            );
+        }
 
+        $view = new ViewModel(\Alae\Service\Datatable::getDatatable($data, $this->_datatable));
         return $view;
     }
 
+    public function downloadAction()
+    {
+        $data   = array();
+        $data[] = array("Id", "Nombre Analito", "Abreviatura");
+        $elements = $this->getRepository()->findBy(array("status" => true));
 
+        foreach ($elements as $analyte)
+        {
+            $data[] = array($analyte->getPkAnalyte(), $analyte->getName(), $analyte->getShortening());
+        }
+
+        return new JsonModel($data);
+    }
+
+    public function deleteAction()
+    {
+        $request = $this->getRequest();
+
+        if ($request->isGet())
+        {
+            $Analyte = $this->getRepository()->find($request->getQuery('pk'));
+
+            if ($Analyte && $Analyte->getPkAnalyte())
+            {
+                $query = $this->getEntityManager()->createQuery("SELECT COUNT(a.fkAnalyte) FROM \Alae\Entity\AnalyteStudy a WHERE a.fkAnalyte = " . $Analyte->getPkAnalyte());
+                $count = $query->getSingleScalarResult();
+
+                if ($count == 0)
+                {
+                    try
+                    {
+                        $User = $this->_getSession();
+                        $Analyte->setStatus(false);
+                        $Analyte->setFkUser($User);
+                        $this->getEntityManager()->persist($Analyte);
+                        $this->getEntityManager()->flush();
+                        $this->transaction(__METHOD__, sprintf("Se ha descativado el analito con identificador #%d", $Analyte->getPkAnalyte()), json_encode(array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())));
+                        return new JsonModel(array("status" => true));
+                    }
+                    catch (Exception $e)
+                    {
+                        $message = sprintf("Se ha presentado un error al desactivar el analito con identificador #%d", $Analyte->getPkAnalyte());
+                        /*
+                         * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
+                         */
+                        $error   = array(
+                            "description" => $message,
+                            "message"     => $e,
+                            "section"     => __METHOD__
+                        );
+                        $this->transactionError($error);
+                        return new JsonModel(array("status" => false, "message" => $message));
+                    }
+                }
+                else
+                {
+                    $message = sprintf("El analito con identificador #%d, no puede desactivarse debido que esta asociado a uno o más estudios", $Analyte->getPkAnalyte());
+                    $error   = array(
+                        "description" => $message,
+                        "message"     => "",
+                        "section"     => __METHOD__
+                    );
+
+                    return new JsonModel(array("status" => false, "message" => $message));
+                }
+            }
+        }
+    }
+
+    public function excelAction()
+    {
+        \Alae\Service\Download::excel("http://localhost/alae/public/analyte/download", "listado_de_analitos");
+    }
+
+    public function pdfAction()
+    {
+        \Alae\Service\Download::pdf("http://localhost/alae/public/analyte/download", "listado_de_analitos");
+    }
 }
