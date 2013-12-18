@@ -12,11 +12,11 @@ namespace Alae\Controller;
 
 use Zend\View\Model\ViewModel,
     Alae\Controller\BaseController,
-    Zend\View\Model\JsonModel;
+    Zend\View\Model\JsonModel,
+    Alae\Service\Datatable;
 
 class AnalyteController extends BaseController
 {
-    protected $_datatable = 'analyte';
     protected $_document  = '\\Alae\\Entity\\Analyte';
 
     public function indexAction()
@@ -122,8 +122,8 @@ class AnalyteController extends BaseController
             );
         }
 
-        $view = new ViewModel(\Alae\Service\Datatable::getDatatable($data, $this->_datatable));
-        return $view;
+        $datatable = new Datatable($data, Datatable::DATATABLE_ANALYTE);
+        return new ViewModel($datatable->getDatatable());
     }
 
     public function downloadAction()

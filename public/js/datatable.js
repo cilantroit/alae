@@ -1,13 +1,12 @@
+var table;
 YUI().use('datatable', function(Y) {
-    var table = new Y.DataTable({
+    table = new Y.DataTable({
         columns: columns,
         data: data,
-        scrollable: "y",
-        height: "200px",
-        width: "600px"
+        scrollable: "y"
     }).render("#datatable");
 
-    $('.yui3-datatable-message').html(getDataFilters(filters));
+    $('.yui3-datatable-message').html(filtersHtml);
     $('.yui3-datatable-message').show();
     $(".yui3-datatable-filter").on("change", function() {
         $('.yui3-datatable-data  > tr').show();
@@ -29,33 +28,17 @@ YUI().use('datatable', function(Y) {
                 $(this).children().removeAttr("selected");
         });
     });
-    $('.form-datatable-new').on("click", function() {
-        $('.yui3-datatable-message').append(getInputs(editable));
+    $('span.form-datatable-new').on("click", function() {
+        $('.yui3-datatable-message').append(getInputs(filters));
         $('.yui3-datatable-message tr:first-child').next("tr").addClass("form-datatable-add-block");
         createNumberIncr++;
         $('.form-datatable-add').on("click", function() {
             addEvent();
         });
         $('.form-datatable-new').hide();
+
     });
 });
-
-function getDataFilters(filters) {
-    var select = '<tr>';
-    $.each(filters, function(key, value) {
-        select += '<td><select id="yui3-datatable-filter-' + key + '" class="yui3-datatable-filter">' + getOptions(value) + '</select></td>';
-    });
-    select += '<td><span class="form-datatable-new">nuevo</span><a href="' + excel + '">excel</a><a href="' + pdf + '">pdf</a><input type="submit"/></td>';
-    return select + '</tr>';
-}
-
-function getOptions(data) {
-    var options = '<option value="-1">autofiltro</option>';
-    $.each(data, function(key, value) {
-        options += '<option value="' + key + '">' + value + '</option>'
-    });
-    return options;
-}
 
 function addEvent() {
     $('.yui3-datatable-message').append(getInputs(filters));
@@ -66,16 +49,17 @@ function addEvent() {
     });
 }
 
-function getInputs(editable) {
+function getInputs(filters) {
+    console.log(filters);
     var input = '<tr>';
-    $.each(editable, function(key, value) {
+    $.each(filters, function(key, value) {
         var disabled = '';
         if (value == 'id')
             disabled = 'disabled="disabled"';
 
-        input += '<td><input ' + disabled + ' type="text" class="form-datatable-input" name="create-' + value + '[' + createNumberIncr + ']" required/></td>';
+        input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" required/></td>';
     });
-    input += '<td><span class="form-datatable-add">agregar</span><span class="form-datatable-remove">eliminar</span></td>';
+    input += '<td class="form-datatable-edit"><span class="form-datatable-add"></span><span class="form-datatable-remove"></span></td>';
     return input + '</tr>';
 }
 
@@ -84,21 +68,13 @@ function changeElement(element, pk) {
     var input = '';
 
     $.each(editable, function(key, value) {
-        input = '<input type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" class="form-datatable-input" required name="update-' + value + '[' + pk + ']"/>';
+        input = '<input type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" required name="update-' + value + '[' + pk + ']"/>';
         $(parentId + ' .yui3-datatable-col-' + value).html(input);
     });
 }
 
-function removeElement(element, pk) {
-//    alert(deleteUrl);
-//    $.getJSON(deleteUrl + pk, function(data) {
-//        if(data.status){
-//            $(element).parent().parent().remove();
-//        } else {
-//            alert(data.message);
-//        }
-//    });   
-
+function removeElement(element, pk) 
+{
     $.ajax({
         type: "GET",
         dataType: "json",
@@ -107,6 +83,18 @@ function removeElement(element, pk) {
         success: function(data) {
             if (data.status) {
                 $(element).parent().parent().remove();
+                $("#yui3-datatable-filter-id option").each(function() {
+                    if ($(this).text() == pk) {
+                        $(".yui3-datatable-filter option[value='" + $(this).val() + "']").remove();
+                    }
+                });
+
+                $.each(data, function(key, value) {
+                    if (value.id == pk) {
+                        delete data[key];
+                        table.removeRow(value.id);
+                    }
+                });
             } else {
                 alert(data.message);
             }

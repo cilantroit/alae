@@ -3,14 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/BatchController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/public/css/datatable.css</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/Batch.php</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/analyte/index.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/AnalyteController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/layout/layout.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/config/application.config.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/batch/unfilled.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/alae/ejemplo.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Helper.php</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Datatable.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/Parameter.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/StudyController.php</file>
         </group>
     </open-files>
 </project-private>

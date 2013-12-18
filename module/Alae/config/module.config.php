@@ -5,11 +5,14 @@ namespace Alae;
 return array(
     'controllers' => array(
         'invokables' => array(
-            'Alae\Controller\Alae' => 'Alae\Controller\AlaeController',
-            'Alae\Controller\Index' => 'Alae\Controller\IndexController',
-            'Alae\Controller\User' => 'Alae\Controller\UserController',
-            'Alae\Controller\Cron'    => 'Alae\Controller\CronController',
-            'Alae\Controller\Analyte' => 'Alae\Controller\AnalyteController',
+            'Alae\Controller\Alae'      => 'Alae\Controller\AlaeController',
+            'Alae\Controller\Index'     => 'Alae\Controller\IndexController',
+            'Alae\Controller\User'      => 'Alae\Controller\UserController',
+            'Alae\Controller\Cron'      => 'Alae\Controller\CronController',
+            'Alae\Controller\Analyte'   => 'Alae\Controller\AnalyteController',
+            'Alae\Controller\Parameter' => 'Alae\Controller\ParameterController',
+            'Alae\Controller\Study'     => 'Alae\Controller\StudyController',
+            'Alae\Controller\Batch'     => 'Alae\Controller\BatchController',
         ),
     ),
     // The following section is new and should be added to your file
@@ -66,6 +69,45 @@ return array(
                     ),
                     'defaults'    => array(
                         'controller' => 'Alae\Controller\Analyte',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            'parameter' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'       => '/parameter[/][:action][/][:param]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults'    => array(
+                        'controller' => 'Alae\Controller\Parameter',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            'study'     => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'       => '/study[/][:action][/:id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults'    => array(
+                        'controller' => 'Alae\Controller\Study',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            'batch'     => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'       => '/batch[/][:action][/:id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults'    => array(
+                        'controller' => 'Alae\Controller\Batch',
                         'action'     => 'index',
                     ),
                 ),

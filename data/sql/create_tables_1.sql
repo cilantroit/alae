@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS alae_study(
 	description		text,
 	observation 		text,
 	close_flag		boolean			NOT NULL DEFAULT 0,
+        status  		boolean			NOT NULL DEFAULT 1,
 	fk_user			bigint(20)		unsigned NOT NULL,
         fk_dilution_tree 	bigint(20)		NOT NULL DEFAULT 1,
 	PRIMARY KEY (pk_study),
@@ -93,14 +94,17 @@ CREATE TABLE IF NOT EXISTS alae_analyte_study(
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS alae_parameter(
-	pk_parameter		int			NOT NULL auto_increment,
+	pk_parameter		int             NOT NULL auto_increment,
 	rule			varchar(10),
 	verification		text,
 	min_value		int 		NOT NULL DEFAULT 0,
 	max_value		int 		NOT NULL DEFAULT 0,
 	code_error		varchar(10),
 	message_error		text,
-	PRIMARY KEY (pk_parameter)
+        type_param              tinyint(1)      NOT NULL DEFAULT '1',
+        fk_user			bigint(20)	unsigned,
+	PRIMARY KEY (pk_parameter),
+        FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS alae_batch(
@@ -271,3 +275,48 @@ CREATE TABLE IF NOT EXISTS alae_audit_transaction_error (
 	PRIMARY KEY (pk_audit_session),
 	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)
 );
+
+INSERT INTO alae_parameter (rule, verification, min_value, max_value, code_error, message_error, fk_user) VALUES
+('V1','Revisión del archivo exportado  (código de estudio)',0,0,null,'V1 - EXPORT ERRÓNEO', 1),
+('V2','Revisión del archivo exportado (abreviatura analito)',0,0,null,'V2 - ANALITO ERRÓNEO', 1),
+('V3','Revisión del archivo exportado  (nº de lote)',0,0,null,'V3 - EXPORT ERRÓNEO', 1),
+('V4','Sample Type',0,0,null,'V4 - SAMPLE TYPE ERRÓNEO', 1),
+('V5','Concentración nominal de CS/QC',0,0,null,'V5 - CONCENTRACIÓN NOMINAL ERRÓNEA', 1),
+('V6.1','Replicados CS (mínimo)',2,0,null,'V6.1 - REPLICADOS INSUFICIENTES', 1),
+('V6.2','Replicados QC (mínimo)',2,0,null,'V6.2 - REPLICADOS INSUFICIENTES', 1),
+('V7','Sample Name repetido',0,0,null,'V7 - SAMPLE NAME REPETIDO', 1),
+('V8','Búsqueda de Muestras reinyectadas',0,0,null,null, 1),
+('V9.1','Accuracy (QCRx*)',85,115,'O','V9.1 - QCR* ACCURACY FUERA DE RANGO', 1),
+('V9.2','Use record = 0 ( QCRx*)',0,0,'O','V9.2 - QCR* USE RECORD NO VALIDO', 1),
+('V9.3','Que tanto V 9.1 como V 9.2 se cumplan',0,0,'O','V9.3 - QCR* NO VALIDO', 1),
+('V10.1','Accuracy (CS1)',80,120,'O','V10.1 - NO CUMPLE ACCURACY', 1),
+('V10.2','Accuracy (CS2-CSx)',85,115,'O','V10.2 - NO CUMPLE ACCURACY', 1),
+('V10.3','Accuracy (QC)',85,115,'O','V10.3 - NO CUMPLE ACCURACY', 1),
+('V10.4','Accuracy (DQC)',85,115,'O','V10.4 - NO CUMPLE ACCURACY', 1),
+('V11','Revisión del dilution factor en HDQC / LDQC',0,0,'O','V11- FACTOR DILUCIÓN ERRÓNEO', 1),
+('V12','Use record (CS/QC/DQC)',0,0,null,null, 1),
+('V13.1','Selección manual de los CS válidos',0,0,null,null, 1),
+('V13.2','Interf. Analito en BLK',20,0,'O','V13.2 - BLK NO CUMPLE', 1),
+('V13.3','Interf. IS en BLK',5,0,'O','V13.3 - BLK NO CUMPLE', 1),
+('V13.4','Interf. Analito en ZS',20,0,'O','V13.4 - ZS NO CUMPLE', 1),
+('V15','75% CS',75,0,null,'V15 - LOTE RECHAZADO (75% CS)', 1),
+('V16','CS consecutivos',0,0,null,'V16 - LOTE RECHAZADO (CS CONSECUTIVOS)', 1),
+('V17','r > 0.99',99,0,null,'V17 - LOTE RECHAZADO (r< 0.99)', 1),
+('V18','67% QC',67,0,null,'V18 - LOTE RECHAZADO (67% QC)', 1),
+('V19','50% de cada nivel de QC',50,0,null,'V19 - LOTE RECHAZADO (50% QCx)', 1),
+('V20.1','50% BLK',50,0,null,'V20.1 - LOTE RECHAZADO (INTERF. BLK)', 1),
+('V20.2','50% ZS',50,0,null,'V20.2 - LOTE RECHAZADO (INTERF. ZS)', 1),
+('V21','Conc. (unknown) > ULOQ ( E )',0,0,'E','V21 - CONC. SUPERIOR AL ULOQ', 1),
+('V22','Variabilidad IS (unknown) ( H )',0,0,'H','V22 - VARIABILIDAD IS', 1),
+('V23','< 5% respuesta IS (unknown) ( B )',0,0,'B','V23 - ERROR EXTRACCIÓN IS', 1),
+('V24','Fuera rango recta truncada ( F )',0,0,'F','V24 - FUERA DE RANGO/RECTA TRUNCADA', 1);
+
+INSERT INTO alae_parameter (rule, verification, min_value, max_value, code_error, message_error, type_param, fk_user) VALUES
+('V12',	null, 0, 0, 'O', 'V12 - No cumple S/N', 0, 1),
+('V12',	null, 0, 0, 'F', 'V12 - Recta truncada al CS2', 0, 1),
+('V12',	null, 0, 0, 'O', 'V12 - Recta truncada al CS7', 0, 1),
+('V12',	null, 0, 0, 'A', 'V12 - Muestra perdida durante la extracción', 0, 1),
+('V12',	null, 0, 0, 'B', 'V12 - Error de extracción', 0, 1),
+('V12',	null, 0, 0, 'C', 'V12 - Problemas de cromatografía', 0, 1),
+('V12',	null, 0, 0, 'D', 'V12 - Fallos técnicos de equipos / software', 0, 1),
+('V12',	null, 0, 0, null, 'V12 - Use Record Erróneo', 0, 1);
