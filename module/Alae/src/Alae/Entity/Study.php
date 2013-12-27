@@ -65,6 +65,13 @@ class Study
     protected $closeFlag = '0';
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="status", type="boolean", nullable=false)
+     */
+    protected $status = '0';
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="fk_dilution_tree", type="bigint", nullable=false)
@@ -149,6 +156,16 @@ class Study
     public function setCloseFlag($closeFlag)
     {
         $this->closeFlag = $closeFlag;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
     public function getFkDilutionTree()

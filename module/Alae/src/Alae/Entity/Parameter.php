@@ -64,6 +64,23 @@ class Parameter
      */
     protected $messageError;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type_param", type="boolean", nullable=false)
+     */
+    protected $typeParam;
+
+    /**
+     * @var \Alae\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_user", referencedColumnName="pk_user")
+     * })
+     */
+    protected $fkUser;
+
     public function getPkParameter()
     {
         return $this->pkParameter;
@@ -134,4 +151,23 @@ class Parameter
         $this->messageError = $messageError;
     }
 
+    public function getTypeParam()
+    {
+        return $this->typeParam;
+    }
+
+    public function setTypeParam($typeParam)
+    {
+        $this->typeParam = $typeParam;
+    }
+
+    public function getFkUser()
+    {
+        return $this->fkUser;
+    }
+
+    public function setFkUser(\Alae\Entity\User $fkUser)
+    {
+        $this->fkUser = $fkUser;
+    }
 }

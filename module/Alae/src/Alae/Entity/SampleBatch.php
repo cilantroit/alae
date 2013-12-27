@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SampleBatch
  *
- * @ORM\Table(name="alae_sample_batch", indexes={@ORM\Index(name="fk_batch", columns={"fk_batch"}), @ORM\Index(name="fk_user", columns={"fk_user"})})
+ * @ORM\Table(name="alae_sample_batch", indexes={@ORM\Index(name="fk_batch", columns={"fk_batch"})})
  * @ORM\Entity
  */
 class SampleBatch
@@ -146,14 +146,14 @@ class SampleBatch
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $createdAt = 'CURRENT_TIMESTAMP';
+    protected $createdAt;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    protected $updatedAt = '0000-00-00 00:00:00';
+    protected $updatedAt;
 
     /**
      * @var \Alae\Entity\Batch
@@ -164,16 +164,6 @@ class SampleBatch
      * })
      */
     protected $fkBatch;
-
-    /**
-     * @var \Alae\Entity\User
-     *
-     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_user", referencedColumnName="pk_user")
-     * })
-     */
-    protected $fkUser;
 
     public function getPkSampleBatch()
     {
@@ -383,16 +373,6 @@ class SampleBatch
     public function setFkBatch(\Alae\Entity\Batch $fkBatch)
     {
         $this->fkBatch = $fkBatch;
-    }
-
-    public function getFkUser()
-    {
-        return $this->fkUser;
-    }
-
-    public function setFkUser(\Alae\Entity\User $fkUser)
-    {
-        $this->fkUser = $fkUser;
     }
 
 }

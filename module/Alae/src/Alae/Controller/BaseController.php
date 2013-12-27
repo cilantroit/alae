@@ -56,13 +56,13 @@ abstract class BaseController extends AbstractActionController
     protected function _getSession()
     {
         $session = new \Zend\Session\Container('user');
-        return $this->getRepository("\\Alae\\Entity\\User")->find($session->id);
+        return $this->getRepository("\\Alae\\Entity\\User")->find(1);
     }
 
-    protected function transaction($_method)
+    protected function transaction($_method = false, $section = false, $description = false)
     {
         $audit = new \Alae\Entity\AuditTransaction();
-        $audit->__prepare($_method);
+        $audit->__prepare($_method, $section, $description);
         $audit->setFkUser($this->_getSession());
         $this->getEntityManager()->persist($audit);
         $this->getEntityManager()->flush();
@@ -84,14 +84,14 @@ abstract class BaseController extends AbstractActionController
         return $this->getRepository("\\Alae\\Entity\\User")->find(1);
     }
 
-    protected function transactionError($description, $message, $section, $system = false)
+    protected function transactionError($data, $system = false)
     {
         $user = $system ? $this->_getSystem() : $this->_getSession();
 
         $audit = new \Alae\Entity\AuditTransactionError();
-        $audit->setDescription($description);
-        $audit->setMessage($message);
-        $audit->setSection($section);
+        $audit->setDescription($data['description']);
+        $audit->setMessage($data['message']);
+        $audit->setSection($data['section']);
         $audit->setFkUser($user);
         $this->getEntityManager()->persist($audit);
         $this->getEntityManager()->flush();
@@ -100,6 +100,12 @@ abstract class BaseController extends AbstractActionController
     protected function sessionError($error)
     {
 
+    }
+
+    protected function execute($sql)
+    {
+        $query = $this->getEntityManager()->createQuery($sql);
+        $response = $query->execute();
     }
 
 }

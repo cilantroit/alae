@@ -41,7 +41,14 @@ class Analyte
      *
      * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    protected $updatedAt = '0000-00-00 00:00:00';
+    protected $updatedAt;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="status", type="boolean", nullable=false)
+     */
+    protected $status = '1';
 
     /**
      * @var \Alae\Entity\User
@@ -52,6 +59,11 @@ class Analyte
      * })
      */
     protected $fkUser;
+
+    public function __construct()
+    {
+        $this->updatedAt = new \DateTime('now');
+    }
 
     public function getPkAnalyte()
     {
@@ -91,6 +103,16 @@ class Analyte
     public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
     public function getFkUser()

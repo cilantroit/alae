@@ -1,0 +1,13 @@
+<form id="datatable-form" action="#" method="POST">
+    <div id="datatable"></div>
+</form>
+<script>
+    var createNumberIncr = 0;
+    var data = <?php echo $data; ?>;
+    var filters = <?php echo $header; ?>;
+    var columns = <?php echo $columns; ?>;
+    var editable = <?php echo $editable; ?>;
+    var filtersHtml = '<?php echo $filters; ?>';
+</script>
+<script type="text/javascript" src="/alae/public/js/datatable.js"></script>
+
