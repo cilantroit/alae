@@ -1,27 +1,29 @@
 $(document).on("ready", inicio);
+
+
 function inicio() {
 
-    $(".login_form").validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 8
-            },
-            email: {
-                required: true,
-                email: true
-            }
+    $("#newaccount").validate({
+	rules: {
+	    username: {
+		required: true
+			//customvalidation: true
+	    },
+	    email: {required: true
+			//customemailvalidatorexist: true
 
+	    }
+	},
+	messages: {
+	    username: {
+		required: "Este campo es de uso oblogatorio"
+			//customvalidation: "hola",
+	    },
+	    email: {
+		required: "Este campo es de uso oblogatorio"
+	    }
 
-        },
-        messages: {
-            password: {
-                required: "Debe introducir su contraseña",
-                minlength: "Su contraseña debe tener al menos 8 caracteres"
-            },
-            email: "Debe introducir un formato de correo valido "
-
-        }
+	}
     });
 
 

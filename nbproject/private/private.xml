@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/UserController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/template_new_usr_sol.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/layout/layout.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/config/module.config.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/BaseController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/public/js/ajax.js</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/newaccount.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/CronController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/public/js/script.js</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/IndexController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Mailing.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/User.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/Module.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Helper.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/config/vars.config.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/template.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/AlaeController.php</file>
+        </group>
+    </open-files>
 </project-private>

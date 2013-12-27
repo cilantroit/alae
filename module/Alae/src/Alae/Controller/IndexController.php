@@ -27,4 +27,3 @@ class IndexController extends BaseController
     }
 
 }
-

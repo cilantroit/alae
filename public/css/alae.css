@@ -19,7 +19,6 @@ span {color:#ffffff;font-family: Trebuchet MS;font-size: 9pt;}
 
 #principal {
     margin:0 auto;
-    position: absolute;
     top:0%;
     left:0%;
     width: 99%;
@@ -27,7 +26,7 @@ span {color:#ffffff;font-family: Trebuchet MS;font-size: 9pt;}
 #cerrar{position: absolute; top:0%; right:3%; z-index:100; }
 #cerrar img{border: 3px ridge #eee; padding:3px;}
 #cuerpo{
-    position: relative;
+
     vertical-align:top;
     width: 99%; height:80%;
     top:1%;
@@ -166,11 +165,14 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 #centrado ul {text-indent:0px;text-align: left;list-style-image:url('../img/xls.png'); outline: solid 1px #008B8B; font-size: 0.9em;  }
 #centrado li {margin: 0 10px 0 10px;}
 
-#pie{position: absolute; margin:0 auto; bottom:1%; border-top:1px solid #ccc; }
+#pie{ margin:0 auto; bottom:1%; border-top:1px solid #ccc; }
 #pie p{font-size: 0.8em; margin: 5px; line-height: 1.5em; color: #666;}
 
 .centro{text-align:center;}
 .izq{text-align:left;}
 .der{text-align:right;}
 .peq{font-size: 0.8em; }
-.error{color:#FF0000;}
+.error{color:#FF0000;
+
+
+}

@@ -1,21 +1,48 @@
+<?php
+var_dump($error);
+?>
+
 <div id="cerrar">
     <a href="index.html"><img title="regresar a la pantalla de login" src="<?php echo $this->basePath(); ?>/img/close.png"/></a></div>
 <div id="principal">
     <div id="cuerpo">
 	<div id="central">
-	    <a href="../alae.html"><img src="<?php echo $this->basePath(); ?>/img/alaelogo.png" width="400px"/></a>
+	    <a href="../alae.html"><img src=" <?php echo $this->basePath(); ?>/img/alaelogo.png" width="400px"/></a>
 
 
 	    <div id="login">
 		<h1>Solicitar acceso a ALAE</h1>
-		<form method="POST" action="<?php echo $this->url('user', array('action' => 'newaccount')); ?>">
+		<form method="POST"  id="newaccount" action="<?php echo $this->url('user', array('action' => 'newaccount')); ?>">
 		    <table>
 			<tr><td><label for="username">Nombre de usuario:</td>
 			    <td><input id="username" name="username" type="text" ></tr>
-			<tr><td></td><td><label class="error" id="usrerrorlabel"></label></td></tr>
+			<tr>
+			<tr>
+			    <td>
+				<?php
+				if (!empty($error['usr']))
+				{
+				    echo "<td><label class='error' id='usrerrorlabel'>" . $error['usr'] . "</label></td>";
+				}
+				?>
+			    </td>
+			</tr>
 			<tr><td><label for="email"> Correo electrónico:</td>
 			    <td><input id="email" type="email" name="email"></td></tr>
-			<tr><td></td><td><label class="error" id="erroremail"></label></td></tr>
+
+			<tr>
+			    <td>
+				<?php
+				if (!empty($error['email']))
+				{
+				    echo "<tr><td></td><td><label class='error' id='erroremail'>" . $error['email'] . "</label></td></tr>";
+				}
+				?>
+			    </td>
+			</tr>
+
+
+
 			<tr><td>[ <a href="index.html">Inicio de sesi&oacute;n</a> ]</td>
 
 			    <td>
