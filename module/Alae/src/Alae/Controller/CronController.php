@@ -102,8 +102,8 @@ class CronController extends BaseController
                     $this->setErrorTransaction('Invalid_file_name_in_the_export_process_batches_of_analytes', $file);
                 }
 
-                $this->insertBatch(Helper:: getVarsConfig("batch_directory") . "/" . $file, $this->_Study, $this->_Analyte);
-                //unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
+                $this->insertBatch(Helper::getVarsConfig("batch_directory") . "/" . $file, $this->_Study, $this->_Analyte);
+                unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
             }
         }
     }
@@ -117,7 +117,14 @@ class CronController extends BaseController
         if (!is_null($Analyte) && !is_null($Study))
         {
             $this->batchVerify($Batch, $fileName);
-            $this->updateBatch($Batch, $Analyte, $Study);
+            $this->updateBatch($Batch, $Analyte, $Study, $fileName);
+        }
+        else
+        {
+//            $query       = $this->getEntityManager()->createQuery(\Alae\Service\Verification::getPkParameter("V1"));
+//            $pkParameter = $query->getSingleScalarResult();
+            $this->execute(\Alae\Service\Verification::update("s.fkBatch = " . $Batch->getPkBatch(), "V1"));
+            $this->execute(\Alae\Service\Verification::updateBatch("b.pkBatch = " . $Batch->getPkBatch(), "V1"));
         }
     }
 
@@ -188,8 +195,12 @@ class CronController extends BaseController
         return $Batch;
     }
 
-    private function updateBatch($Batch, $Analyte, $Study)
+    private function updateBatch($Batch, $Analyte, $Study, $fileName)
     {
+        $string = substr($fileName, 0, -4);
+        list($pkBatch, $aux) = explode("-", $string);
+
+        $Batch->setSerial($pkBatch);
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
@@ -200,8 +211,8 @@ class CronController extends BaseController
     {
         $string = substr($fileName, 0, -4);
         list($pkBatch, $aux) = explode("-", $string);
-        $this->execute(Verification::updateFk("s.analytePeakName <> '" . $Analyte->getShortening() . " AND s.fkBatch = " . $Batch->getPkBatch() . "'", "V1"));
-        $this->execute(Verification::updateFk("SUBSTRING(s.fileName, 0, 2) <> '" . $pkBatch . " AND s.fkBatch = " . $Batch->getPkBatch() . "'", "V2"));
+        $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V1"));
+        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 0, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2"));
     }
 
     private function saveSampleBatch($headers, $data, $Batch)

@@ -23,12 +23,15 @@ class BatchController extends BaseController
 
         foreach ($elements as $unfilled)
         {
-            $data[] = array(
-                "batch"     => $unfilled->getSerial(),
-                "filename"  => $unfilled->getFileName(),
-                "create_at" => $unfilled->getCreatedAt(),
-                "reason"    => $unfilled->getFkParameter()->getMessageError()
-            );
+            if (!is_null($unfilled->getFkParameter()))
+            {
+                $data[] = array(
+                    "batch"     => $unfilled->getSerial(),
+                    "filename"  => $unfilled->getFileName(),
+                    "create_at" => $unfilled->getCreatedAt(),
+                    "reason"    => utf8_encode($unfilled->getFkParameter()->getMessageError())
+                );
+            }
         }
 
         $datatable = new Datatable($data, Datatable::DATATABLE_UNFILLED);

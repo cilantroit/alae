@@ -1,0 +1,1 @@
+start "cronjob" "C:\xampp\php\php.exe" -f C:\xampp\htdocs\alae\public\index.php checkdirectory
