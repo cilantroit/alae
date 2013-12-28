@@ -35,15 +35,21 @@ class UserController extends BaseController
 		{
 		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
 		    {
-			$this->_setSession($element);
 
-			echo 'rrrrrrrr';
+			$this->_setSession($element);
 			$this->redirect()->toRoute('index', array('action' => 'menu'));
 		    }
 		}
 	    }
-	    return new ViewModel();
+	    else
+	    {
+		$message = 'Usuario o contraseña invalidos';
+	    }
 	}
+
+
+	return new ViewModel(array('error' => $message,
+	));
     }
 
     public function newaccountAction()
@@ -102,7 +108,9 @@ class UserController extends BaseController
 	    }
 //}
 	}
-	return new ViewModel(array('error' => $message,
+	return
+
+		new ViewModel(array('error' => $message,
 	));
     }
 

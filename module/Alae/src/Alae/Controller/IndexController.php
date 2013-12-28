@@ -18,7 +18,32 @@ class IndexController extends BaseController
 
     public function indexAction()
     {
-	return new ViewModel();
+	$request = $this->getRequest();
+
+
+
+
+
+
+	//var_dump(getParam('message'));
+	//$message = getParam('message');
+	//$message = $this->getEvent()->getRouteMatch()->getParam('message');
+	//$message = $request->getQuery('message');
+	//$message = $request->getRouteMatch()->getQuery('message');
+	//var_dump($request->getEvent()->getRouteMatch());
+
+
+	$slug = $this->getEvent()->getRouteMatch()->getParam('message');
+
+
+
+
+
+
+
+
+
+	return new ViewModel(array('message' => $slug));
     }
 
     public function menuAction()

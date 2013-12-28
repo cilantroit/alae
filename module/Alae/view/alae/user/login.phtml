@@ -1,6 +1,52 @@
-<div class="hero-unit">
 
-    <?php
-    echo 'hello login';
-    ?>
-</div>
+<html>
+    <!--
+     login.html
+     Fecha creación: 07.jun.2013 (Rita de la Torre) Pantalla login del ALAE
+     Modificación:
+    -->
+
+    <?php var_dump($error) ?>
+    <div id="principal">
+	<div id="cuerpo">
+	    <div id="central">
+
+
+		<a href="<?php echo $this->url('user', array('action' => 'login')); ?>">
+
+		    <img src="<?php echo $this->basePath() . '/img/alaelogo.png' ?> "/></a>
+		<div id='login'>
+		    <h1>Inicio de sesi&oacute;n </h1>
+		    <form method='POST'  id="loginusr" action="<?php echo $this->url('user', array('action' => 'login')); ?>">
+			<table>
+			    <tr><td><label for="username">Nombre de usuario:</td>
+				<td><input id="username" name="username" type="text" ></tr><tr>
+				<td>
+				    <label for="password"> Contrase&ntilde;a:
+				</td>
+				<td><input type="password" id="password" name="password">
+				</td>
+			    </tr>
+			    <tr>
+				<td><a href="<?php
+				    echo $this->url('user', array('action' => 'newaccount'));
+				    ?>"><?php echo 'Solicitar cuenta'; ?></h></td>
+				<td >&nbsp;</td>
+			    </tr><tr>
+				<td>[ <a href="alae002.html">Reinicializar contrase&ntilde;a</a> ]</td>
+				<!-- para efectos de demostración, cambiar por SUBMIT  el botón a continuación-->
+				<td ><a href="alae000.html"><input type="submit" value="Iniciar sesión" id="entrar"></a></td>
+			    </tr><tr>
+			    </tr>
+			</table>
+		    </form>
+		</div>
+	    </div>
+	</div>
+	<div id="pie">
+	    <p><a href="./help/alaeIndex.pdf" target="blank"><img src="./img/help.png"  title="ayuda sobre esta pantalla" /></a>
+		Ayuda sobre el Sistema</p>
+	    <p><a href="./sf/alaeIndexsf.pdf" target="blank"><img src="./img/info.png"  title="Especificaciones funcionales" /></a>
+		ALAE Software. Copyright © Anapharm, 2013.</p>
+	</div>
+    </div>

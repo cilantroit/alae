@@ -27,7 +27,7 @@ class AuditSession
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $createdAt = 'CURRENT_TIMESTAMP';
+    protected $createdAt;
 
     /**
      * @var \Alae\Entity\User
@@ -39,34 +39,39 @@ class AuditSession
      */
     protected $fkUser;
 
+    public function __construct()
+    {
+	$this->createdAt = new \DateTime('now');
+    }
+
     public function getPkAuditSession()
     {
-        return $this->pkAuditSession;
+	return $this->pkAuditSession;
     }
 
     public function setPkAuditSession($pkAuditSession)
     {
-        $this->pkAuditSession = $pkAuditSession;
+	$this->pkAuditSession = $pkAuditSession;
     }
 
     public function getCreatedAt()
     {
-        return $this->createdAt;
+	return $this->createdAt;
     }
 
     public function setCreatedAt(\DateTime $createdAt)
     {
-        $this->createdAt = $createdAt;
+	$this->createdAt = $createdAt;
     }
 
     public function getFkUser()
     {
-        return $this->fkUser;
+	return $this->fkUser;
     }
 
     public function setFkUser(\Alae\Entity\User $fkUser)
     {
-        $this->fkUser = $fkUser;
+	$this->fkUser = $fkUser;
     }
 
 }
