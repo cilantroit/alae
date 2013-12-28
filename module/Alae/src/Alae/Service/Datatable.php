@@ -16,6 +16,7 @@ class Datatable
     const DATATABLE_PARAMETER = 'parameter';
     const DATATABLE_REASON    = 'reason';
     const DATATABLE_UNFILLED  = 'unfilled';
+    const DATATABLE_ADMIN     = 'admin';
 
     protected $_data;
     protected $_datatable;
@@ -104,9 +105,9 @@ class Datatable
         return array(
             "data"     => (!empty($data)) ? json_encode($data) : 0,
             "columns"  => json_encode(array(
-                array("key" => "rule", "label" => utf8_encode("Regla"), "sortable" => true),
-                array("key" => "code_error", "label" => utf8_encode("Motivo"), "sortable" => true, "allowHTML" => true),
-                array("key" => "message_error", "label" => utf8_encode("Mensaje de error"), "sortable" => true, "allowHTML" => true),
+                array("key" => "rule", "label" => "Regla", "sortable" => true),
+                array("key" => "code_error", "label" => "Motivo", "sortable" => true, "allowHTML" => true),
+                array("key" => "message_error", "label" => "Mensaje de error", "sortable" => true, "allowHTML" => true),
                 array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-change" onclick="changeElement(this, {value});"></span>')
             )),
             "editable" => json_encode(array("rule", "code_error", "message_error")),
@@ -123,10 +124,10 @@ class Datatable
         return array(
             "data"     => (!empty($data)) ? json_encode($data) : 0,
             "columns"  => json_encode(array(
-                array("key" => "batch", "label" => utf8_encode("# Lote"), "sortable" => true),
-                array("key" => "filename", "label" => utf8_encode("Nombre del archivo"), "sortable" => true, "allowHTML" => true),
-                array("key" => "create_at", "label" => utf8_encode("Importado el"), "sortable" => true, "allowHTML" => true),
-                array("key" => "reason", "label" => utf8_encode("Motivo de descarte"), "sortable" => true, "allowHTML" => true)
+                array("key" => "batch", "label" => "# Lote", "sortable" => true),
+                array("key" => "filename", "label" => "Nombre del archivo", "sortable" => true, "allowHTML" => true),
+                array("key" => "create_at", "label" => "Importado el", "sortable" => true, "allowHTML" => true),
+                array("key" => "reason", "label" => "Motivo de descarte", "sortable" => true, "allowHTML" => true)
             )),
             "editable" => 0,
             "header"   => json_encode($header),

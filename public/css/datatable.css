@@ -81,7 +81,7 @@
     font-size: 1em;
     color: red;
 }
-#datatable table tbody tr td label[class=error]{ display: none !important; }
+/*#datatable table tbody tr td label[class=error]{ display: none !important; }*/
 #datatable table thead .yui3-datatable-col-edit{ display:none; }
 #datatable .yui3-datatable-message .yui3-datatable-filter{
     height: 2em;
