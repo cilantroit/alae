@@ -1,7 +1,15 @@
 <form id="datatable-form" action="#" method="POST">
     <div id="datatable"></div>
 </form>
-<script>$("#datatable-form").validate();</script>
+<script>
+    jQuery.validator.addClassRules('datatable-class-name', {
+        required: true
+    });
+    jQuery.validator.addClassRules('datatable-class-shortname', {
+        required: true
+    });
+    $("#datatable-form").validate();
+</script>
 <script>
     var createNumberIncr = 0;
     var data = <?php echo $data; ?>;

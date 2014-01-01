@@ -111,11 +111,11 @@ class ParameterController extends BaseController
 
             $data[] = array(
                 "rule"          => $parameter->getRule(),
-                "verification"  => utf8_encode($parameter->getVerification()),
+                "verification"  => $parameter->getVerification(),
                 "min_value"     => ($parameter->getMinValue() > 0) ? $parameter->getMinValue() : "",
                 "max_value"     => ($parameter->getMaxValue() > 0) ? $parameter->getMaxValue() : "",
                 "code_error"    => $parameter->getCodeError(),
-                "message_error" => utf8_encode($parameter->getMessageError()),
+                "message_error" => $parameter->getMessageError(),
                 "edit"          => $parameter->getPkParameter()
             );
         }
@@ -134,11 +134,11 @@ class ParameterController extends BaseController
         {
             $data[] = array(
                 $parameter->getRule(),
-                utf8_encode($parameter->getVerification()),
+                $parameter->getVerification(),
                 ($parameter->getMinValue() > 0) ? $parameter->getMinValue() : "",
                 ($parameter->getMaxValue() > 0) ? $parameter->getMaxValue() : "",
                 $parameter->getCodeError(),
-                utf8_encode($parameter->getMessageError())
+                $parameter->getMessageError()
             );
         }
 
@@ -156,7 +156,7 @@ class ParameterController extends BaseController
             $data[] = array(
                 $parameter->getRule(),
                 $parameter->getCodeError(),
-                utf8_encode($parameter->getMessageError())
+                $parameter->getMessageError()
             );
         }
 
@@ -293,8 +293,8 @@ class ParameterController extends BaseController
 
             $data[] = array(
                 "rule"          => $parameter->getRule(),
-                "code_error"    => utf8_encode($parameter->getCodeError()),
-                "message_error" => utf8_encode($parameter->getMessageError()),
+                "code_error"    => $parameter->getCodeError(),
+                "message_error" => $parameter->getMessageError(),
                 "edit"          => $parameter->getPkParameter()
             );
         }

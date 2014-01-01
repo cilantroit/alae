@@ -29,7 +29,7 @@ class BatchController extends BaseController
                     "batch"     => $unfilled->getSerial(),
                     "filename"  => $unfilled->getFileName(),
                     "create_at" => $unfilled->getCreatedAt(),
-                    "reason"    => utf8_encode($unfilled->getFkParameter()->getMessageError())
+                    "reason"    => $unfilled->getFkParameter()->getMessageError()
                 );
             }
         }

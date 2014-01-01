@@ -15,10 +15,11 @@ use Alae\Controller\BaseController,
 
 class CronController extends BaseController
 {
-
-    protected $_Study = null;
+    protected $_Study   = null;
     protected $_Analyte = null;
-    protected $_error = false;
+    protected $_error   = false;
+    protected $_analyteConcentrationUnits;
+    protected $_calculatedConcentrationUnits;
 
     private function isRepeatedBatch($fileName)
     {
@@ -89,7 +90,6 @@ class CronController extends BaseController
 
         foreach ($files as $file)
         {
-            //echo $file . "\n";
             if (!is_dir($file))
             {
                 if (preg_match("/^(\d+-\d+\_[a-zA-Z0-9]+\.txt)$/i", $file))
@@ -102,7 +102,7 @@ class CronController extends BaseController
                     $this->setErrorTransaction('Invalid_file_name_in_the_export_process_batches_of_analytes', $file);
                 }
 
-                $this->insertBatch(Helper::getVarsConfig("batch_directory") . "/" . $file, $this->_Study, $this->_Analyte);
+                $this->insertBatch($file, $this->_Study, $this->_Analyte);
                 unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
             }
         }
@@ -110,19 +110,17 @@ class CronController extends BaseController
 
     private function insertBatch($fileName, $Study, $Analyte)
     {
-        $data = $this->getData($fileName, $Study, $Analyte);
+        $data  = $this->getData(Helper::getVarsConfig("batch_directory") . "/" . $fileName, $Study, $Analyte);
         $Batch = $this->saveBatch($fileName);
         $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
 
         if (!is_null($Analyte) && !is_null($Study))
         {
             $this->batchVerify($Batch, $fileName);
-            $this->updateBatch($Batch, $Analyte, $Study, $fileName);
+            $this->updateBatch($Batch, $Analyte, $Study);
         }
         else
         {
-//            $query       = $this->getEntityManager()->createQuery(\Alae\Service\Verification::getPkParameter("V1"));
-//            $pkParameter = $query->getSingleScalarResult();
             $this->execute(\Alae\Service\Verification::update("s.fkBatch = " . $Batch->getPkBatch(), "V1"));
             $this->execute(\Alae\Service\Verification::updateBatch("b.pkBatch = " . $Batch->getPkBatch(), "V1"));
         }
@@ -132,8 +130,19 @@ class CronController extends BaseController
     {
         $newsHeaders = array();
 
+        $this->_analyteConcentrationUnits    = $this->_calculatedConcentrationUnits = "";
+
         foreach ($headers as $header)
         {
+            if (preg_match("/Analyte Concentration/i", $header))
+            {
+                $this->_analyteConcentrationUnits = preg_replace(array("/Analyte Concentration\s/", "/\(/", "/\)/"), "", $header);
+            }
+            if (preg_match("/Calculated Concentration/i", $header))
+            {
+                $this->_calculatedConcentrationUnits = preg_replace(array("/Calculated Concentration\s/", "/\(/", "/\)/"), "", $header);
+            }
+
             $newsHeaders[] = preg_replace('/\s\(([a-zA-Z]|\s|\/|%)+\)/i', '', $header);
         }
         return $newsHeaders;
@@ -186,7 +195,11 @@ class CronController extends BaseController
 
     private function saveBatch($fileName)
     {
+        $string = substr($fileName, 0, -4);
+        list($serial, $aux) = explode("-", $string);
+
         $Batch = new \Alae\Entity\Batch();
+        $Batch->setSerial((string) $serial);
         $Batch->setFileName($fileName);
         $Batch->setFkUser($this->_getSystem());
         $this->getEntityManager()->persist($Batch);
@@ -195,12 +208,8 @@ class CronController extends BaseController
         return $Batch;
     }
 
-    private function updateBatch($Batch, $Analyte, $Study, $fileName)
+    private function updateBatch($Batch, $Analyte, $Study)
     {
-        $string = substr($fileName, 0, -4);
-        list($pkBatch, $aux) = explode("-", $string);
-
-        $Batch->setSerial($pkBatch);
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
@@ -233,8 +242,8 @@ class CronController extends BaseController
                     }
                 }
                 $SampleBatch->setFkBatch($Batch);
-                $SampleBatch->setAnalyteConcentrationUnits("ng/nl");
-                $SampleBatch->setCalculatedConcentrationUnits("ng/nl");
+                $SampleBatch->setAnalyteConcentrationUnits($this->_analyteConcentrationUnits);
+                $SampleBatch->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
                 $this->getEntityManager()->persist($SampleBatch);
                 $this->getEntityManager()->flush();
 
@@ -275,9 +284,7 @@ class CronController extends BaseController
             "IS Peak Name" => "setIsPeakName",
             "IS Peak Area" => "setIsPeakArea",
             "Analyte Concentration" => "setAnalyteConcentration",
-            //"Analyte Concentration units" => "setAnalyteConcentration", --> No existe en el fichero de prueba
             "Calculated Concentration" => "setCalculatedConcentration",
-            //"Calculated Concentration Units" => "setCalculatedConcentration", --> No existe en el fichero de prueba
             "Accuracy" => "setAccuracy",
             "Use Record" => "setUseRecord",
         );

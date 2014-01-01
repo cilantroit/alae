@@ -125,9 +125,9 @@ class Datatable
             "data"     => (!empty($data)) ? json_encode($data) : 0,
             "columns"  => json_encode(array(
                 array("key" => "batch", "label" => "# Lote", "sortable" => true),
-                array("key" => "filename", "label" => "Nombre del archivo", "sortable" => true, "allowHTML" => true),
-                array("key" => "create_at", "label" => "Importado el", "sortable" => true, "allowHTML" => true),
-                array("key" => "reason", "label" => "Motivo de descarte", "sortable" => true, "allowHTML" => true)
+                array("key" => "filename", "label" => "Nombre del archivo", "sortable" => true),
+                array("key" => "create_at", "label" => "Importado el", "sortable" => true),
+                array("key" => "reason", "label" => "Motivo de descarte", "sortable" => true)
             )),
             "editable" => 0,
             "header"   => json_encode($header),
