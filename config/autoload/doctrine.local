@@ -9,8 +9,9 @@ return array(
 		    'host' => 'localhost',
 		    'port' => '3306',
 		    'user' => 'alae',
-		    'password' => 'vHmWUsLqnX6pxu8h',
+		    'password' => 'Alae1',
 		    'dbname' => 'alae',
+		    'charset' => 'utf8',
 		)
 	    )
 	)

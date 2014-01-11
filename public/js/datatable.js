@@ -67,7 +67,7 @@ function getInputs(filters) {
 	if (value == 'id')
 	    disabled = 'disabled="disabled"';
 
-	input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" required/></td>';
+	input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" class="datatable-class-' + value + '"/></td>';
     });
     input += '<td class="form-datatable-edit"><span class="form-datatable-add"></span><span class="form-datatable-remove"></span></td>';
     return input + '</tr>';
@@ -78,7 +78,7 @@ function changeElement(element, pk) {
     var input = '';
 
     $.each(editable, function(key, value) {
-	input = '<input type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" required name="update-' + value + '[' + pk + ']"/>';
+	input = '<input class="datatable-class-' + value + '" type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" name="update-' + value + '[' + pk + ']"/>';
 	$(parentId + ' .yui3-datatable-col-' + value).html(input);
     });
 }

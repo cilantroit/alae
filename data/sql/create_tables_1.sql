@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS alae_user(
 	email		varchar(50)		NOT NULL,
 	password	varchar(50)		NOT NULL,
 	active_code	varchar(50)		NOT NULL,
+        verification	varchar(50),
 	active_flag	boolean			NOT NULL DEFAULT 0,
 	fk_profile	int,
 	PRIMARY KEY (pk_user),

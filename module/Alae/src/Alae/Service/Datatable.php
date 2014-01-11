@@ -140,10 +140,6 @@ class Datatable
 	$header = array("username", "email", "profile", "password", "status");
 	$data = $this->getData();
 
-	foreach ($data as $dataid)
-	{
-	    $dataid ['edit'];
-	}
 	return array(
 	    "data" => (!empty($data)) ? json_encode($data) : 0,
 	    "columns" => json_encode(array(
@@ -217,7 +213,6 @@ class Datatable
 	    case Datatable::DATATABLE_UNFILLED:
 		$elements = '<a href="' . $this->_base_url . '/batch/excel"><span class="form-download-excel"></span></a>';
 		break;
-
 	    case Datatable::DATATABLE_ADMIN:
 		$elements = '<a href="' . $this->_base_url . '/user/excel"><span class="form-download-excel"></span></a>';
 		break;

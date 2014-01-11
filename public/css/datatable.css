@@ -82,18 +82,13 @@
 #datatable table tbody tr td input[type=text]{
     height: 1.8em;
     border: 1px solid #008B8B;
-    width: 100%;
+    width: 99%;
     font-family: Verdana;
     font-size: 1em;
     color: #0000CC;
     padding-left: 2px;
 }
-#datatable table tbody tr td input[class=error]{
-    border: 2px solid red;
-    font-size: 1em;
-    color: red;
-}
-/*#datatable table tbody tr td label[class=error]{ display: none !important; }*/
+#datatable table tbody tr td label[class=error]{ display: none !important; }
 #datatable table thead .yui3-datatable-col-edit{ display:none; }
 #datatable .yui3-datatable-message .yui3-datatable-filter{
     height: 2em;
@@ -111,4 +106,8 @@
 .container
 {
     margin: 25px;
+}
+.error{
+    border: 1px solid red !important;
+    color: red !important;
 }
