@@ -56,8 +56,8 @@ button{vertical-align: top;
        font-family: 'Century Gothic',  Tahoma, Helvetica, Sans-serif;
        color: #120873;
        letter-spacing:0.3px;
-       border: 2px outset #272535
-           box-shadow: 0 0 .05em rgba(0,0,0,0.4);
+       border: 2px outset #272535;
+       box-shadow: 0 0 .05em rgba(0,0,0,0.4);
        -moz-box-shadow: 0 0 .05em rgba(0,0,0,0.4);
        -webkit-box-shadow: 0 0 .05em rgba(0,0,0,0.4);
        -moz-border-radius: .3em;

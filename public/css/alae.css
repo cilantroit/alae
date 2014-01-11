@@ -1,6 +1,12 @@
 
 body {margin:20px; font:100.1%/1.1 Verdana, Arial, Helvetica, sans-serif; background-color:#eee; }
 h1 {font: Tahoma, Arial;color:#008B8B; font-size: 2em;text-align:left;}
+h2 {
+    font: 'Century Gothic', Tahoma, Helvetica;
+    color: #008B8B;
+    font-size: 1.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;}
 h3 {color:#838c98; font-size: 1em;}
 h4 {background-color:#008B8B; color:#fff; font-size: 1.1em; margin:0; line-height:1.6em; text-align:center;}
 img.vinculo {border:1px solid #EEE; width:155px; height:100px;}
@@ -26,12 +32,12 @@ span {color:#ffffff;font-family: Trebuchet MS;font-size: 9pt;}
 #cerrar{position: absolute; top:0%; right:3%; z-index:100; }
 #cerrar img{border: 3px ridge #eee; padding:3px;}
 #cuerpo{
-
     vertical-align:top;
-    width: 99%; height:80%;
+    width: 99%;
     top:1%;
-    margin:0 auto;
     clear:both;
+    min-height: 600px;
+    margin:0 auto;
     text-align: center;
     vertical-align: text-top;}
 #top{width: 98%; padding: 0 5px 1px 15px; float:left; text-align: left; }

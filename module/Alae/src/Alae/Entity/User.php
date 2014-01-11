@@ -28,6 +28,13 @@ class User
     /**
      * @var string
      *
+     * @ORM\Column(name="name", type="string", length=25, nullable=true)
+     */
+    protected $name;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="username", type="string", length=25, nullable=false)
      */
     protected $username;
@@ -45,6 +52,13 @@ class User
      * @ORM\Column(name="password", type="string", length=50, nullable=false)
      */
     protected $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="active_code", type="string", length=50, nullable=false)
+     */
+    protected $activeCode;
 
     /**
      * @var boolean
@@ -83,6 +97,16 @@ class User
 	$this->username = $username;
     }
 
+    public function getName()
+    {
+	return $this->name;
+    }
+
+    public function setName($name)
+    {
+	$this->name = $name;
+    }
+
     public function getEmail()
     {
 	return $this->email;
@@ -101,6 +125,16 @@ class User
     public function setPassword($password)
     {
 	$this->password = md5(sha1($password));
+    }
+
+    public function getActiveCode()
+    {
+	return $this->activeCode;
+    }
+
+    public function setActiveCode($activeCode)
+    {
+	$this->activeCode = $activeCode;
     }
 
     public function getActiveFlag()
@@ -124,4 +158,3 @@ class User
     }
 
 }
-

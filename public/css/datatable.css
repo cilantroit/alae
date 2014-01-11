@@ -1,4 +1,4 @@
-/* 
+/*
     Created on : 18-dic-2013, 20:16:46
     Author     : Maria Quiroz
 */
@@ -28,7 +28,7 @@
     border: 0px none;
     width: 10%;
 }
- #datatable table tbody tr td input[type=submit]{
+#datatable table tbody tr td input[type=submit]{
     height: 16px;
     width: 16px;
     background:url(http://cilantroit.com/alae/maqueta/img/save.png) no-repeat top left;
@@ -45,7 +45,19 @@
 #datatable table tbody tr .form-datatable-edit .form-download-excel{
     height: 16px;
     width: 16px;
-    background:url(http://cilantroit.com/alae/maqueta/img/xls.png) no-repeat top left;
+    background:url(../img/xls.png) no-repeat top left;
+    display: inline-block;
+}
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-reject{
+    height: 16px;
+    width: 16px;
+    background:url(../img/reject.png) no-repeat top left;
+    display: inline-block;
+}
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-approve{
+    height: 16px;
+    width: 16px;
+    background:url(../img/approve.png) no-repeat top left;
     display: inline-block;
 }
 #datatable table tbody tr .form-datatable-edit .form-download-pdf{

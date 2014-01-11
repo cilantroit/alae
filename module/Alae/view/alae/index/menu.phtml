@@ -13,8 +13,9 @@
     <body>
         <div id="principal">
             <div id="cuerpo">
+
                 <div id="izquierda">
-                    <a href="alae000.html"><img src="./img/alaelogo.png"  title="volver a contenido" /></a>
+		    <img src="<?php echo $this->basePath() . '/img/alaelogo.png' ?> "  title="volver a contenido" />
                 </div>
                 <div id="derecha">
                     <h2>menu principal</h2>
@@ -24,7 +25,7 @@
                         <li><a href="alae020.html">Estudios</a></li>
                         <li><a href="alae030.html">Estad&iacute;sticas</a></li>
                         <li><a href="<?php echo $this->basePath() ?>/batch/unfilled">Lotes sin asignar</a></li>
-                        <li><a href="alae050.html">Administración de Usuarios (*)</a></li>
+                        <li><a href="<?php echo $this->basePath() ?>/user/admin">Administración de Usuarios (*)</a></li>
                         <li><a href="<?php echo $this->basePath() ?>/parameter/index">Parametrizaci&oacute;n (*)</a></li>
                         <!-- <li><a href="alae070.html">Mantenimiento Desplegables (*)</a></li> -->
                         <li><a target="_blank" href="http://www.tonymarston.net/php-mysql/auditlog.html">Audit Trail</a></li>
@@ -32,13 +33,6 @@
                     </ul>
                 </div>
             </div>
-
-            <div id="pie">
-                <p><a href="./help/alae020.pdf" target="blank"><img src="./img/help.png"  title="ayuda sobre esta pantalla" /></a>
-                    Usuario: <strong>Perfil</strong> | Fulanito de tal.</p>
-                <p><a href="./sf/alae020sf.pdf" target="blank"><img src="./img/info.png"  title="Especificaciones funcionales" /></a>
-                    ALAE Software. Copyright © Anapharm, 2013.</p>
-            </div>
-        </div>
+	</div>
     </body>
 </html>

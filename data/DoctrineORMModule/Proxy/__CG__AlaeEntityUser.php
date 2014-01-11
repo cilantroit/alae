@@ -64,10 +64,10 @@ class User extends \Alae\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'pkUser', 'username', 'email', 'password', 'activeFlag', 'fkProfile');
+            return array('__isInitialized__', 'pkUser', 'name', 'username', 'email', 'password', 'activeCode', 'activeFlag', 'fkProfile');
         }
 
-        return array('__isInitialized__', 'pkUser', 'username', 'email', 'password', 'activeFlag', 'fkProfile');
+        return array('__isInitialized__', 'pkUser', 'name', 'username', 'email', 'password', 'activeCode', 'activeFlag', 'fkProfile');
     }
 
     /**
@@ -224,6 +224,28 @@ class User extends \Alae\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function getName()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getName', array());
+
+        return parent::getName();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setName($name)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setName', array($name));
+
+        return parent::setName($name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getEmail()
     {
 
@@ -263,6 +285,28 @@ class User extends \Alae\Entity\User implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setPassword', array($password));
 
         return parent::setPassword($password);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getActiveCode()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getActiveCode', array());
+
+        return parent::getActiveCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setActiveCode($activeCode)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setActiveCode', array($activeCode));
+
+        return parent::setActiveCode($activeCode);
     }
 
     /**

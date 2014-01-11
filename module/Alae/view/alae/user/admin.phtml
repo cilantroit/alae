@@ -1,0 +1,69 @@
+<div id="datatable">
+    <div id="cerrar">[  <a href="<?php echo $this->basePath() ?>/index/menu">regresar al menú</a>]</div>
+    <div id="cerrar">[  <a href="<?php echo $this->basePath() ?>/index/logout">logout</a>]</div>
+    <img src="<?php echo $this->basePath() . '/img/alaepeq.png' ?> "  title="volver a contenido" />
+    <div id="encab"><h2>administración de usuarios</h2></div>
+
+
+</div>
+<input type="hidden" id="profile" value=""/>
+<script>
+    var createNumberIncr = 0;
+    var data = <?php echo $data; ?>;
+    var filters = <?php echo $header; ?>;
+    var columns = <?php echo $columns; ?>;
+    var editable = <?php echo $editable; ?>;
+    var filtersHtml = '<?php echo $filters; ?>';
+    var profile = '';
+</script>
+
+<script type="text/javascript" src="/alae/public/js/datatable.js"></script>
+<script>
+
+    $(document).on("ready", inicio);
+
+    function inicio()
+    {
+	approve(id);
+
+	alert('inicio')
+    }
+
+    function approve(id)
+    {
+	var profile = $("#profile").val();
+	var result = false;
+	$.ajax
+		({
+		    type: "GET",
+		    dataType: "json",
+		    url: basePath + "/user/approve",
+		    data: {id: id, profile: profile},
+		    success: function(data)
+		    {
+			location.reload();
+		    }
+		});
+    }
+
+
+    function reject(id)
+    {
+
+	$.ajax
+		({
+		    type: "GET",
+		    dataType: "json",
+		    url: basePath + "/user/reject",
+		    data: {id: id},
+		    success: function(data)
+		    {
+
+			location.reload();
+		    }
+		});
+    }
+
+
+</script>
+

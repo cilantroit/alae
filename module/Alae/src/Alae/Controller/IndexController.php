@@ -16,39 +16,57 @@ use Zend\View\Model\ViewModel,
 class IndexController extends BaseController
 {
 
-    public function indexAction()
+    public function logoutAction()
     {
-	$request = $this->getRequest();
 
 
-
-
-
-
-	//var_dump(getParam('message'));
-	//$message = getParam('message');
-	//$message = $this->getEvent()->getRouteMatch()->getParam('message');
-	//$message = $request->getQuery('message');
-	//$message = $request->getRouteMatch()->getQuery('message');
-	//var_dump($request->getEvent()->getRouteMatch());
-
-
-	$slug = $this->getEvent()->getRouteMatch()->getParam('message');
-
-
-
-
-
-
-
-
-
-	return new ViewModel(array('message' => $slug));
+	$session_user = new \Zend\Session\Container('user');
+	$session_user->getManager()->getStorage()->clear('user');
+	$viewModel = new ViewModel();
+	$viewModel->setTerminal(true);
+	return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
     }
 
     public function menuAction()
     {
+
 	return new ViewModel();
+    }
+
+    public function loginAction()
+    {
+	$request = $this->getRequest();
+
+	if ($request->isPost())
+	{
+	    $elements = $this->getRepository('\\Alae\\Entity\\User')
+		    ->findBy(array('username' => $request->getPost('username'), 'password' => md5(sha1($request->getPost('password')))));
+
+	    if ((!empty($elements)))
+	    {
+		foreach ($elements as $element)
+		{
+		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
+		    {
+
+			$this->_setSession($element);
+			return $this->redirect()->toRoute('index', array('controller' => 'index', 'action' => 'menu'));
+		    }
+		    else
+		    {
+			$message = 'Este usuario no tiene permiso de acceso. Por favor contacte al administrador.';
+		    }
+		}
+	    }
+	    else
+	    {
+		$message = 'Usuario o contraseña invalidos. Por favor revise los campos.';
+	    }
+	}
+
+
+	return new ViewModel(array('error' => $message,
+	));
     }
 
 }

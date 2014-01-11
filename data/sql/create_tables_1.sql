@@ -36,17 +36,19 @@ INSERT INTO alae_profile (name) VALUES
 
 CREATE TABLE IF NOT EXISTS alae_user(
 	pk_user		bigint(20) 		unsigned NOT NULL auto_increment,
+	name		varchar(25)		NULL,
 	username	varchar(25)		NOT NULL,
 	email		varchar(50)		NOT NULL,
 	password	varchar(50)		NOT NULL,
+	active_code	varchar(50)		NOT NULL,
 	active_flag	boolean			NOT NULL DEFAULT 0,
 	fk_profile	int,
 	PRIMARY KEY (pk_user),
 	FOREIGN KEY (fk_profile) REFERENCES alae_profile (pk_profile)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-INSERT INTO alae_user (username, email, password, active_flag, fk_profile) VALUES
-    ('alae_system', 'alae@cilantroit.com', 'c360723e2f01ccc2a7bd08176ac62d14', 1, 6);
+INSERT INTO alae_user (username, email, password, active_flag, active_code, fk_profile) VALUES
+    ('alae_system', 'alae@cilantroit.com', 'c360723e2f01ccc2a7bd08176ac62d14', 'c260184e2f01ccc2a7bd08176ac62d14', 1, 6);
 
 CREATE TABLE IF NOT EXISTS alae_study(
 	pk_study		bigint(20) 		unsigned NOT NULL auto_increment,

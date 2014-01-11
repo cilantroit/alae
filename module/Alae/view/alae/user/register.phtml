@@ -1,0 +1,63 @@
+<div id="cerrar"><a href="index.html"><img title="regresar a la pantalla de login" src="img/close.png"></a></div>
+<div id="principal">
+    <div id="cuerpo">
+	<div id="central">
+	    <a href="<?php echo $this->url('user', array('action' => 'login')); ?>">
+		<img src="<?php echo $this->basePath() . '/img/alaelogo.png'; ?>"/>
+	    </a>
+	    <?php if ($message != "") : ?>
+    	    <div>
+    		<p class="peq" style="color:#f00">(*) Requerido</p>
+		    <?php echo $message; ?>
+    	    </div>
+	    <?php endif; ?>
+	    <?php if ($showForm) : ?>
+    	    <div id="login">
+    		<h1>Indique su contraseña</h1>
+    		<form method="POST"  id="register" action="<?php echo $this->url('user', array('action' => 'register')); ?>">
+    		    <input type="text"   name="id" id="id"  value="<?php echo $pkUser ?>">
+    		    <table>
+    			<tbody>
+    			    <tr>
+    				<td>Nombre de usuario:</td>
+    				<td><?php echo $username ?></td>
+    			    </tr>
+    			    <tr>
+    				<td>Contraseña (*):</td>
+    				<td><input type="password" id="pwd" name="pwd"></td>
+    			    </tr>
+    			    <tr>
+    				<td>Confirmar contraseña (*):</td>
+    				<td><input name ="password" type="password" id="password" name="password"></td>
+    			    </tr>
+    			    <tr>
+    				<td>Correo electrónico:</td>
+    				<td><?php echo $email ?></td>
+    			    </tr>
+    			    <tr>
+    				<td>Nombre real (*):</td>
+    				<td><input type="text" id="name"  name ="name" name="name" ></td>
+    			    </tr>
+    			    <tr>
+    				<td><input type="submit" value="Actualizar usuario"></td>
+    			    </tr>
+    			    <tr>
+    				<td colspan="2">
+    				    <p class="peq" style="line-height:1.3em;">
+    					El acceso a ALAE requiere de aprobación.<br>
+    					Una vez que el Administrador de la Aplicación le asigne su perfil, <br>podrá tener acceso a ALAE con el nombre de usuario y la contraseña indicados.<br>
+    				    </p>
+    				</td>
+    			    </tr>
+    			</tbody>
+    		    </table>
+    		</form>
+    	    </div>
+	    <?php endif; ?>
+	</div>
+    </div>
+    <div id="pie">
+	<p>
+
+    </div>
+</div>

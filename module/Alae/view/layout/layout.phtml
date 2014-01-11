@@ -2,7 +2,7 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <?php echo $this->headTitle('ZF2 ' . $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
+	<?php echo $this->headTitle('ZF2 ' . $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
 
 	<?php
 	echo $this->headMeta()
@@ -14,8 +14,8 @@
 	echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
 		->prependStylesheet($this->basePath() . '/css/style.css')
 		->prependStylesheet($this->basePath() . '/css/alae.css')
-                ->prependStylesheet($this->basePath() . '/css/datatable.css')
-?>
+		->prependStylesheet($this->basePath() . '/css/datatable.css')
+	?>
 	<!-- Scripts -->
 	<?php
 	echo $this->headScript()
@@ -41,6 +41,17 @@
     <body>
 	<div class="container">
 	    <?php echo $this->content; ?>
+
+	    <div id="pie">
+
+		<?php echo Alae\Service\Helper::getUserSession(); ?>
+		<p><a href="./sf/alae020sf.pdf" target="blank"><img src="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/img/info.png' ?>"  title="Especificaciones funcionales" /></a>
+                    ALAE Software. Copyright © Anapharm, 2013.</p>
+            </div>
+
+
+
+
 	</div>
     </body>
 </html>

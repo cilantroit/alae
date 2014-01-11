@@ -34,10 +34,11 @@ return array(
 	    'user' => array(
 		'type' => 'segment',
 		'options' => array(
-		    'route' => '/user[/][:action][/:id][?:usr][&:pass]',
+		    'route' => '/user[/][:action][/:id][/:profile][?:usr][&:pass]',
 		    'constraints' => array(
 			'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-			'id' => '[0-9]+',
+			'profile' => '[a-zA-Z][a-zA-Z0-9_-]*',
+			'pass' => '[a-zA-Z][a-zA-Z0-9_-]*',
 			'usr' => '[a-zA-Z][a-zA-Z0-9_-]*',
 			'pass' => '[a-zA-Z][a-zA-Z0-9_-]*',
 		    ),
@@ -50,13 +51,12 @@ return array(
 	    'index' => array(
 		'type' => 'segment',
 		'options' => array(
-		    'route' => '/[/:action][?:message]',
+		    'route' => '/[index/:action]',
 		    'constraints' => array(
 			'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-			'message' => '[a-zA-Z][a-zA-Z0-9_-]*',
 		    ),
 		    'defaults' => array(
-			'controller' => 'Alae\Controller\User',
+			'controller' => 'Alae\Controller\Index',
 			'action' => 'login',
 		    ),
 		),
