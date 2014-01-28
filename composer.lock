@@ -3,8 +3,34 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "fcbc86ab9d5f931972319956eb0a746e",
+    "hash": "755f2d57bbd68a9493d93dd33b5989f4",
     "packages": [
+        {
+            "name": "beberlei/DoctrineExtensions",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/DoctrineExtensions.git",
+                "reference": "5e4ec9c3ec3434151e1c73144b4ab87ae30aefbc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/DoctrineExtensions/zipball/5e4ec9c3ec3434151e1c73144b4ab87ae30aefbc",
+                "reference": "5e4ec9c3ec3434151e1c73144b4ab87ae30aefbc",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "DoctrineExtensions": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2013-12-20 22:02:19"
+        },
         {
             "name": "codeplex/phpexcel",
             "version": "1.7.8",
@@ -343,16 +369,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.4.1",
+            "version": "v2.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "328357bd9eea9d671fe5fff0737f01953bfe66a0"
+                "reference": "fec965d330c958e175c39e61c3f6751955af32d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/328357bd9eea9d671fe5fff0737f01953bfe66a0",
-                "reference": "328357bd9eea9d671fe5fff0737f01953bfe66a0",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/fec965d330c958e175c39e61c3f6751955af32d0",
+                "reference": "fec965d330c958e175c39e61c3f6751955af32d0",
                 "shasum": ""
             },
             "require": {
@@ -405,7 +431,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2013-11-12 12:38:28"
+            "time": "2014-01-01 16:43:57"
         },
         {
             "name": "doctrine/doctrine-module",
@@ -764,17 +790,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "3c1496ae96d24ccc6c340fcc25f71d7a1ab4c12c"
+                "reference": "4c1ed2ff514bd85ee186eebb010ccbdeeab05af7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/3c1496ae96d24ccc6c340fcc25f71d7a1ab4c12c",
-                "reference": "3c1496ae96d24ccc6c340fcc25f71d7a1ab4c12c",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/4c1ed2ff514bd85ee186eebb010ccbdeeab05af7",
+                "reference": "4c1ed2ff514bd85ee186eebb010ccbdeeab05af7",
                 "shasum": ""
             },
             "require": {
@@ -813,7 +839,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2013-11-27 09:10:40"
+            "time": "2014-01-01 08:14:50"
         },
         {
             "name": "zendframework/zendframework",
@@ -936,12 +962,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/ZFTool.git",
-                "reference": "2d35c9a1245c84578300e6615ef36e41fbc640ff"
+                "reference": "d73bf6f0ae6ce9b92acc72ecc8f336e2352f3ae0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/ZFTool/zipball/2d35c9a1245c84578300e6615ef36e41fbc640ff",
-                "reference": "2d35c9a1245c84578300e6615ef36e41fbc640ff",
+                "url": "https://api.github.com/repos/zendframework/ZFTool/zipball/d73bf6f0ae6ce9b92acc72ecc8f336e2352f3ae0",
+                "reference": "d73bf6f0ae6ce9b92acc72ecc8f336e2352f3ae0",
                 "shasum": ""
             },
             "require": {
@@ -980,7 +1006,7 @@
                 "tool",
                 "zf2"
             ],
-            "time": "2013-11-20 21:37:15"
+            "time": "2014-01-02 17:29:50"
         }
     ],
     "packages-dev": [
@@ -991,7 +1017,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "zendframework/zftool": 20
+        "zendframework/zftool": 20,
+        "beberlei/doctrineextensions": 20
     },
     "platform": {
         "php": ">=5.3.3"

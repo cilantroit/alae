@@ -11,12 +11,15 @@ namespace Alae\Service;
 class Datatable
 {
 
-    const DATATABLE_ANALYTE = 'analyte';
-    const DATATABLE_STUDY = 'study';
-    const DATATABLE_PARAMETER = 'parameter';
-    const DATATABLE_REASON = 'reason';
-    const DATATABLE_UNFILLED = 'unfilled';
-    const DATATABLE_ADMIN = 'admin';
+    const DATATABLE_ANALYTE      = 'analyte';
+    const DATATABLE_STUDY        = 'study';
+    const DATATABLE_PARAMETER    = 'parameter';
+    const DATATABLE_REASON       = 'reason';
+    const DATATABLE_UNFILLED     = 'unfilled';
+    const DATATABLE_ADMIN        = 'admin';
+    const DATATABLE_ANASTUDY     = 'analyte_study';
+    const DATATABLE_BATCH        = 'batch';
+    const DATATABLE_SAMPLE_BATCH = 'sample_batch';
 
     protected $_data;
     protected $_datatable;
@@ -156,6 +159,74 @@ class Datatable
 	);
     }
 
+    protected function getAnaStudyColumns()
+    {
+        $header = array("analyte", "analyte_is", "cs_number", "qc_number", "unit", "is", "use");
+        $data   = $this->getData();
+
+        return array(
+            "data"     => (!empty($data)) ? json_encode($data) : 0,
+            "columns"  => json_encode(array(
+                array("key" => "analyte", "label" => "Analito", "sortable" => true),
+                array("key" => "analyte_is", "label" => "Patrón Interno (IS)", "sortable" => true, "allowHTML" => true),
+                array("key" => "cs_number", "label" => "Núm. CS", "sortable" => true, "allowHTML" => true),
+                array("key" => "qc_number", "label" => "Núm. QC", "sortable" => true),
+                array("key" => "unit", "label" => "Unidades", "sortable" => false),
+                array("key" => "is", "label" => "% var IS", "sortable" => true, "allowHTML" => true),
+                array("key" => "use", "label" => "usar", "sortable" => false, "allowHTML" => true, "formatter" => '{value}'),
+                array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/nominalconcentration/{value}">no</a><a href="' . $this->_base_url . '/batch/list/{value}">ve</a><span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
+            )),
+            "editable" => json_encode(array("analyte_is", "cs_number", "qc_number", "unit", "is", "use")),
+            "header"   => json_encode($header),
+            "filters"  => $this->getFilters($header)
+        );
+    }
+
+    protected function getBatchColumns()
+    {
+        $header = array("batch", "filename", "create_at", "valid_flag", "validation_date", "result", "modify", "accepted_flag", "justification");
+        $data   = $this->getData();
+
+        return array(
+            "data"     => (!empty($data)) ? json_encode($data) : 0,
+            "columns"  => json_encode(array(
+                array("key" => "batch", "label" => "Lote #", "sortable" => true),
+                array("key" => "filename", "label" => "Archivo", "sortable" => true),
+                array("key" => "create_at", "label" => "Importado el", "sortable" => true),
+                array("key" => "valid_flag", "label" => "Validar", "sortable" => false, "allowHTML" => true),
+                array("key" => "validation_date", "label" => "Validado el", "sortable" => true),
+                array("key" => "result", "label" => "Resultado", "sortable" => true),
+                array("key" => "modify", "label" => "Modificar resultado", "sortable" => false, "allowHTML" => true),
+                array("key" => "accepted_flag", "label" => "Válido ADM", "sortable" => true),
+                array("key" => "justification", "label" => "Justificar Modificación", "sortable" => false)
+            )),
+            "editable" => 0,
+            "header"   => json_encode($header),
+            "filters"  => ""
+        );
+    }
+
+    protected function getSampleBatchColumns()
+    {
+        $header = array("filename", "sample_name", "accuracy", "use_record");
+        $data   = $this->getData();
+
+        return array(
+            "data"     => (!empty($data)) ? json_encode($data) : 0,
+            "columns"  => json_encode(array(
+                array("key" => "filename", "label" => "File Name", "sortable" => true),
+                array("key" => "sample_name", "label" => "Sample Name", "sortable" => true),
+                array("key" => "accuracy", "label" => "Accuracy", "sortable" => true),
+                array("key" => "use_record", "label" => "Use Record", "sortable" => true),
+                array("key" => "reason", "label" => "Motivo del rechazo", "sortable" => false, "allowHTML" => true),
+                array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-change" onclick="changeElement(this, {value});"></span><input value="" type="submit"/>')
+            )),
+            "editable" => 0,
+            "header"   => json_encode($header),
+            "filters"  => ""
+        );
+    }
+
     protected function prepare($headers)
     {
 	$options = array();
@@ -216,7 +287,10 @@ class Datatable
 	    case Datatable::DATATABLE_ADMIN:
 		$elements = '<a href="' . $this->_base_url . '/user/excel"><span class="form-download-excel"></span></a>';
 		break;
-	}
+            case Datatable::DATATABLE_ANASTUDY:
+                $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+                break;
+        }
 
 	return sprintf('<tr>%1$s<td class="form-datatable-edit">%2$s</td></tr>', $filters, $elements);
     }
@@ -255,7 +329,16 @@ class Datatable
 	    case Datatable::DATATABLE_ADMIN:
 		$response = $this->getAdminColumns();
 		break;
-	}
+            case Datatable::DATATABLE_ANASTUDY:
+                $response = $this->getAnaStudyColumns();
+                break;
+            case Datatable::DATATABLE_BATCH:
+                $response = $this->getBatchColumns();
+                break;
+            case Datatable::DATATABLE_SAMPLE_BATCH:
+                $response = $this->getSampleBatchColumns();
+                break;
+        }
 
 	return $response;
     }

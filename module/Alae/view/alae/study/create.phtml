@@ -1,0 +1,39 @@
+<div id="cuerpo" style="height:77%;">
+    <div id="encab">
+        <h2>ficha del estudio</h2>
+    </div>
+    <div id="top" style="font-size:0.85em;">
+        <form id="study-form" action="#" method="POST">
+            <h3>Datos Generales del Estudio</h3>
+            <p><label>Código:</label>
+                <input type="text" name="code">
+                <label>Arbol de Dilución:</label>
+                <select name="dilution_tree">
+                    <option>1</option>
+                </select>
+            </p>
+            <p>
+                <label>Descripción:</label>
+                <textarea name="description"></textarea>
+            </p>
+            <p>
+                <label>Observaciones:</label>
+                <textarea name="observation"></textarea>
+                <input type="submit" class="btn" value="guardar" />
+            </p>
+        </form>
+    </div>
+</div>
+<script>
+    jQuery.validator.addMethod("regex", function (value, element, params) {
+        return this.optional(element) || /^[A-Z0-9]+(\-[0-9]+)?$/.test(value);
+    }, "Please enter a valid Rule");
+    $("#study-form").validate({
+        rules:{
+            code: {
+                required: true,
+                regex: true
+            }
+        }
+    });
+</script>

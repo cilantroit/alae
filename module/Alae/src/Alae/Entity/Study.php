@@ -34,14 +34,14 @@ class Study
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $createdAt = 'CURRENT_TIMESTAMP';
+    protected $createdAt;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    protected $updatedAt = '0000-00-00 00:00:00';
+    protected $updatedAt;
 
     /**
      * @var string
@@ -88,6 +88,11 @@ class Study
      */
     protected $fkUser;
 
+    public function __construct()
+    {
+        $this->updatedAt = new \DateTime('now');
+    }
+
     public function getPkStudy()
     {
         return $this->pkStudy;
@@ -110,7 +115,7 @@ class Study
 
     public function getCreatedAt()
     {
-        return $this->createdAt;
+        return $this->createdAt->format('Y-m-d H:i:s');
     }
 
     public function setCreatedAt(\DateTime $createdAt)

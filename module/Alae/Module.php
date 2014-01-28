@@ -2,8 +2,21 @@
 
 namespace Alae;
 
-class Module
+use Zend\Mvc\ModuleRouteListener,
+    Zend\Mvc\MvcEvent,
+    Zend\ModuleManager\Feature\ConfigProviderInterface,
+    Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+
+class Module implements ConfigProviderInterface, AutoloaderProviderInterface
 {
+
+//    public function onBootstrap(MvcEvent $e)
+//    {
+//        $eventManager        = $e->getApplication()->getEventManager();
+//        $moduleRouteListener = new ModuleRouteListener();
+//        $moduleRouteListener->attach($eventManager);
+//        $eventManager->getSharedManager()->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, 'preDispatch', 100);
+//    }
 
     public function getConfig()
     {
@@ -20,5 +33,4 @@ class Module
 	    ),
 	);
     }
-
 }

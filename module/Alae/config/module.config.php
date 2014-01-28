@@ -12,8 +12,9 @@ return array(
 	    'Alae\Controller\Analyte' => 'Alae\Controller\AnalyteController',
 	    'Alae\Controller\Parameter' => 'Alae\Controller\ParameterController',
 	    'Alae\Controller\Study' => 'Alae\Controller\StudyController',
-	    'Alae\Controller\Batch' => 'Alae\Controller\BatchController',
-	),
+	    'Alae\Controller\Batch'        => 'Alae\Controller\BatchController',
+            'Alae\Controller\Verification' => 'Alae\Controller\VerificationController',
+        ),
     ),
     // The following section is new and should be added to your file
     'router' => array(
@@ -90,10 +91,11 @@ return array(
 	    'study' => array(
 		'type' => 'segment',
 		'options' => array(
-		    'route' => '/study[/][:action][/:id]',
-		    'constraints' => array(
+		    'route'       => '/study[/][:action][/][:id]',
+                    'constraints' => array(
 			'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-		    ),
+                        'id'     => '[0-9]+',
+                    ),
 		    'defaults' => array(
 			'controller' => 'Alae\Controller\Study',
 			'action' => 'index',
@@ -113,7 +115,20 @@ return array(
 		    ),
 		),
 	    ),
-	),
+            'verification' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'       => '/verification[/][:action][/:id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults'    => array(
+                        'controller' => 'Alae\Controller\Verification',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+        ),
     ),
     'view_manager' => array(
 	'display_not_found_reason' => true,
@@ -145,10 +160,22 @@ return array(
 	    ),
 	    'orm_default' => array(
 		'drivers' => array(
-		    __NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver'
-		)
+		    __NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver',
+                )
 	    )
 	)
+    ),
+    'configuration' => array(
+        'orm_default' => array(
+//            'numeric_functions'  => array(),
+//            'datetime_functions' => array(),
+            'string_functions'   => array(
+                'REGEXP' => 'DoctrineExtensions\Query\Mysql\Regexp'
+            ),
+//            'metadata_cache'     => 'filesystem',
+//            'query_cache'        => 'filesystem',
+//            'result_cache'       => 'filesystem',
+        )
     ),
     'console' => array(
 	'router' => array(

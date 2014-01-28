@@ -21,6 +21,11 @@ class CronController extends BaseController
     protected $_analyteConcentrationUnits;
     protected $_calculatedConcentrationUnits;
 
+    public function init()
+    {
+
+    }
+
     private function isRepeatedBatch($fileName)
     {
         $query = $this->getEntityManager()->createQuery("SELECT COUNT(b.pkBatch) FROM Alae\Entity\Batch b WHERE b.fileName = '" . Helper::getVarsConfig("batch_directory") . "/" . $fileName . "'");
@@ -47,16 +52,17 @@ class CronController extends BaseController
 
         if ($this->isRepeatedBatch($fileName))
         {
-            $studies = $this->getRepository("\\Alae\\Entity\\Study")
-                    ->findBy(array('code' => $codeStudy));
+            $qb = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
+                    ->where('s.code like :code')
+                    ->setParameter('code', '%' . $codeStudy);
+            $studies = $qb->getQuery()->getResult();
 
             if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
             {
                 $qb = $this->getEntityManager()->createQueryBuilder()
                         ->select("a")
                         ->from("Alae\Entity\AnalyteStudy", "h")
-                        ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $studies[0]->getPkStudy())
-                ;
+                        ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $studies[0]->getPkStudy());
                 $analytes = $qb->getQuery()->getResult();
 
                 if ($analytes)
@@ -92,7 +98,7 @@ class CronController extends BaseController
         {
             if (!is_dir($file))
             {
-                if (preg_match("/^(\d+-\d+\_[a-zA-Z0-9]+\.txt)$/i", $file))
+                if (preg_match("/^([a-zA-Z0-9]+-\d+\_[a-zA-Z0-9]+\.txt)$/i", $file))
                 {
                     $this->validateFile($file);
                 }
@@ -116,7 +122,7 @@ class CronController extends BaseController
 
         if (!is_null($Analyte) && !is_null($Study))
         {
-            $this->batchVerify($Batch, $fileName);
+            $this->batchVerify($Batch, $Analyte, $fileName);
             $this->updateBatch($Batch, $Analyte, $Study);
         }
         else
@@ -221,7 +227,7 @@ class CronController extends BaseController
         $string = substr($fileName, 0, -4);
         list($pkBatch, $aux) = explode("-", $string);
         $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V1"));
-        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 0, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2"));
+        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 1, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2"));
     }
 
     private function saveSampleBatch($headers, $data, $Batch)

@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS alae_user(
 	FOREIGN KEY (fk_profile) REFERENCES alae_profile (pk_profile)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
-INSERT INTO alae_user (username, email, password, active_flag, active_code, fk_profile) VALUES
-    ('alae_system', 'alae@cilantroit.com', 'c360723e2f01ccc2a7bd08176ac62d14', 'c260184e2f01ccc2a7bd08176ac62d14', 1, 6);
+INSERT INTO alae_user (name, username, email, password, active_flag, active_code, fk_profile) VALUES
+    ('ALAE System','alae_system', 'alae@cilantroit.com', 'c360723e2f01ccc2a7bd08176ac62d14', 'c260184e2f01ccc2a7bd08176ac62d14', 1, 6);
 
 CREATE TABLE IF NOT EXISTS alae_study(
 	pk_study		bigint(20) 		unsigned NOT NULL auto_increment,
@@ -78,22 +78,26 @@ CREATE TABLE IF NOT EXISTS alae_analyte(
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS alae_analyte_study(
+        pk_analyte_study	bigint(20) 	unsigned NOT NULL auto_increment,
 	cs_number		int		NOT NULL DEFAULT 8,
 	qc_number		int		NOT NULL DEFAULT 4,
 	cs_values		varchar(100),
 	qc_values		varchar(100),
 	internal_standard	decimal(19,4)	NOT NULL DEFAULT 0,
-	is_flag			boolean		NOT NULL DEFAULT 0,
-	imported_flag		boolean		NOT NULL DEFAULT 0,
+	status			boolean		NOT NULL DEFAULT 0,
+	is_used                 boolean		NOT NULL DEFAULT 0,
+        updated_at              timestamp	NOT NULL,
 	fk_study		bigint(20)	unsigned NOT NULL,
 	fk_analyte		bigint(20)	unsigned NOT NULL,
 	fk_analyte_is		bigint(20)	unsigned NOT NULL,
 	fk_unit			int		NOT NULL,
-	PRIMARY KEY (fk_study, fk_analyte),
+        fk_user                 bigint(20)	unsigned NOT NULL,
+	PRIMARY KEY (pk_analyte_study),
    	FOREIGN KEY (fk_study)      REFERENCES alae_study   (pk_study),
    	FOREIGN KEY (fk_analyte)    REFERENCES alae_analyte (pk_analyte),
 	FOREIGN KEY (fk_analyte_is) REFERENCES alae_analyte (pk_analyte),
-	FOREIGN KEY (fk_unit)       REFERENCES alae_unit    (pk_unit)
+	FOREIGN KEY (fk_unit)       REFERENCES alae_unit    (pk_unit),
+        FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)
 )ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS alae_parameter(
