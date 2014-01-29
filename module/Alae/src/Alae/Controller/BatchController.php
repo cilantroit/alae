@@ -16,6 +16,15 @@ class BatchController extends BaseController
 {
     protected $_document = '\\Alae\\Entity\\Batch';
 
+    public function init()
+    {
+        if (!$this->isLogged())
+        {
+            header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url"));
+            exit;
+        }
+    }
+
     public function unfilledAction()
     {
         $data     = array();
@@ -59,6 +68,33 @@ class BatchController extends BaseController
 
     public function excelAction()
     {
-        \Alae\Service\Download::excel("http://localhost/alae/public/batch/download", "lotes_sin_asignar");
+        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/batch/download", "lotes_sin_asignar");
+    }
+
+    public function listAction()
+    {
+        if ($this->getEvent()->getRouteMatch()->getParam('id'))
+        {
+            $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($this->getEvent()->getRouteMatch()->getParam('id'));
+            $elements = $this->getRepository()->findBy(array("fkAnalyte" => $AnaStudy->getFkAnalyte(), "fkStudy" => $AnaStudy->getFkStudy()));
+
+            foreach ($elements as $batch)
+            {
+                $data[] = array(
+                    "batch"           => $batch->getSerial(),
+                    "filename"        => $batch->getFileName(),
+                    "create_at"       => $batch->getCreatedAt(),
+                    "valid_flag"      => is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : '',
+                    "validation_date" => $batch->getValidationDate(),
+                    "result"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO"),
+                    "modify"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" type="button"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" type="button"><span class="btn-validate"></span>aceptar</button>'),
+                    "accepted_flag"   => is_null($batch->getAcceptedFlag()) ? "" : ($batch->getAcceptedFlag() ? "S" : "N"),
+                    "justification"   => is_null($batch->getJustification()) ? "" : $batch->getJustification()
+                );
+            }
+
+            $datatable = new Datatable($data, Datatable::DATATABLE_BATCH);
+            return new ViewModel($datatable->getDatatable());
+        }
     }
 }

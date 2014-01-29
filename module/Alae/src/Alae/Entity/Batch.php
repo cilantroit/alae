@@ -256,7 +256,7 @@ class Batch
 
     public function getUpdatedAt()
     {
-        return $this->updatedAt;
+        return !is_null($this->updatedAt) ? $this->updatedAt->format('Y-m-d H:i:s') : "";
     }
 
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -296,7 +296,7 @@ class Batch
 
     public function getValidationDate()
     {
-        return $this->validationDate;
+        return !is_null($this->validationDate) ? $this->validationDate->format('Y-m-d H:i:s') : "";
     }
 
     public function setValidationDate(\DateTime $validationDate)

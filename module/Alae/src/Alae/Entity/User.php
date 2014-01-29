@@ -174,4 +174,34 @@ class User
 	$this->verifiction = $verification;
     }
 
+    public function isSustancias()
+    {
+	return (bool) $this->getFkProfile()->getName() == "Sustancias";
+    }
+
+    public function isLaboratorio()
+    {
+	return (bool) $this->getFkProfile()->getName() == "Laboratorio";
+    }
+
+    public function isDirectorEstudio()
+    {
+	return (bool) $this->getFkProfile()->getName() == "Director Estudio";
+    }
+
+    public function isUGC()
+    {
+	return (bool) $this->getFkProfile()->getName() == "UGC";
+    }
+
+    public function isAdministrador()
+    {
+	return (bool) $this->getFkProfile()->getName() == "Administrador";
+    }
+
+    public function isCron()
+    {
+	return (bool) $this->getFkProfile()->getName() == "Cron";
+    }
+
 }

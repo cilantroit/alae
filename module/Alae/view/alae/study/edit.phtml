@@ -1,0 +1,97 @@
+<div id="cuerpo" style="height:77%;">
+    <div id="encab">
+        <h2>ficha del estudio</h2>
+    </div>
+    <div id="top" style="font-size:0.85em;">
+        <form id="study-form" action="" method="POST">
+            <h3>Datos Generales del Estudio</h3>
+            <p><label>Código:</label>
+                <input type="text" name="code" value="<?php echo $study->getCode(); ?>">
+                <label>Arbol de Dilución:</label>
+                <select name="dilution_tree">
+                    <option>1</option>
+                </select>
+            </p>
+            <p>
+                <label>Descripción:</label>
+                <textarea name="description"><?php echo $study->getDescription(); ?></textarea>
+            </p>
+            <p>
+                <label>Observaciones:</label>
+                <textarea name="observation"><?php echo $study->getObservation(); ?></textarea>
+                <input type="hidden" name="form" value="1"/>
+                <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
+                <button type="button" class="btn">Cerrar estudio</button>
+                <button type="button" class="btn">Aprobar</button>
+                <input type="submit" class="btn" value="guardar" />
+            </p>
+        </form>
+        <script>
+            jQuery.validator.addMethod("regex", function(value, element, params) {
+                return this.optional(element) || /^[A-Z0-9]+(\-[0-9]+)?$/.test(value);
+            }, "Please enter a valid Rule");
+            $("#study-form").validate({
+                rules: {
+                    code: {
+                        required: true,
+                        regex: true
+                    }
+                }
+            });
+        </script>
+        <form id="datatable-form" action="" method="POST">
+            <div id="datatable"></div>
+            <input type="hidden" name="form" value="2"/>
+            <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
+        </form>
+        <script>
+            var createNumberIncr = 0;
+            var data = <?php echo $data; ?>;
+            var filters = <?php echo $header; ?>;
+            var columns = <?php echo $columns; ?>;
+            var editable = <?php echo $editable; ?>;
+            var deleteUrl = basePath + '/study/deleteanastudy';
+            var filtersHtml = '<?php echo $filters; ?>';
+        </script>
+        <script type="text/javascript" src="/alae/public/js/datatable.js"></script>
+        <script>
+            jQuery.validator.addMethod("rule", function(value, element, params) {
+                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
+            }, "Please enter a valid number");
+            jQuery.validator.addClassRules('datatable-class-cs_number', {
+                required: true,
+                digits: true
+            });
+            jQuery.validator.addClassRules('datatable-class-qc_number', {
+                required: true,
+                digits: true
+            });
+            jQuery.validator.addClassRules('datatable-class-is', {
+                required: true,
+                rule: true
+            });
+            $("#datatable-form").validate();
+        </script>
+        <div id="analyte">
+            <select class="form-datatable-select">
+                <?php foreach ($analytes as $analyte) : ?>
+                    <option value="<?php echo $analyte->getPkAnalyte() ?>"><?php echo $analyte->getShortening() ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div id="analyte_is">
+            <select class="form-datatable-select">
+                <?php foreach ($analytes as $analyte) : ?>
+                    <option value="<?php echo $analyte->getPkAnalyte() ?>"><?php echo $analyte->getShortening() ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div id="unit">
+            <select class="form-datatable-select">
+                <?php foreach ($units as $unit) : ?>
+                    <option value="<?php echo $unit->getPkUnit() ?>"><?php echo $unit->getName() ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+</div>

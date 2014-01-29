@@ -15,6 +15,7 @@ a:link,
 a:visited {color:#00008B;}
 a:hover {color:#DC143C;}
 span {color:#ffffff;font-family: Trebuchet MS;font-size: 9pt;}
+input{ margin: 0; padding: 0; }
 
 #login{border: 1px solid #008B8B;}
 #login h1{background-color:#008B8B; color:#fff; font-size: 1.2em; margin:0; line-height:2em; text-align:center;}
@@ -92,7 +93,7 @@ span {color:#ffffff;font-family: Trebuchet MS;font-size: 9pt;}
 .w33{width: 33%;}
 .w50{width: 50%;}
 .w75{width: 75%;}
-label{display:inline-block; width: 92%; margin-right: 2.5em;}
+
 
 #top input[type=text], input[type=date], textarea{
     height:1.8em;
@@ -178,7 +179,8 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 .izq{text-align:left;}
 .der{text-align:right;}
 .peq{font-size: 0.8em; }
-.error{color:#FF0000;
+#contenedor label.error { display: none !important; }
 
+#contenedor ul li { display: inline-block; margin: 5px; }
 
-}
+#top ul li { display: inline-block; margin: 5px; }

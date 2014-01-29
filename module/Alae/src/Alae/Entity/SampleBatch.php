@@ -81,7 +81,7 @@ class SampleBatch
     /**
      * @var string
      *
-     * @ORM\Column(name="analyte_concentration", type="decimal", precision=19, scale=4, nullable=true)
+     * @ORM\Column(name="analyte_concentration", type="decimal", precision=19, scale=2, nullable=true)
      */
     protected $analyteConcentration;
 

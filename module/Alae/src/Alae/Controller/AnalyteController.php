@@ -17,7 +17,16 @@ use Zend\View\Model\ViewModel,
 
 class AnalyteController extends BaseController
 {
-    protected $_document  = '\\Alae\\Entity\\Analyte';
+    protected $_document = '\\Alae\\Entity\\Analyte';
+
+    public function init()
+    {
+        if (!$this->isLogged())
+        {
+            header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url"));
+            exit;
+        }
+    }
 
     public function indexAction()
     {
@@ -197,11 +206,11 @@ class AnalyteController extends BaseController
 
     public function excelAction()
     {
-        \Alae\Service\Download::excel("http://localhost/alae/public/analyte/download", "listado_de_analitos");
+        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/analyte/download", "listado_de_analitos");
     }
 
     public function pdfAction()
     {
-        \Alae\Service\Download::pdf("http://localhost/alae/public/analyte/download", "listado_de_analitos");
+        \Alae\Service\Download::pdf(\Alae\Service\Helper::getVarsConfig("base_url") . "/analyte/download", "listado_de_analitos");
     }
 }

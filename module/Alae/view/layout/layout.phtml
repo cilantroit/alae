@@ -23,8 +23,9 @@
 		->prependFile($this->basePath() . '/js/additional-methods.min.js')
 		->prependFile($this->basePath() . '/js/jquery.validate.min.js')
 		->prependFile($this->basePath() . '/js/jquery.js')
-		->prependFile($this->basePath() . '/public/css/style.css');
-	?>
+                ->prependFile($this->basePath() . '/js/yui.min.js')
+        ->prependFile($this->basePath() . '/public/css/style.css');
+?>
 	<script>
 	    var basePath = '<?php echo $this->basePath() ?>';
         </script>
@@ -39,19 +40,19 @@
         </style>
     </head>
     <body>
-	<div class="container">
-	    <?php echo $this->content; ?>
-
-	    <div id="pie">
-
-		<?php echo Alae\Service\Helper::getUserSession(); ?>
-		<p><a href="./sf/alae020sf.pdf" target="blank"><img src="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/img/info.png' ?>"  title="Especificaciones funcionales" /></a>
-                    ALAE Software. Copyright © Anapharm, 2013.</p>
+        <div class="container">
+            <div id="cerrar">
+                [<a href=""></a>]&nbsp;
+                [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
             </div>
-
-
-
-
+            <?php echo $this->content; ?>
+	    <div id="pie">
+		<?php echo Alae\Service\Helper::getUserSession(); ?>
+                <p>
+                    <img src="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/img/info.png' ?>"/>
+                    ALAE Software. Copyright © Anapharm, 2013.
+                </p>
+            </div>
 	</div>
     </body>
 </html>

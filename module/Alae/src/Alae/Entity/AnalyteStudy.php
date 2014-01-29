@@ -16,6 +16,15 @@ class AnalyteStudy
     /**
      * @var integer
      *
+     * @ORM\Column(name="pk_analyte_study", type="bigint", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    protected $pkAnalyteStudy;
+
+    /**
+     * @var integer
+     *
      * @ORM\Column(name="cs_number", type="integer", nullable=false)
      */
     protected $csNumber = '8';
@@ -51,23 +60,28 @@ class AnalyteStudy
     /**
      * @var boolean
      *
-     * @ORM\Column(name="is_flag", type="boolean", nullable=false)
+     * @ORM\Column(name="status", type="boolean", nullable=false)
      */
-    protected $isFlag = '0';
+    protected $status;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="imported_flag", type="boolean", nullable=false)
+     * @ORM\Column(name="is_used", type="boolean", nullable=false)
      */
-    protected $importedFlag = '0';
+    protected $isUsed;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updatedAt;
 
     /**
      * @var \Alae\Entity\Study
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Alae\Entity\Study")
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\Study")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="fk_study", referencedColumnName="pk_study")
      * })
@@ -77,9 +91,7 @@ class AnalyteStudy
     /**
      * @var \Alae\Entity\Analyte
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Alae\Entity\Analyte")
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\Analyte")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="fk_analyte", referencedColumnName="pk_analyte")
      * })
@@ -105,6 +117,31 @@ class AnalyteStudy
      * })
      */
     protected $fkUnit;
+
+    /**
+     * @var \Alae\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_user", referencedColumnName="pk_user")
+     * })
+     */
+    protected $fkUser;
+
+    public function __construct()
+    {
+        $this->updatedAt = new \DateTime('now');
+    }
+
+    public function getPkAnalyteStudy()
+    {
+        return $this->pkAnalyteStudy;
+    }
+
+    public function setPkAnalyteStudy($pkAnalyteStudy)
+    {
+        $this->pkAnalyteStudy = $pkAnalyteStudy;
+    }
 
     public function getCsNumber()
     {
@@ -156,24 +193,34 @@ class AnalyteStudy
         $this->internalStandard = $internalStandard;
     }
 
-    public function getIsFlag()
+    public function getStatus()
     {
-        return $this->isFlag;
+        return $this->status;
     }
 
-    public function setIsFlag($isFlag)
+    public function setStatus($status)
     {
-        $this->isFlag = $isFlag;
+        $this->status = $status;
     }
 
-    public function getImportedFlag()
+    public function getIsUsed()
     {
-        return $this->importedFlag;
+        return $this->isUsed;
     }
 
-    public function setImportedFlag($importedFlag)
+    public function setIsUsed($isUsed)
     {
-        $this->importedFlag = $importedFlag;
+        $this->isUsed = $isUsed;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
     }
 
     public function getFkStudy()
@@ -216,4 +263,13 @@ class AnalyteStudy
         $this->fkUnit = $fkUnit;
     }
 
+    public function getFkUser()
+    {
+        return $this->fkUser;
+    }
+
+    public function setFkUser(\Alae\Entity\User $fkUser)
+    {
+        $this->fkUser = $fkUser;
+    }
 }

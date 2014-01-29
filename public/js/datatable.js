@@ -48,6 +48,12 @@ YUI().use('datatable', function(Y) {
 	});
 	$("#profile").val(this.value);
     });
+    
+    table.modifyColumn('use', {
+        formatter: function (o) {
+            return o.value ? '<input type="checkbox" disabled checked value="'+ o.value +'"/>' : '<input type="checkbox" disabled value="'+ o.value +'"/>';
+        }
+    });
 });
 
 function addEvent() {
@@ -63,11 +69,32 @@ function getInputs(filters) {
     console.log(filters);
     var input = '<tr>';
     $.each(filters, function(key, value) {
-	var disabled = '';
-	if (value == 'id')
-	    disabled = 'disabled="disabled"';
+        var disabled = '';
+        if (value == 'id')
+            disabled = 'disabled="disabled"';
 
-	input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" class="datatable-class-' + value + '"/></td>';
+        if (value == 'analyte')
+        {
+            $('#analyte > select').attr("name", "create-" + value + "[" + createNumberIncr + "]");
+            input += '<td>'+ $('#analyte').html() +'</td>';
+        }
+        else if (value == 'analyte_is')
+        {
+            $('#analyte_is > select').attr("name", "create-" + value + "[" + createNumberIncr + "]");
+            input += '<td>'+ $('#analyte_is').html() +'</td>';
+        }
+        else if (value == 'use')
+        {
+            input += '<td><input type="checkbox" name="create-' + value + '[' + createNumberIncr + ']"/></td>';
+        }
+        else if (value == 'unit')
+        {
+            $('#unit > select').attr("name", "create-" + value + "[" + createNumberIncr + "]");
+            input += '<td>'+ $('#unit').html() +'</td>';
+        }
+        else{
+            input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" class="datatable-class-' + value + '"/></td>';
+        }
     });
     input += '<td class="form-datatable-edit"><span class="form-datatable-add"></span><span class="form-datatable-remove"></span></td>';
     return input + '</tr>';
@@ -78,8 +105,27 @@ function changeElement(element, pk) {
     var input = '';
 
     $.each(editable, function(key, value) {
-	input = '<input class="datatable-class-' + value + '" type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" name="update-' + value + '[' + pk + ']"/>';
-	$(parentId + ' .yui3-datatable-col-' + value).html(input);
+        console.log(value);
+        if (value == "use"){
+            $(parentId + ' .yui3-datatable-col-' + value + ' > input').prop('disabled',false);
+            $(parentId + ' .yui3-datatable-col-' + value + ' > input').attr("name", "update-" + value + "[" + pk + "]");
+        }
+        else if (value == 'analyte_is')
+        {
+            $('#analyte_is > select').attr("name", "update-" + value + "[" + pk + "]");
+            input = $('#analyte_is').html();
+            $(parentId + ' .yui3-datatable-col-' + value).html(input);
+        }
+        else if (value == 'unit')
+        {
+            $('#unit > select').attr("name", "update-" + value + "[" + pk + "]");
+            input = $('#unit').html();
+            $(parentId + ' .yui3-datatable-col-' + value).html(input);
+        }
+        else{
+            input = '<input class="datatable-class-' + value + '" type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" name="update-' + value + '[' + pk + ']"/>';
+            $(parentId + ' .yui3-datatable-col-' + value).html(input);
+        }
     });
 }
 

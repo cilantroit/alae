@@ -16,10 +16,13 @@ use Zend\View\Model\ViewModel,
 class IndexController extends BaseController
 {
 
+    public function init()
+    {
+        
+    }
+
     public function logoutAction()
     {
-
-
 	$session_user = new \Zend\Session\Container('user');
 	$session_user->getManager()->getStorage()->clear('user');
 	$viewModel = new ViewModel();
@@ -29,16 +32,20 @@ class IndexController extends BaseController
 
     public function menuAction()
     {
-
-	return new ViewModel();
+        if (!$this->isLogged())
+        {
+            return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
+        }
+        return new ViewModel();
     }
 
     public function loginAction()
     {
 	$request = $this->getRequest();
+        $message = "";
 
-	if ($request->isPost())
-	{
+        if ($request->isPost())
+        {
 	    $elements = $this->getRepository('\\Alae\\Entity\\User')
 		    ->findBy(array('username' => $request->getPost('username'), 'password' => md5(sha1($request->getPost('password')))));
 
@@ -70,8 +77,7 @@ class IndexController extends BaseController
 	}
 
 
-	return new ViewModel(array('error' => $message,
-	));
+	return new ViewModel(array('error' => $message));
     }
 
 }

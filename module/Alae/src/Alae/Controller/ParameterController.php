@@ -14,7 +14,16 @@ use Zend\View\Model\ViewModel,
 
 class ParameterController extends BaseController
 {
-    protected $_document  = '\\Alae\\Entity\\Parameter';
+    protected $_document = '\\Alae\\Entity\\Parameter';
+
+    public function init()
+    {
+        if (!$this->isLogged())
+        {
+            header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url"));
+            exit;
+        }
+    }
 
     public function indexAction()
     {
@@ -309,6 +318,6 @@ class ParameterController extends BaseController
         $download = ($this->params('param') == "1") ? "" : "reason";
         $filename = ($this->params('param') == "1") ? "verificaciones_de_lotes_de_analitos" : "codigos_de_error_no_automatizables";
 
-        \Alae\Service\Download::excel("http://localhost/alae/public/parameter/download" . $download, $filename);
+        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/parameter/download" . $download, $filename);
     }
 }

@@ -5,15 +5,21 @@ namespace Alae\Controller;
 use Zend\View\Model\JsonModel,
     Zend\Mvc\MvcEvent,
     Zend\Mvc\Controller\AbstractActionController,
+    Zend\EventManager\EventManagerInterface,
     Doctrine\ORM\EntityManager,
     Doctrine\ORM\Mapping;
 
 abstract class BaseController extends AbstractActionController
 {
-
     protected $_em;
     protected $_repository;
     protected $_document;
+
+    public function setEventManager(\Zend\EventManager\EventManagerInterface $events)
+    {
+        parent::setEventManager($events);
+        $this->init();
+    }
 
     protected function sendResponse($data)
     {
@@ -76,11 +82,6 @@ abstract class BaseController extends AbstractActionController
 	return $renderer->render($view, $params);
     }
 
-    protected function update()
-    {
-
-    }
-
     protected function _getSystem()
     {
 	return $this->getRepository("\\Alae\\Entity\\User")->find(1);
@@ -99,15 +100,15 @@ abstract class BaseController extends AbstractActionController
 	$this->getEntityManager()->flush();
     }
 
-    protected function sessionError($error)
-    {
-
-    }
-
     protected function execute($sql)
     {
 	$query = $this->getEntityManager()->createQuery($sql);
 	return $query->execute();
     }
 
+    protected function isLogged()
+    {
+        $session = new \Zend\Session\Container('user');
+        return $session->id ? true : false;
+    }
 }
