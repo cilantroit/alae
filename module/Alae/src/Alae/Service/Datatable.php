@@ -146,7 +146,7 @@ class Datatable
 		array("key" => "username", "label" => "Nombre de Usuario", "sortable" => true),
 		array("key" => "email", "label" => "Correo electrónico", "sortable" => true),
 		array("key" => "profile", "label" => "Nivel de Acceso", "sortable" => true, "allowHTML" => true),
-		array("key" => "password", "label" => "Contraseña validación", "sortable" => true, "allowHTML" => true),
+		array("key" => "password", "label" => "Contraseña validación", "sortable" => true, "allowHTML" => true, "formatter" => '<button class="mail" type="button" onclick="sentpassword({value});"><img src="img/mail.png" > enviar contraseña</button>'),
 		array("key" => "status", "label" => "Activo (S/N)", "sortable" => true),
 		array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-approve" onclick="approve({value})"></span><span class="form-datatable-reject" onclick="reject({value});"></span>')
 	    )),

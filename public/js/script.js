@@ -90,6 +90,30 @@ function inicio() {
     });
 
 
+    $("#newpasswordusr").validate({
+	rules: {
+	    pwd: {
+		required: true
+			//customvalidation: true
+	    },
+	    password: {
+		required: true, equalTo: "#pwd",
+		//customemailvalidatorexist: true
+	    }
+	},
+	messages: {
+	    pwd: {
+		required: "Este campo es de uso oblogatorio"
+			//customvalidation: true
+	    },
+	    password: {
+		required: "Este campo es de uso oblogatorio",
+		equalTo: "Por favor ingrese la misma contraseña"
+	    }
+
+	}
+    });
+
 
 
 

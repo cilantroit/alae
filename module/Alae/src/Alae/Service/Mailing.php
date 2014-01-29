@@ -20,6 +20,7 @@ class Mailing
 	    'connection_config' => array(
 		'username' => Helper::getVarsConfig("mail_username"),
 		'password' => Helper::getVarsConfig("mail_password"),
+		'ssl' => 'tls',
 	    ),
 	));
 
@@ -50,5 +51,3 @@ class Mailing
     }
 
 }
-
-?>

@@ -42,12 +42,17 @@ class IndexController extends BaseController
 	    $elements = $this->getRepository('\\Alae\\Entity\\User')
 		    ->findBy(array('username' => $request->getPost('username'), 'password' => md5(sha1($request->getPost('password')))));
 
+
+
 	    if ((!empty($elements)))
 	    {
+
+
 		foreach ($elements as $element)
 		{
 		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
 		    {
+
 
 			$this->_setSession($element);
 			return $this->redirect()->toRoute('index', array('controller' => 'index', 'action' => 'menu'));

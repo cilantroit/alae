@@ -1,0 +1,34 @@
+<head>
+    <title>ALAE</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <style type="text/css" media="Screen"> /*\*/@import url("./css/alae.css");/**/ </style>
+    <link rel="shortcut icon" href="img/favicon.ico">
+</head>
+<body>
+    <div id="principal">
+	<div id="cuerpo">
+	    <a href="../alae.html"><img src="img/alaelogo.png" width="400px"></a>
+	    <div id="central" style="text-align:left; font-size:1.1em;">
+		<h4>Contenido del mail para reinicializar contraseña</h4>
+		<p><label>De:</label>Administrador de ALAE</p>
+		<p><label>Para:</label><?php echo $Username; ?>[correo@anapharmeurope.com]</p>
+		<p><label>Asunto:</label>Cambio de Contraseña ALAE</p>
+		<hr>
+		<blockquote>
+		    <p>El siguiente vínculo tiene una fecha de caducidad de 7 días.</p>
+		    <p>Si ha solicitado cambiar la contraseña de ALAE, <br>
+			visite la siguiente URL para realizarlo:</p>
+
+		    <blockquote>
+			<a href="<?php echo $link ?>?active_code=   <?php echo $active_code ?> ">formulario para reinicializar contraseña. clicar. clicar aquí</a>;
+			<a href="alae004.html" target="_blank">…/alae004.php?... </a>
+			<span class="peq">(formulario para reinicializar contraseña. clicar)</span>
+		    </blockquote>
+
+		    <p>Si usted no lo ha solicitado, ignore este mensaje.</p></blockquote>
+	    </div>
+	</div>
+    </div>
+
+</body>
+</html>

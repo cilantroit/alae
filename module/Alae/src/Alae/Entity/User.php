@@ -68,6 +68,13 @@ class User
     protected $activeFlag = '0';
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="verification", type="string", length=50, nullable=false)
+     */
+    protected $verification;
+
+    /**
      * @var \Alae\Entity\Profile
      *
      * @ORM\ManyToOne(targetEntity="Alae\Entity\Profile")
@@ -155,6 +162,16 @@ class User
     public function setFkProfile(\Alae\Entity\Profile $fkProfile)
     {
 	$this->fkProfile = $fkProfile;
+    }
+
+    public function getVerification()
+    {
+	return $this->verifiction;
+    }
+
+    public function setVerification()
+    {
+	$this->verifiction = $verification;
     }
 
 }

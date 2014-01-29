@@ -1,12 +1,12 @@
 
+
 <html>
+
     <!--
      login.html
      Fecha creación: 07.jun.2013 (Rita de la Torre) Pantalla login del ALAE
      Modificación:
     -->
-
-
     <div id="principal">
 	<div id="cuerpo">
 	    <div id="central">
@@ -24,7 +24,6 @@
 		}
 		?>
 		<div id='login'>
-
 		    <h1>Inicio de sesi&oacute;n </h1>
 		    <form method='POST'  id="loginusr" action="">
 			<table>
@@ -42,7 +41,8 @@
 				    ?>"><?php echo 'Solicitar cuenta'; ?></a></td>
 				<td >&nbsp;</td>
 			    </tr><tr>
-				<td>[ <a href="alae002.html">Reinicializar contrase&ntilde;a</a> ]</td>
+
+				<td>[<a href="<?php echo $this->basePath() ?>/user/resetpass">Reinicializar contrase&ntilde;a</a>]</td>
 				<!-- para efectos de demostración, cambiar por SUBMIT  el botón a continuación-->
 				<td ><a href="alae000.html"><input type="submit" value="Iniciar sesión" id="entrar"></a></td>
 			    </tr><tr>

@@ -62,6 +62,18 @@ class UserController extends BaseController
 	return new ViewModel(array('error' => $message));
     }
 
+    protected function getProfileOptions($pkProfile)
+    {
+	$elements = $this->getRepository('\\Alae\\Entity\\Profile')->findAll();
+	$options = '<option value="0">Seleccione</option>';
+	foreach ($elements as $profile)
+	{
+	    $selected = ($profile->getPkProfile() == $pkProfile) ? "selected" : "";
+	    $options .= sprintf('<option value="%d" %s>%s</option>', $profile->getPkProfile(), $selected, $profile->getName());
+	}
+	return $options;
+    }
+
     public function adminAction()
     {
 	$users = $this->getRepository()->findAll();
@@ -71,8 +83,8 @@ class UserController extends BaseController
 	    $data[] = array(
 		"username" => utf8_encode($user->getUsername()),
 		"email" => utf8_encode($user->getEmail()),
-		"profile" => '<select class="form-datatable-profile" id="form-datatable-profile-' . $user->getPkUser() . '"><option value="0">Seleccione</option><option value="1">Sustancias</option><option value="2">Administrador</option></select>',
-		"password" => "enviar contraseña",
+		"profile" => '<select class="form-datatable-profile" id="form-datatable-profile-' . $user->getPkUser() . '">' . $this->getProfileOptions($user->getFkProfile()->getPkProfile()) . '</select>',
+		"password" => $user->getPkUser(),
 		"status" => $user->getActiveFlag() ? "S" : "N",
 		"edit" => $user->getPkUser()
 	    );
@@ -90,7 +102,6 @@ class UserController extends BaseController
 	if ($request->isGet())
 	{
 	    $User = $this->getRepository()->find($request->getQuery('id'));
-
 	    $Profile = $this->getRepository('\\Alae\\Entity\\Profile')->find($request->getQuery('profile'));
 	    $User->setActiveFlag(\Alae\Entity\User::USER_ACTIVE_FLAG);
 
@@ -101,6 +112,8 @@ class UserController extends BaseController
 	    $User->setFkProfile($Profile);
 	    $this->getEntityManager()->persist($User);
 	    $this->getEntityManager()->flush();
+
+
 	    $mail = new \Alae\Service\Mailing();
 	    $mail->send(array($User->getEmail()), $this->render('alae/user/template', array('active_code' => $User->getActiveCode(), 'email' => $User->getEmail())));
 	    $jsonModel = new JsonModel();
@@ -122,9 +135,6 @@ class UserController extends BaseController
 	$request->getQuery('email');
 	if ($request->isGet() && $request->getQuery('email') && $request->getQuery('active_code'))
 	{
-	    /*
-	     * Buscas por email
-	     */
 	    $User = $this->getRepository()->findBy(array("email" => trim($request->getQuery('email'))));
 	    $username = $User[0]->getUsername();
 	    $email = $User[0]->getEmail();
@@ -132,8 +142,6 @@ class UserController extends BaseController
 	    /*
 	     * Verificamos que el activeCode registrado = al activeCode del GET
 	     */
-
-
 	    if ($User && $User[0]->getActiveCode() == trim($request->getQuery('active_code')))
 	    {
 		$showForm = true;
@@ -154,10 +162,6 @@ class UserController extends BaseController
 	    $this->getEntityManager()->persist($User);
 	    $this->getEntityManager()->flush();
 	    $message = '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/index/login">Se ha registrado la información de manera exitosa!!! Para acceder inicie sesion;</a>';
-
-
-
-	    //return $this->redirect()->toRoute('index/login');
 	}
 
 	return new ViewModel(array(
@@ -182,6 +186,117 @@ class UserController extends BaseController
 	    $jsonModel = new JsonModel();
 	    return $jsonModel;
 	}
+    }
+
+    public function sentverificationAction()
+    {
+	$request = $this->getRequest();
+
+	if ($request->isGet())
+	{
+	    $User = $this->getRepository()->find($request->getQuery('id'));
+	    $verification = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
+
+
+	    $User->setVerification($verification);
+	    $this->getEntityManager()->persist($User);
+	    $this->getEntityManager()->flush();
+	    $mail = new \Alae\Service\Mailing();
+	    $mail->send(array($User->getEmail()), $this->render('alae/user/template_verification', array('verification' => $verification, 'email' => $User->getEmail(), 'name' => $User->getEmail())));
+
+
+//	    $jsonModel = new JsonModel();
+//	    return $jsonModel;
+	}
+    }
+
+    public function resetpassAction()
+    {
+	$request = $this->getRequest();
+	$message = '';
+	$User = new \Alae\Entity\User();
+	if ($request->isPost())
+	{
+	    $User = $this->getRepository()->findBy(array('name' => $request->getPost('username')));
+
+	    if ($User)
+	    {
+		$User[0]->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
+		$this->getEntityManager()->persist($User[0]);
+		$this->getEntityManager()->flush();
+		$mail = new \Alae\Service\Mailing();
+		$mail->send(array('daniel.farnos.e@gmail.com'), $this->render('alae/user/template_reset_pass', array('active_code' => $User[0]->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 'username' => $User[0]->getName())));
+	    }
+	    else
+	    {
+		$message = "<div class='error'>El Nombre de usuario es incorrecto....</div>";
+	    }
+	}
+
+
+	return new ViewModel(array(
+	    "message" => $message
+	));
+    }
+
+    public function newpasswordAction()
+    {
+	$Username = "";
+	$message = "";
+	$ShowForm = "";
+	$Email = "";
+	$Id = "";
+	$Perfil = '';
+	$Request = $this->getRequest();
+	$Entity = new \Alae\Entity\User();
+	if ($Request->isPost())
+	{
+	    $User = $this->getRepository()->findBy(array('pkUser' => $Request->getPost('id')));
+	    if (!empty($User[0]))
+	    {
+		$showForm = true;
+		$message = 'Ok';
+		$Activecode = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
+		$User[0]->setActiveCode($Activecode);
+		$User[0]->setPassword($Request->getPost('password'));
+		$this->getEntityManager()->persist($User[0]);
+		$this->getEntityManager()->flush();
+
+
+		$message = '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/index/login">Su cambio de password se realizó de manera exitosa!!!</a>';
+	    }
+	    else
+	    {
+		$message = 'Se ha presentado un error.Por favor intente de nuevo';
+		$showForm = false;
+	    }
+	}
+
+	if ($Request->isGet())
+	{
+	    $User = $this->getRepository()->findBy(array("activeCode" => trim($Request->getQuery('active_code'))));
+	    if (empty($User))
+	    {
+		$message = '<div class="errordiv">Sú código de ha caducado. Debe repetir el proceso<div>';
+		$showForm = false;
+	    }
+	    else
+	    {
+		$showForm = true;
+		$Username = $User[0]->getUsername();
+		$Email = $User[0]->getEmail();
+		$Perfil = $User[0]->getFkProfile()->getName();
+		$Id = $User[0]->getPkUser();
+	    }
+	}
+	return new ViewModel(array(
+	    "showForm" => $showForm,
+	    "message" => $message,
+	    "username" => $Username,
+	    "email" => $Email,
+	    "perfil" => $Perfil,
+	    "id" => $Id
+	));
     }
 
 }
