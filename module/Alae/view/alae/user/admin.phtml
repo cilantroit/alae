@@ -3,8 +3,6 @@
     <div id="cerrar">[  <a href="<?php echo $this->basePath() ?>/index/logout">logout</a>]</div>
     <img src="<?php echo $this->basePath() . '/img/alaepeq.png' ?> "  title="volver a contenido" />
     <div id="encab"><h2>administración de usuarios</h2></div>
-
-
 </div>
 <input type="hidden" id="profile" value=""/>
 <script>
@@ -16,8 +14,7 @@
     var filtersHtml = '<?php echo $filters; ?>';
     var profile = '';
 </script>
-
-<script type="text/javascript" src="/alae/public/js/datatable.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
 <script>
 
     $(document).on("ready", inicio);
