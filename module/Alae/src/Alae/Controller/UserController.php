@@ -20,6 +20,11 @@ class UserController extends BaseController
 
     protected $_document = '\\Alae\\Entity\\User';
 
+    public function init()
+    {
+
+    }
+
     public function newaccountAction()
     {
 	$request = $this->getRequest();
