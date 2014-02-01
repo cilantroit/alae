@@ -66,7 +66,6 @@ function addEvent() {
 }
 
 function getInputs(filters) {
-    console.log(filters);
     var input = '<tr>';
     $.each(filters, function(key, value) {
         var disabled = '';
@@ -105,7 +104,6 @@ function changeElement(element, pk) {
     var input = '';
 
     $.each(editable, function(key, value) {
-        console.log(value);
         if (value == "use"){
             $(parentId + ' .yui3-datatable-col-' + value + ' > input').prop('disabled',false);
             $(parentId + ' .yui3-datatable-col-' + value + ' > input').attr("name", "update-" + value + "[" + pk + "]");
@@ -120,6 +118,18 @@ function changeElement(element, pk) {
         {
             $('#unit > select').attr("name", "update-" + value + "[" + pk + "]");
             input = $('#unit').html();
+            $(parentId + ' .yui3-datatable-col-' + value).html(input);
+        }
+        else if (value == 'accepted_flag')
+        {
+            var response = 1; 
+            $(element).attr("disabled", true);
+            alert($(element).children().attr('class'));
+            if ($(element).children().attr('class') == "btn-reject") 
+            {
+                response = 0;
+            }
+            input = '<input type="hidden" value="' + response + '" name="update-' + value + '[' + pk + ']"/>';
             $(parentId + ' .yui3-datatable-col-' + value).html(input);
         }
         else{

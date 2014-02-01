@@ -1,4 +1,13 @@
-<div id="datatable"></div>
+<form id="datatable-form" action="" method="POST">
+    <div id="datatable"></div>
+    <input type="hidden" name="id" value="<?php echo $pkAnalyteStudy; ?>"/>
+</form>
+<script>
+    jQuery.validator.addClassRules('datatable-class-justification', {
+        required: true
+    });
+    $("#datatable-form").validate();
+</script>
 <script>
     var createNumberIncr = 0;
     var data = <?php echo $data; ?>;

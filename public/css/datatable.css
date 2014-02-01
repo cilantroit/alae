@@ -22,6 +22,7 @@
 #datatable table tbody tr td{
     border: 1px solid #008B8B;
     vertical-align: top;
+    height: 35px;
 }
 #datatable table tbody tr .form-datatable-edit,
 #datatable table tbody tr .yui3-datatable-col-edit{
@@ -93,7 +94,7 @@
 #datatable table thead .yui3-datatable-col-edit{ display:none; }
 #datatable .yui3-datatable-message .yui3-datatable-filter,
 .form-datatable-select{
-    height: 2em;
+    height: 35px;
     border: 1px solid #008B8B;
     width: 100%;
     background-color: #FFFFCC;
@@ -114,6 +115,9 @@
 #datatable .form-datatable-add,
 #datatable .form-datatable-add-block .form-datatable-remove,
 #yui3-datatable-filter-use,
+#yui3-datatable-filter-valid_flag,
+#yui3-datatable-filter-modify,
+#yui3-datatable-filter-accepted_flag,
 #analyte,
 #analyte_is,
 #unit
