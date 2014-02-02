@@ -174,7 +174,7 @@ class Datatable
                 array("key" => "unit", "label" => "Unidades", "sortable" => false),
                 array("key" => "is", "label" => "% var IS", "sortable" => true, "allowHTML" => true),
                 array("key" => "use", "label" => "usar", "sortable" => false, "allowHTML" => true, "formatter" => '{value}'),
-                array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/nominalconcentration/{value}">no</a><a href="' . $this->_base_url . '/batch/list/{value}">ve</a><span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
+                array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/nominalconcentration/{value}"><span class="form-datatable-nominal"></span></a><a href="' . $this->_base_url . '/batch/list/{value}"><span class="form-datatable-batch"></span></a><span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
             )),
             "editable" => json_encode(array("analyte_is", "cs_number", "qc_number", "unit", "is", "use")),
             "header"   => json_encode($header),

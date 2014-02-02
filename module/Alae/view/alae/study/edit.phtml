@@ -1,30 +1,65 @@
-<div id="cuerpo" style="height:77%;">
+<div id="cuerpo">
     <div id="encab">
         <h2>ficha del estudio</h2>
     </div>
-    <div id="top" style="font-size:0.85em;">
+    <div id="edit-study" style="font-size:0.85em;">
+        <h3>Datos Generales del Estudio</h3>
         <form id="study-form" action="" method="POST">
-            <h3>Datos Generales del Estudio</h3>
-            <p><label>Código:</label>
-                <input type="text" name="code" value="<?php echo $study->getCode(); ?>">
-                <label>Arbol de Dilución:</label>
-                <select name="dilution_tree">
-                    <option>1</option>
-                </select>
-            </p>
+            <ul>
+                <li>
+                    <p>Código: </p>
+                    <input type="text" name="code" <?php echo $disabled; ?> value="<?php echo $study->getCode(); ?>">
+                </li>
+                <li>
+                    <p>Arbol de Dilución: </p>
+                    <select <?php echo $disabled; ?> name="dilution_tree">
+                        <option>1</option>
+                    </select>
+                </li>
+                <li>
+                    <p>Cerrado: <?php echo $study->getCloseFlag() ? "S" : "N"; ?></p>
+                </li>
+                <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
+                <li>
+                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>)"><span class="btn-reject"></span>cerrar estudio</button>
+                </li>
+                <?php endif; ?>
+            </ul>
             <p>
                 <label>Descripción:</label>
-                <textarea name="description"><?php echo $study->getDescription(); ?></textarea>
+                <textarea <?php echo $disabled; ?> name="description" rows="2" cols="50"><?php echo $study->getDescription(); ?></textarea>
             </p>
             <p>
                 <label>Observaciones:</label>
-                <textarea name="observation"><?php echo $study->getObservation(); ?></textarea>
-                <input type="hidden" name="form" value="1"/>
-                <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
-                <button type="button" class="btn">Cerrar estudio</button>
-                <button type="button" class="btn">Aprobar</button>
-                <input type="submit" class="btn" value="guardar" />
+                <textarea <?php echo $disabled; ?> name="observation" rows="2" cols="50"><?php echo $study->getObservation(); ?></textarea>
             </p>
+            <ul>
+                <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
+                    <?php if(!$study->getStatus()) : ?>
+                    <li>
+                        <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>)"><span class="btn-validate"></span>aprobar</button>
+                    </li>
+                    <?php endif; ?>
+                    <?php if ($user->isAdministrador()) : ?>
+
+                    <li>
+                        <input type="submit" class="btn" value="guardar" />
+                    </li>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if($user->isAdministrador() && !$study->getDuplicate()) : ?>
+                <li>
+                    <a class="btn" href="<?php echo $this->basePath() ?>/study/duplicate/<?php echo $study->getPkStudy(); ?>"><span class="btn-validate"></span>duplicar</a>
+                </li>
+                <?php endif; ?>
+                <?php if($study->getStatus()) : ?>
+                <li>
+                    <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $study->getFkUser()->getUsername(), $study->getFkUser()->getFkProfile()->getname(), $study->getUpdatedAt()); ?></p>
+                </li>
+                <?php endif; ?>
+            </ul>
+            <input type="hidden" name="form" value="1"/>
+            <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
         </form>
         <script>
             jQuery.validator.addMethod("regex", function(value, element, params) {
@@ -38,9 +73,33 @@
                     }
                 }
             });
+
+            function changeStatus(url, id)
+            {
+                $.ajax
+                ({
+                    type: "GET",
+                    dataType: "json",
+                    url: basePath + url,
+                    data: {id: id},
+                    success: function(data)
+                    {
+                        if (data.status)
+                        {
+                            location.reload();
+                        }
+                        else
+                        {
+                            alert(data.message);
+                        }
+                    }
+                });
+            }
         </script>
-        <form id="datatable-form" action="" method="POST">
-            <div id="datatable"></div>
+        <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && $study->getStatus()) : ?>
+        <form id="datatable-form" class="<?php echo !$study->getCloseFlag() ? "datatable-form-edit" : ""; ?>" action="" method="POST">
+            <h5>ANALITOS DEL ESTUDIO</h5>
+            <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
             <input type="hidden" name="form" value="2"/>
             <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
         </form>
@@ -58,13 +117,18 @@
             jQuery.validator.addMethod("rule", function(value, element, params) {
                 return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
             }, "Please enter a valid number");
+
             jQuery.validator.addClassRules('datatable-class-cs_number', {
                 required: true,
-                digits: true
+                digits: true,
+                min: 6,
+                max: 15
             });
             jQuery.validator.addClassRules('datatable-class-qc_number', {
                 required: true,
-                digits: true
+                digits: true,
+                min: 3,
+                max: 6
             });
             jQuery.validator.addClassRules('datatable-class-is', {
                 required: true,
@@ -93,5 +157,6 @@
                 <?php endforeach; ?>
             </select>
         </div>
+        <?php endif; ?>
     </div>
 </div>

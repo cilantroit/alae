@@ -77,42 +77,45 @@ class BatchController extends BaseController
 
         if ($request->isPost())
         {
-            $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($request->getPost('id'));
-            $updateJustification = $request->getPost('update-justification');
-            $updateAcceptedFlag  = $request->getPost('update-accepted_flag');
-
-            if (!empty($updateJustification))
+            if ($this->_getSession()->isAdministrador())
             {
-                foreach ($updateJustification as $key => $value)
+                $AnaStudy            = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($request->getPost('id'));
+                $updateJustification = $request->getPost('update-justification');
+                $updateAcceptedFlag  = $request->getPost('update-accepted_flag');
+
+                if (!empty($updateJustification))
                 {
-                    $Batch = $this->getRepository()->find($key);
-
-                    if ($Batch && $Batch->getPkBatch())
+                    foreach ($updateJustification as $key => $value)
                     {
-                        try
-                        {
-                            $Batch->setValidFlag((bool)$updateAcceptedFlag[$key]);
-                            $Batch->setAcceptedFlag((bool)$updateAcceptedFlag[$key]);
-                            $Batch->setJustification($updateJustification[$key]);
-                            $Batch->setFkUser($this->_getSession());
-                            $this->getEntityManager()->persist($Batch);
-                            $this->getEntityManager()->flush();
+                        $Batch = $this->getRepository()->find($key);
 
-                            return $this->redirect()->toRoute('batch', array(
-                                'controller' => 'batch',
-                                'action'     => 'list',
-                                'id'         => $AnaStudy->getPkAnalyteStudy()
-                            ));
-                        }
-                        catch (Exception $e)
+                        if ($Batch && $Batch->getPkBatch())
                         {
-                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Batch->getPkBatch(), "Justification" => $updateJustification[$key])));
-                            $error   = array(
-                                "description" => $message,
-                                "message"     => $e,
-                                "section"     => __METHOD__
-                            );
-                            $this->transactionError($error);
+                            try
+                            {
+                                $Batch->setValidFlag((bool) $updateAcceptedFlag[$key]);
+                                $Batch->setAcceptedFlag((bool) $updateAcceptedFlag[$key]);
+                                $Batch->setJustification($updateJustification[$key]);
+                                $Batch->setFkUser($this->_getSession());
+                                $this->getEntityManager()->persist($Batch);
+                                $this->getEntityManager()->flush();
+
+                                return $this->redirect()->toRoute('batch', array(
+                                            'controller' => 'batch',
+                                            'action'     => 'list',
+                                            'id'         => $AnaStudy->getPkAnalyteStudy()
+                                ));
+                            }
+                            catch (Exception $e)
+                            {
+                                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Batch->getPkBatch(), "Justification" => $updateJustification[$key])));
+                                $error   = array(
+                                    "description" => $message,
+                                    "message"     => $e,
+                                    "section"     => __METHOD__
+                                );
+                                $this->transactionError($error);
+                            }
                         }
                     }
                 }
@@ -145,21 +148,5 @@ class BatchController extends BaseController
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('pkAnalyteStudy', $AnaStudy->getPkAnalyteStudy());
         return $viewModel;
-    }
-
-    public function acceptAction()
-    {
-        if ($this->_getSession()->isAdministrador())
-        {
-
-        }
-    }
-
-    public function rejectAction()
-    {
-        if ($this->_getSession()->isAdministrador())
-        {
-
-        }
     }
 }

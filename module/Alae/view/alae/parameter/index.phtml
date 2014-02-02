@@ -1,39 +1,44 @@
-<a href="<?php echo \Alae\Service\Helper::getVarsConfig("base_url"); ?>/parameter/reason">[ códigos de error no automatizables ]</a>
-<form id="datatable-form" action="#" method="POST">
-    <div id="datatable"></div>
-</form>
-<script>
-    jQuery.validator.addMethod("rule", function (value, element, params) {
-        return this.optional(element) || /^V[0-9]+(\.[0-9]+)?$/.test(value);
-    }, "Please enter a valid Rule");
-    jQuery.validator.addMethod("code_error", function(value, element, params) {
-        return this.optional(element) || /^[A-Z]$/.test(value);
-    }, "Please enter a valid Code Error");
+<div id="parameter-index">
+    <div id="encab">
+        <h2>ESTUDIOS REGISTRADOS</h2>
+    </div>
+    <a href="<?php echo \Alae\Service\Helper::getVarsConfig("base_url"); ?>/parameter/reason">[ códigos de error no automatizables ]</a>
+    <form id="datatable-form" action="#" method="POST">
+        <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
+    </form>
+    <script>
+        jQuery.validator.addMethod("rule", function (value, element, params) {
+            return this.optional(element) || /^V[0-9]+(\.[0-9]+)?$/.test(value);
+        }, "Please enter a valid Rule");
+        jQuery.validator.addMethod("code_error", function(value, element, params) {
+            return this.optional(element) || /^[A-Z]$/.test(value);
+        }, "Please enter a valid Code Error");
 
-    jQuery.validator.addClassRules('datatable-class-rule', {
-        required: true,
-        rule: true
-    });
-    jQuery.validator.addClassRules('datatable-class-verification', {
-        required: true
-    });
-    jQuery.validator.addClassRules('datatable-class-min_value', {
-        digits: true
-    });
-    jQuery.validator.addClassRules('datatable-class-max_value', {
-        digits: true
-    });
-    jQuery.validator.addClassRules('datatable-class-code_error', {
-        code_error: true
-    });
-    $("#datatable-form").validate();
-</script>
-<script>
-    var createNumberIncr = 0;
-    var data = <?php echo $data; ?>;
-    var filters = <?php echo $header; ?>;
-    var columns = <?php echo $columns; ?>;
-    var editable = <?php echo $editable; ?>;
-    var filtersHtml = '<?php echo $filters; ?>';
-</script>
-<script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
+        jQuery.validator.addClassRules('datatable-class-rule', {
+            required: true,
+            rule: true
+        });
+        jQuery.validator.addClassRules('datatable-class-verification', {
+            required: true
+        });
+        jQuery.validator.addClassRules('datatable-class-min_value', {
+            digits: true
+        });
+        jQuery.validator.addClassRules('datatable-class-max_value', {
+            digits: true
+        });
+        jQuery.validator.addClassRules('datatable-class-code_error', {
+            code_error: true
+        });
+        $("#datatable-form").validate();
+    </script>
+    <script>
+        var createNumberIncr = 0;
+        var data = <?php echo $data; ?>;
+        var filters = <?php echo $header; ?>;
+        var columns = <?php echo $columns; ?>;
+        var editable = <?php echo $editable; ?>;
+        var filtersHtml = '<?php echo $filters; ?>';
+    </script>
+    <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
+</div>

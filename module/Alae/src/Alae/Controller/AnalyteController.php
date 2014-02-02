@@ -132,7 +132,9 @@ class AnalyteController extends BaseController
         }
 
         $datatable = new Datatable($data, Datatable::DATATABLE_ANALYTE);
-        return new ViewModel($datatable->getDatatable());
+        $viewModel = new ViewModel($datatable->getDatatable());
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
     }
 
     public function downloadAction()

@@ -130,7 +130,9 @@ class ParameterController extends BaseController
         }
 
         $datatable = new Datatable($data, Datatable::DATATABLE_PARAMETER);
-        return new ViewModel($datatable->getDatatable());
+        $viewModel = new ViewModel($datatable->getDatatable());
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
     }
 
     public function downloadAction()

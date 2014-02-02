@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS alae_study(
 	observation 		text,
 	close_flag		boolean			NOT NULL DEFAULT 0,
         status  		boolean			NOT NULL DEFAULT 1,
+        duplicate		boolean			NOT NULL DEFAULT 0,
 	fk_user			bigint(20)		unsigned NOT NULL,
         fk_dilution_tree 	bigint(20)		NOT NULL DEFAULT 1,
 	PRIMARY KEY (pk_study),
