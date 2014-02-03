@@ -2,19 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/xampp/htdocs/alae/public/css/style.css</file>
-            <file>file:/C:/xampp/htdocs/alae/public/css/datatable.css</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/UserController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/admin.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/resetpass.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/IndexController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Mailing.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/User.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/newpassword.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Datatable.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/config/vars.config.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/newaccount.phtml</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
