@@ -47,7 +47,7 @@ class BatchController extends BaseController
         return new ViewModel($datatable->getDatatable());
     }
 
-    public function downloadAction()
+    protected function download()
     {
         $data     = array();
         $data[]   = array("# Lote", "Nombre del archivo", "Importado el", "Motivo de descarte");
@@ -63,38 +63,90 @@ class BatchController extends BaseController
             );
         }
 
-        return new JsonModel($data);
+        return json_encode($data);
     }
 
     public function excelAction()
     {
-        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/batch/download", "lotes_sin_asignar");
+        \Alae\Service\Download::excel("lotes_sin_asignar", $this->download());
     }
 
     public function listAction()
     {
+        $request = $this->getRequest();
+
+        if ($request->isPost())
+        {
+            if ($this->_getSession()->isAdministrador())
+            {
+                $AnaStudy            = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($request->getPost('id'));
+                $updateJustification = $request->getPost('update-justification');
+                $updateAcceptedFlag  = $request->getPost('update-accepted_flag');
+
+                if (!empty($updateJustification))
+                {
+                    foreach ($updateJustification as $key => $value)
+                    {
+                        $Batch = $this->getRepository()->find($key);
+
+                        if ($Batch && $Batch->getPkBatch())
+                        {
+                            try
+                            {
+                                $Batch->setValidFlag((bool) $updateAcceptedFlag[$key]);
+                                $Batch->setAcceptedFlag((bool) $updateAcceptedFlag[$key]);
+                                $Batch->setJustification($updateJustification[$key]);
+                                $Batch->setFkUser($this->_getSession());
+                                $this->getEntityManager()->persist($Batch);
+                                $this->getEntityManager()->flush();
+
+                                return $this->redirect()->toRoute('batch', array(
+                                            'controller' => 'batch',
+                                            'action'     => 'list',
+                                            'id'         => $AnaStudy->getPkAnalyteStudy()
+                                ));
+                            }
+                            catch (Exception $e)
+                            {
+                                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Batch->getPkBatch(), "Justification" => $updateJustification[$key])));
+                                $error   = array(
+                                    "description" => $message,
+                                    "message"     => $e,
+                                    "section"     => __METHOD__
+                                );
+                                $this->transactionError($error);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         if ($this->getEvent()->getRouteMatch()->getParam('id'))
         {
             $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($this->getEvent()->getRouteMatch()->getParam('id'));
-            $elements = $this->getRepository()->findBy(array("fkAnalyte" => $AnaStudy->getFkAnalyte(), "fkStudy" => $AnaStudy->getFkStudy()));
-
-            foreach ($elements as $batch)
-            {
-                $data[] = array(
-                    "batch"           => $batch->getSerial(),
-                    "filename"        => $batch->getFileName(),
-                    "create_at"       => $batch->getCreatedAt(),
-                    "valid_flag"      => is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : '',
-                    "validation_date" => $batch->getValidationDate(),
-                    "result"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO"),
-                    "modify"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" type="button"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" type="button"><span class="btn-validate"></span>aceptar</button>'),
-                    "accepted_flag"   => is_null($batch->getAcceptedFlag()) ? "" : ($batch->getAcceptedFlag() ? "S" : "N"),
-                    "justification"   => is_null($batch->getJustification()) ? "" : $batch->getJustification()
-                );
-            }
-
-            $datatable = new Datatable($data, Datatable::DATATABLE_BATCH);
-            return new ViewModel($datatable->getDatatable());
         }
+
+        $data = array();
+        $elements = $this->getRepository()->findBy(array("fkAnalyte" => $AnaStudy->getFkAnalyte(), "fkStudy" => $AnaStudy->getFkStudy()));
+        foreach ($elements as $batch)
+        {
+            $data[] = array(
+                "batch"           => $batch->getSerial(),
+                "filename"        => $batch->getFileName(),
+                "create_at"       => $batch->getCreatedAt(),
+                "valid_flag"      => is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : "",
+                "validation_date" => $batch->getValidationDate(),
+                "result"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO"),
+                "modify"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-validate"></span>aceptar</button>'),
+                "accepted_flag"   => is_null($batch->getAcceptedFlag()) ? "" : ($batch->getAcceptedFlag() ? "S" : "N"),
+                "justification"   => is_null($batch->getJustification()) ? "" : $batch->getJustification()
+            );
+        }
+
+        $datatable = new Datatable($data, Datatable::DATATABLE_BATCH);
+        $viewModel = new ViewModel($datatable->getDatatable());
+        $viewModel->setVariable('AnaStudy', $AnaStudy);
+        return $viewModel;
     }
 }

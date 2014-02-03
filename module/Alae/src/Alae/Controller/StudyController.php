@@ -32,7 +32,7 @@ class StudyController extends BaseController
     public function indexAction()
     {
         $data     = array();
-        $elements = $this->getRepository()->findBy(array("status" => true));
+        $elements = $this->getRepository()->findAll();
 
         foreach ($elements as $study)
         {
@@ -49,12 +49,9 @@ class StudyController extends BaseController
         }
 
         $datatable = new Datatable($data, Datatable::DATATABLE_STUDY);
-        return new ViewModel($datatable->getDatatable());
-
-//      $this->view->layout()->disableLayout();
-//      $this->view->headTitle("Gestor de disponibilidad");
-//     	$this->view->headLink()->appendStylesheet($this->view->baseUrl().'/plugin/cluetip-1.0.6/jquery.cluetip.css');
-//		$this->view->headScript()->appendFile($this->view->baseUrl().'/plugin/cluetip-1.0.6/jquery.cluetip.min.js');
+        $viewModel = new ViewModel($datatable->getDatatable());
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
     }
 
     public function createAction()
@@ -76,7 +73,8 @@ class StudyController extends BaseController
                 $Study->setCreatedAt(new \DateTime('now'));
                 $Study->setObservation($request->getPost('observation'));
                 $Study->setFkDilutionTree($request->getPost('dilution_tree'));
-                $Study->setStatus(true);
+                $Study->setStatus(false);
+                $Study->setDuplicate(false);
                 $Study->setFkUser($User);
                 $this->getEntityManager()->persist($Study);
                 $this->getEntityManager()->flush();
@@ -110,6 +108,10 @@ class StudyController extends BaseController
                 $this->transactionError($error);
             }
         }
+
+        $viewModel = new ViewModel();
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
     }
 
     public function deleteanastudyAction()
@@ -239,8 +241,8 @@ class StudyController extends BaseController
                             $AnaStudy->setQcNumber($createQcNumber[$key]);
                             $AnaStudy->setFkUnit($Unit);
                             $AnaStudy->setInternalStandard($createIs[$key]);
+                            $AnaStudy->setStatus(false);
                             $AnaStudy->setIsUsed((isset($createUse[$key]) ? true : false));
-                            $AnaStudy->setStatus(true);
                             $AnaStudy->setFkUser($User);
                             $this->getEntityManager()->persist($AnaStudy);
                             $this->getEntityManager()->flush();
@@ -361,6 +363,8 @@ class StudyController extends BaseController
         $viewModel->setVariable('study', $Study);
         $viewModel->setVariable('analytes', $Analyte);
         $viewModel->setVariable('units', $Unit);
+        $viewModel->setVariable('user', $this->_getSession());
+        $viewModel->setVariable('disabled', (($this->_getSession()->isAdministrador() && !$Study->getCloseFlag()) ? "" : "disabled"));
         return $viewModel;
     }
 
@@ -402,11 +406,11 @@ class StudyController extends BaseController
         }
     }
 
-    public function downloadAction()
+    protected function download()
     {
         $data     = array();
         $data[]   = array("Código", "Descripción", "Fecha", "Nº Analitos", "Observaciones", "Cerrado (S/N)");
-        $elements = $this->getRepository()->findBy(array("status" => true));
+        $elements = $this->getRepository()->findAll();
 
         foreach ($elements as $study)
         {
@@ -421,27 +425,176 @@ class StudyController extends BaseController
             );
         }
 
-        return new JsonModel($data);
+        return json_encode($data);
     }
 
     public function excelAction()
     {
-        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/study/download", "listado_de_estudios");
+        \Alae\Service\Download::excel("listado_de_estudios", $this->download());
     }
 
     public function approveAction()
     {
+        $request = $this->getRequest();
 
+	if ($request->isGet() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()))
+	{
+            $Study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
+
+	    if ($Study && $Study->getPkStudy())
+            {
+                try
+                {
+                    $User = $this->_getSession();
+                    $Study->setStatus(true);
+                    $Study->setFkUser($User);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(__METHOD__, sprintf("El estudio %s ha sido aprobado por el usuario %s ",
+                            $Study->getCode(), $User->getUsername()), json_encode(array(
+                                "User"  => $User->getUsername(),
+                                "Study" => $Study->getCode()
+                    )));
+                    return new JsonModel(array("status" => true));
+                }
+                catch (Exception $e)
+                {
+                    $message = sprintf("Se ha presentado un error al aprobar el estudio %s",
+                            $Study->getCode());
+                    $this->transactionError(array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    ));
+                    return new JsonModel(array("status" => false, "message" => $message));
+                }
+            }
+	}
     }
 
     public function closeAction()
     {
+        $request = $this->getRequest();
 
+	if ($request->isGet() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()))
+	{
+            $Study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
+
+	    if ($Study && $Study->getPkStudy())
+            {
+                try
+                {
+                    $User = $this->_getSession();
+                    $Study->setCloseFlag(true);
+                    $Study->setFkUser($User);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(__METHOD__, sprintf("El estudio %s ha sido cerrado por el usuario %s ",
+                            $Study->getCode(), $User->getUsername()), json_encode(array(
+                                "User"  => $User->getUsername(),
+                                "Study" => $Study->getCode()
+                    )));
+                    return new JsonModel(array("status" => true));
+                }
+                catch (Exception $e)
+                {
+                    $message = sprintf("Se ha presentado un error al cerrar el estudio %s",
+                            $Study->getCode());
+                    $this->transactionError(array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    ));
+                    return new JsonModel(array("status" => false, "message" => $message));
+                }
+            }
+	}
     }
 
     public function duplicateAction()
     {
-        //ejemplo AAE
+        if ($this->getEvent()->getRouteMatch()->getParam('id') && $this->_getSession()->isAdministrador())
+	{
+            $Study = $this->getRepository('\\Alae\\Entity\\Study')->find($this->getEvent()->getRouteMatch()->getParam('id'));
+
+	    if ($Study && $Study->getPkStudy())
+            {
+                try
+                {
+                    $User = $this->_getSession();
+                    $qb = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
+                            ->where('s.code like :code')
+                            ->setParameter('code', '%' . $Study->getCode() . '%');
+                    $studies = $qb->getQuery()->getResult();
+
+                    $newStudy = new \Alae\Entity\Study();
+                    $newStudy->setDescription($Study->getDescription());
+                    $newStudy->setObservation($Study->getObservation());
+                    $newStudy->setCode($Study->getCode(). count($studies));
+                    $newStudy->setCloseFlag(false);
+                    $newStudy->setStatus(false);
+                    $newStudy->setDuplicate(true);
+                    $newStudy->setCreatedAt(new \DateTime('now'));
+                    $newStudy->setFkUser($User);
+                    $this->getEntityManager()->persist($newStudy);
+                    $this->getEntityManager()->flush();
+
+                    $elements = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array("fkStudy" => $Study->getPkStudy()));
+                    foreach ($elements as $AnaStudy)
+                    {
+                        $newAnaStudy = new \Alae\Entity\AnalyteStudy();
+                        $newAnaStudy->setFkAnalyte($AnaStudy->getFkAnalyte());
+                        $newAnaStudy->setFkAnalyteIs($AnaStudy->getFkAnalyteIs());
+                        $newAnaStudy->setFkStudy($newStudy);
+                        $newAnaStudy->setCsNumber($AnaStudy->getCsNumber());
+                        $newAnaStudy->setQcNumber($AnaStudy->getQcNumber());
+                        $newAnaStudy->setCsValues($AnaStudy->getCsValues());
+                        $newAnaStudy->setQcValues($AnaStudy->getQcValues());
+                        $newAnaStudy->setFkUnit($AnaStudy->getFkUnit());
+                        $newAnaStudy->setInternalStandard($AnaStudy->getInternalStandard());
+                        $newAnaStudy->setStatus(false);
+                        $newAnaStudy->setIsUsed($AnaStudy->getIsUsed());
+                        $newAnaStudy->setFkUser($User);
+                        $this->getEntityManager()->persist($newAnaStudy);
+                        $this->getEntityManager()->flush();
+                    }
+
+                    $this->transaction(__METHOD__, sprintf("El estudio %s ha sido duplicado por el usuario %s",
+                        $Study->getCode(), $User->getUsername()), json_encode(array(
+                            "User"  => $User->getUsername(),
+                            "Study" => $Study->getCode()
+                    )));
+
+                    return $this->redirect()->toRoute('study', array(
+                        'controller' => 'study',
+                        'action'     => 'index'
+                    ));
+                }
+                catch (Exception $e)
+                {
+                    $message = sprintf("Se ha presentado un error al duplicar el estudio %s",
+                            $Study->getCode());
+                    $this->transactionError(array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    ));
+                    $this->back($this->getEvent()->getRouteMatch()->getParam('id'));
+                }
+            }
+	}
+        else{
+            $this->back($this->getEvent()->getRouteMatch()->getParam('id'));
+        }
+    }
+
+    protected function back($pkStudy)
+    {
+        return $this->redirect()->toRoute('study', array(
+            'controller' => 'study',
+            'action'     => 'edit',
+            'id'         => $pkStudy
+        ));
     }
 
     /**
@@ -449,12 +602,86 @@ class StudyController extends BaseController
      */
     public function approvencAction()
     {
+        $request = $this->getRequest();
 
+	if ($request->isGet() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()))
+	{
+            $AnaStudy = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->find($request->getQuery('id'));
+
+	    if ($AnaStudy && $AnaStudy->getPkAnalyteStudy())
+            {
+                try
+                {
+                    $User = $this->_getSession();
+                    $AnaStudy->setStatus(true);
+                    $AnaStudy->setFkUser($User);
+                    $this->getEntityManager()->persist($AnaStudy);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(__METHOD__, sprintf("El usuario %s ha aprobado las concentraciones nominales para el analito %s del estudio %s: ",
+                            $User->getUsername(), $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode()), json_encode(array(
+                                "User"                       => $User->getUsername(),
+                                "Analyte"                    => $AnaStudy->getFkAnalyte()->getName(),
+                                "Study"                      => $AnaStudy->getFkStudy()->getCode(),
+                                "Nominal Concentration (CS)" => $AnaStudy->getCsValues(),
+                                "Nominal Concentration (QC)" => $AnaStudy->getQcValues()
+                    )));
+                    return new JsonModel(array("status" => true));
+                }
+                catch (Exception $e)
+                {
+                    $message = sprintf("Se ha presentado un error al aprobar las concentraciones nominales para el analito %s del estudio %s",
+                            $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode());
+                    $this->transactionError(array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    ));
+                    return new JsonModel(array("status" => false, "message" => $message));
+                }
+            }
+	}
     }
 
     public function unlockAction()
     {
+        $request = $this->getRequest();
 
+	if ($request->isGet() && $this->_getSession()->isAdministrador())
+	{
+            $AnaStudy = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->find($request->getQuery('id'));
+
+	    if ($AnaStudy && $AnaStudy->getPkAnalyteStudy())
+            {
+                try
+                {
+                    $User = $this->_getSession();
+                    $AnaStudy->setStatus(false);
+                    $AnaStudy->setFkUser($User);
+                    $this->getEntityManager()->persist($AnaStudy);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(__METHOD__, sprintf("El usuario %s ha desbloqueado las concentraciones nominales para el analito %s del estudio %s: ",
+                            $User->getUsername(), $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode()), json_encode(array(
+                                "User"                       => $User->getUsername(),
+                                "Analyte"                    => $AnaStudy->getFkAnalyte()->getName(),
+                                "Study"                      => $AnaStudy->getFkStudy()->getCode(),
+                                "Nominal Concentration (CS)" => $AnaStudy->getCsValues(),
+                                "Nominal Concentration (QC)" => $AnaStudy->getQcValues()
+                    )));
+                    return new JsonModel(array("status" => true));
+                }
+                catch (Exception $e)
+                {
+                    $message = sprintf("Se ha presentado un error al desbloquear las concentraciones nominales para el analito %s del estudio %s",
+                            $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode());
+                    $this->transactionError(array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    ));
+                    return new JsonModel(array("status" => false, "message" => $message));
+                }
+            }
+	}
     }
 
     public function nominalconcentrationAction()
@@ -479,6 +706,8 @@ class StudyController extends BaseController
         $viewModel->setVariable('AnaStudy', $AnaStudy);
         $viewModel->setVariable('cs_number', explode(",", $AnaStudy->getCsValues()));
         $viewModel->setVariable('qc_number', explode(",", $AnaStudy->getQcValues()));
+        $viewModel->setVariable('User', $this->_getSession());
+        $viewModel->setVariable('disabled', (!$AnaStudy->getStatus() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) ? "" : "disabled"));
         return $viewModel;
     }
 

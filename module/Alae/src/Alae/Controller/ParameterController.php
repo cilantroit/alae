@@ -130,46 +130,9 @@ class ParameterController extends BaseController
         }
 
         $datatable = new Datatable($data, Datatable::DATATABLE_PARAMETER);
-        return new ViewModel($datatable->getDatatable());
-    }
-
-    public function downloadAction()
-    {
-        $data     = array();
-        $data[]   = array("Regla", "Descripción", "Mín", "Máx", "Motivo", "Mensaje de error");
-        $elements = $this->getRepository()->findBy(array("typeParam" => true));
-
-        foreach ($elements as $parameter)
-        {
-            $data[] = array(
-                $parameter->getRule(),
-                $parameter->getVerification(),
-                ($parameter->getMinValue() > 0) ? $parameter->getMinValue() : "",
-                ($parameter->getMaxValue() > 0) ? $parameter->getMaxValue() : "",
-                $parameter->getCodeError(),
-                $parameter->getMessageError()
-            );
-        }
-
-        return new JsonModel($data);
-    }
-
-    public function downloadreasonAction()
-    {
-        $data     = array();
-        $data[]   = array("Regla", "Motivo", "Mensaje de error");
-        $elements = $this->getRepository()->findBy(array("typeParam" => false));
-
-        foreach ($elements as $parameter)
-        {
-            $data[] = array(
-                $parameter->getRule(),
-                $parameter->getCodeError(),
-                $parameter->getMessageError()
-            );
-        }
-
-        return new JsonModel($data);
+        $viewModel = new ViewModel($datatable->getDatatable());
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
     }
 
     public function reasonAction()
@@ -309,15 +272,56 @@ class ParameterController extends BaseController
         }
 
         $datatable = new Datatable($data, Datatable::DATATABLE_REASON);
-        return new ViewModel($datatable->getDatatable());
+        $viewModel = new ViewModel($datatable->getDatatable());
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
+    }
+
+    protected function download()
+    {
+        $data     = array();
+        $data[]   = array("Regla", "Descripción", "Mín", "Máx", "Motivo", "Mensaje de error");
+        $elements = $this->getRepository()->findBy(array("typeParam" => true));
+
+        foreach ($elements as $parameter)
+        {
+            $data[] = array(
+                $parameter->getRule(),
+                $parameter->getVerification(),
+                ($parameter->getMinValue() > 0) ? $parameter->getMinValue() : "",
+                ($parameter->getMaxValue() > 0) ? $parameter->getMaxValue() : "",
+                $parameter->getCodeError(),
+                $parameter->getMessageError()
+            );
+        }
+
+        return json_encode($data);
+    }
+
+    protected function downloadreason()
+    {
+        $data     = array();
+        $data[]   = array("Regla", "Motivo", "Mensaje de error");
+        $elements = $this->getRepository()->findBy(array("typeParam" => false));
+
+        foreach ($elements as $parameter)
+        {
+            $data[] = array(
+                $parameter->getRule(),
+                $parameter->getCodeError(),
+                $parameter->getMessageError()
+            );
+        }
+
+        return json_encode($data);
     }
 
     public function excelAction()
     {
 
-        $download = ($this->params('param') == "1") ? "" : "reason";
+        $json = ($this->params('param') == "1") ? "" : $this->downloadreason();
         $filename = ($this->params('param') == "1") ? "verificaciones_de_lotes_de_analitos" : "codigos_de_error_no_automatizables";
 
-        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/parameter/download" . $download, $filename);
+        \Alae\Service\Download::excel($filename, $json);
     }
 }

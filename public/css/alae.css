@@ -1,14 +1,5 @@
 
-body {margin:20px; font:100.1%/1.1 Verdana, Arial, Helvetica, sans-serif; background-color:#eee; }
-h1 {font: Tahoma, Arial;color:#008B8B; font-size: 2em;text-align:left;}
-h2 {
-    font: 'Century Gothic', Tahoma, Helvetica;
-    color: #008B8B;
-    font-size: 1.8em;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;}
-h3 {color:#838c98; font-size: 1em;}
-h4 {background-color:#008B8B; color:#fff; font-size: 1.1em; margin:0; line-height:1.6em; text-align:center;}
+
 img.vinculo {border:1px solid #EEE; width:155px; height:100px;}
 a {text-decoration: none; }
 a:link,
@@ -33,15 +24,12 @@ input{ margin: 0; padding: 0; }
 #cerrar{position: absolute; top:0%; right:3%; z-index:100; }
 #cerrar img{border: 3px ridge #eee; padding:3px;}
 #cuerpo{
-    vertical-align:top;
-    width: 99%;
-    top:1%;
-    clear:both;
+    width: 100%;
     min-height: 600px;
     margin:0 auto;
-    text-align: center;
-    vertical-align: text-top;}
-#top{width: 98%; padding: 0 5px 1px 15px; float:left; text-align: left; }
+    padding: 0 5px 1px 15px;
+}
+
 
 #dwn{
     /*background-color: #fff;*/
@@ -71,20 +59,7 @@ input{ margin: 0; padding: 0; }
 }
 #rght{width: 45%; height:100%; float:right; padding:0 1em 0 0;}
 #rght p{line-height:1.8em;margin:0;}
-#valores{/*background-color: #fff; */ height:60%;}
-#lotes{background-color: #fff;overflow-x: hidden; overflow-y: scroll;}
-#lotes input[type=text], input[type=date], select{
-    height:1.8em;
-    border:1px solid #008B8B;
-    width:98%;
-    background-color: #fff;
-    font-family: Verdana;
-    font-size: 0.9em;
-    color: #0000CC;
-    padding-left: 1px;
-    margin-right: 1em;
-}
-#lotes td{border:1px solid #aaa;}
+
 
 
 .w10{width: 10%;}
@@ -95,18 +70,7 @@ input{ margin: 0; padding: 0; }
 .w75{width: 75%;}
 
 
-#top input[type=text], input[type=date], textarea{
-    height:1.8em;
-    border:1px solid #008B8B;
-    width:8%;
-    background-color: #fff;
-    font-family: Verdana;
-    font-size: 1em;
-    color: #0000CC;
-    padding-left: 2px;
-    margin-right: 3em;
-}
-#top textarea{width:50%; }
+
 
 
 #izquierda{width: 50%; float:left; }
@@ -172,8 +136,7 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 #centrado ul {text-indent:0px;text-align: left;list-style-image:url('../img/xls.png'); outline: solid 1px #008B8B; font-size: 0.9em;  }
 #centrado li {margin: 0 10px 0 10px;}
 
-#pie{ margin:0 auto; bottom:1%; border-top:1px solid #ccc; }
-#pie p{font-size: 0.8em; margin: 5px; line-height: 1.5em; color: #666;}
+
 
 .centro{text-align:center;}
 .izq{text-align:left;}
@@ -183,4 +146,111 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 
 #contenedor ul li { display: inline-block; margin: 5px; }
 
-#top ul li { display: inline-block; margin: 5px; }
+/************Nuevo***************/
+body {
+    margin:20px; 
+    font:100.1%/1.1 Verdana, Arial, Helvetica, sans-serif; 
+    background-color:#eee; 
+    min-height: 700px;
+    position: relative;
+    min-width: 1000px;
+    padding-top: 60px;
+}
+h1 {
+    font: Tahoma, Arial;
+    color:#008B8B; 
+    font-size: 2em;
+    text-align:left;
+}
+h2 {
+    font: 'Century Gothic', Tahoma, Helvetica;
+    color: #008B8B;
+    font-size: 1.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;}
+h3 {color:#838c98; font-size: 1em;}
+h4 {background-color:#008B8B; color:#fff; font-size: 1.1em; margin:0; line-height:1.6em; text-align:center;}
+h5{
+    background-color: #1DD300;
+    color: #fff;
+    font-size: 1.1em;
+    margin: 0;
+    line-height: 35px;
+    text-align: center;
+}
+#pie{
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
+    position: absolute;
+    bottom: 0;
+    width: 98%;
+}
+#container {
+    margin: 20px;
+    width: 98%;
+}
+#pie p{
+    font-size: 0.8em; 
+    margin: 5px; 
+    line-height: 1.5em; 
+    color: #666;
+}
+#director_estudio .nominalconcentration-form-buttons,
+#administrador .nominalconcentration-form-buttons{
+    display: block;
+}
+#study-form{
+   padding: 0 0 30px 20px;
+}
+#study-form input[type=text], textarea{
+    border:1px solid #008B8B;
+    font-family: Verdana;
+    font-size: 1em;
+    color: #0000CC;
+    padding-left: 2px;
+    min-height: 30px;
+}
+#study-form select{
+    border: 1px solid #008B8B;
+    font-family: Verdana;
+    font-size: 0.9em;
+    color: #0000CC;
+    width: 50px;
+}
+#study-form ul{
+    list-style:none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+#study-form ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+#study-form ul li p {
+    display: inline-block;   
+}
+#study-form p {
+    margin: 10px 0 10px 0;
+    padding: 0;
+}
+#study-form p label{
+    margin: 10px;
+}
+#study-form textarea{
+    width: 70%;
+}
+.approve_notification{
+    color: #008B8B;
+    font-style: italic;
+    font-size: 1.1em;
+    vertical-align: bottom;
+}
+.nominalconcentration-form-buttons ul {
+    list-style:none;
+}
+.nominalconcentration-form-buttons ul li {
+    display: inline-block;
+    margin-left: 10px;
+}

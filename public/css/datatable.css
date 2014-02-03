@@ -22,62 +22,80 @@
 #datatable table tbody tr td{
     border: 1px solid #008B8B;
     vertical-align: top;
+    height: 35px;
 }
 #datatable table tbody tr .form-datatable-edit,
 #datatable table tbody tr .yui3-datatable-col-edit{
     border: 0px none;
-    width: 10%;
+    display: none;
+    min-width: 50px;
+}
+
+#datatable table tbody tr .yui3-datatable-col-edit a{
+    float: left;
 }
 #datatable table tbody tr td input[type=submit]{
     height: 16px;
     width: 16px;
-    background:url(http://cilantroit.com/alae/maqueta/img/save.png) no-repeat top left;
-    display: inline-block;
+    background:url(../img/save.png) no-repeat top left;
+    float: left;
     border: 0 none;
 }
 #datatable table tbody tr .form-datatable-edit .form-datatable-new,
 #datatable table tbody tr .form-datatable-edit .form-datatable-add{
     height: 16px;
     width: 16px;
-    background:url(http://cilantroit.com/alae/maqueta/img/add.png) no-repeat top left;
-    display: inline-block;
+    background:url(../img/add.png) no-repeat top left;
+    float: left;
 }
 #datatable table tbody tr .form-datatable-edit .form-download-excel{
     height: 16px;
     width: 16px;
     background:url(../img/xls.png) no-repeat top left;
-    display: inline-block;
+    float: left;
 }
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-reject{
     height: 16px;
     width: 16px;
     background:url(../img/reject.png) no-repeat top left;
-    display: inline-block;
+    float: left;
 }
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-approve{
     height: 16px;
     width: 16px;
     background:url(../img/approve.png) no-repeat top left;
-    display: inline-block;
+    float: left;
 }
 #datatable table tbody tr .form-datatable-edit .form-download-pdf{
     height: 16px;
     width: 16px;
     background:url(http://cilantroit.com/alae/maqueta/img/pdf.png) no-repeat top left;
-    display: inline-block;
+    float: left;
 }
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-delete,
 #datatable table tbody tr .form-datatable-edit .form-datatable-remove{
     height: 16px;
     width: 16px;
-    background:url(http://cilantroit.com/alae/maqueta/img/del.png) no-repeat top left;
-    display: inline-block;
+    background:url(../img/del.png) no-repeat top left;
+    float: left;
 }
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-change{
     height: 16px;
     width: 16px;
-    background:url(http://cilantroit.com/alae/maqueta/img/edit.png) no-repeat top left;
-    display: inline-block;
+    background:url(../img/edit.png) no-repeat top left;
+    float: left;
+}
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-nominal{
+    height: 16px;
+    width: 16px;
+    background:url(../img/no.png) no-repeat top left;
+    float: left;
+}
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-batch{
+    height: 16px;
+    width: 16px;
+    background:url(../img/batch.png) no-repeat top left;
+    float: left;
 }
 #datatable table tbody tr td input[type=text]{
     height: 1.8em;
@@ -93,7 +111,7 @@
 #datatable table thead .yui3-datatable-col-edit{ display:none; }
 #datatable .yui3-datatable-message .yui3-datatable-filter,
 .form-datatable-select{
-    height: 2em;
+    height: 35px;
     border: 1px solid #008B8B;
     width: 100%;
     background-color: #FFFFCC;
@@ -114,14 +132,13 @@
 #datatable .form-datatable-add,
 #datatable .form-datatable-add-block .form-datatable-remove,
 #yui3-datatable-filter-use,
+#yui3-datatable-filter-valid_flag,
+#yui3-datatable-filter-modify,
+#yui3-datatable-filter-accepted_flag,
 #analyte,
 #analyte_is,
 #unit
 { display:none; }
-.container
-{
-    margin: 25px;
-}
 .error{
     border: 1px solid red !important;
     color: red !important;
@@ -155,7 +172,7 @@
     filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);    
 }
 .btn:hover{
     color: #333333;
@@ -180,3 +197,31 @@
     display: inline-block;
     vertical-align: middle;
 }
+.btn-lock{
+    background: url(../img/lock.png) no-repeat left;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#datatable .btn{
+    height: 30px;
+}
+
+#parameter-index .administrador tbody tr .yui3-datatable-col-edit,
+#parameter-index .administrador tbody tr .form-datatable-edit,
+#study-index .administrador tbody tr .yui3-datatable-col-edit,
+#study-index .administrador tbody tr .form-datatable-edit,
+#study-index .director_estudio tbody tr .yui3-datatable-col-edit,
+#study-index .director_estudio tbody tr .form-datatable-edit,
+#create-analyte .administrador tbody tr .yui3-datatable-col-edit,
+#create-analyte .administrador tbody tr .form-datatable-edit,
+#create-analyte .sustancias tbody tr .yui3-datatable-col-edit,
+#create-analyte .sustancias tbody tr .form-datatable-edit,
+#edit-study .datatable-form-edit .administrador tbody tr .yui3-datatable-col-edit,
+#edit-study .datatable-form-edit .administrador tbody tr .form-datatable-edit,
+#edit-study .datatable-form-edit .director_estudio tbody tr .yui3-datatable-col-edit,
+#edit-study .datatable-form-edit .director_estudio tbody tr .form-datatable-editt{
+    display: block;
+}   
+

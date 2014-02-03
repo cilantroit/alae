@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS alae_study(
 	observation 		text,
 	close_flag		boolean			NOT NULL DEFAULT 0,
         status  		boolean			NOT NULL DEFAULT 1,
+        duplicate		boolean			NOT NULL DEFAULT 0,
 	fk_user			bigint(20)		unsigned NOT NULL,
         fk_dilution_tree 	bigint(20)		NOT NULL DEFAULT 1,
 	PRIMARY KEY (pk_study),
@@ -319,11 +320,11 @@ INSERT INTO alae_parameter (rule, verification, min_value, max_value, code_error
 ('V24','Fuera rango recta truncada ( F )',0,0,'F','V24 - FUERA DE RANGO/RECTA TRUNCADA', 1);
 
 INSERT INTO alae_parameter (rule, verification, min_value, max_value, code_error, message_error, type_param, fk_user) VALUES
-('V12',	null, 0, 0, 'O', 'V12 - No cumple S/N', 0, 1),
-('V12',	null, 0, 0, 'F', 'V12 - Recta truncada al CS2', 0, 1),
-('V12',	null, 0, 0, 'O', 'V12 - Recta truncada al CS7', 0, 1),
-('V12',	null, 0, 0, 'A', 'V12 - Muestra perdida durante la extracción', 0, 1),
-('V12',	null, 0, 0, 'B', 'V12 - Error de extracción', 0, 1),
-('V12',	null, 0, 0, 'C', 'V12 - Problemas de cromatografía', 0, 1),
-('V12',	null, 0, 0, 'D', 'V12 - Fallos técnicos de equipos / software', 0, 1),
-('V12',	null, 0, 0, null, 'V12 - Use Record Erróneo', 0, 1);
+('V12.1',	null, 0, 0, 'O', 'V12 - No cumple S/N', 0, 1),
+('V12.2',	null, 0, 0, 'F', 'V12 - Recta truncada al CS2', 0, 1),
+('V12.3',	null, 0, 0, 'O', 'V12 - Recta truncada al CS7', 0, 1),
+('V12.4',	null, 0, 0, 'A', 'V12 - Muestra perdida durante la extracción', 0, 1),
+('V12.5',	null, 0, 0, 'B', 'V12 - Error de extracción', 0, 1),
+('V12.6',	null, 0, 0, 'C', 'V12 - Problemas de cromatografía', 0, 1),
+('V12.7',	null, 0, 0, 'D', 'V12 - Fallos técnicos de equipos / software', 0, 1),
+('V12.8',	null, 0, 0, null, 'V12 - Use Record Erróneo', 0, 1);

@@ -174,7 +174,7 @@ class Datatable
                 array("key" => "unit", "label" => "Unidades", "sortable" => false),
                 array("key" => "is", "label" => "% var IS", "sortable" => true, "allowHTML" => true),
                 array("key" => "use", "label" => "usar", "sortable" => false, "allowHTML" => true, "formatter" => '{value}'),
-                array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/nominalconcentration/{value}">no</a><a href="' . $this->_base_url . '/batch/list/{value}">ve</a><span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
+                array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/nominalconcentration/{value}"><span class="form-datatable-nominal"></span></a><a href="' . $this->_base_url . '/batch/list/{value}"><span class="form-datatable-batch"></span></a><span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
             )),
             "editable" => json_encode(array("analyte_is", "cs_number", "qc_number", "unit", "is", "use")),
             "header"   => json_encode($header),
@@ -200,9 +200,9 @@ class Datatable
                 array("key" => "accepted_flag", "label" => "Válido ADM", "sortable" => true),
                 array("key" => "justification", "label" => "Justificar Modificación", "sortable" => false)
             )),
-            "editable" => 0,
+            "editable" => json_encode(array("accepted_flag", "justification")),
             "header"   => json_encode($header),
-            "filters"  => ""
+            "filters"  => $this->getFilters($header)
         );
     }
 
@@ -219,7 +219,7 @@ class Datatable
                 array("key" => "accuracy", "label" => "Accuracy", "sortable" => true),
                 array("key" => "use_record", "label" => "Use Record", "sortable" => true),
                 array("key" => "reason", "label" => "Motivo del rechazo", "sortable" => false, "allowHTML" => true),
-                array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-change" onclick="changeElement(this, {value});"></span><input value="" type="submit"/>')
+                array("key" => "edit", "allowHTML" => true, "formatter" => '<input value="" type="submit"/>')
             )),
             "editable" => 0,
             "header"   => json_encode($header),
@@ -289,6 +289,9 @@ class Datatable
 		break;
             case Datatable::DATATABLE_ANASTUDY:
                 $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+                break;
+            case Datatable::DATATABLE_BATCH:
+                $elements = '<input value="" type="submit"/>';
                 break;
         }
 

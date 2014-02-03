@@ -215,7 +215,7 @@ class AnalyteStudy
 
     public function getUpdatedAt()
     {
-        return $this->updatedAt;
+        return $this->updatedAt->format('Y-m-d H:i:s');
     }
 
     public function setUpdatedAt(\DateTime $updatedAt)

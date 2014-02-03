@@ -72,6 +72,13 @@ class Study
     protected $status = '0';
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="duplicate", type="boolean", nullable=false)
+     */
+    protected $duplicate = '0';
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="fk_dilution_tree", type="bigint", nullable=false)
@@ -125,7 +132,7 @@ class Study
 
     public function getUpdatedAt()
     {
-        return $this->updatedAt;
+        return $this->updatedAt->format('Y-m-d H:i:s');
     }
 
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -171,6 +178,16 @@ class Study
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    public function getDuplicate()
+    {
+        return $this->duplicate;
+    }
+
+    public function setDuplicate($duplicate)
+    {
+        $this->duplicate = $duplicate;
     }
 
     public function getFkDilutionTree()

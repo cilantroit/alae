@@ -64,10 +64,10 @@ class User extends \Alae\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'pkUser', 'name', 'username', 'email', 'password', 'activeCode', 'activeFlag', 'fkProfile');
+            return array('__isInitialized__', 'pkUser', 'name', 'username', 'email', 'password', 'activeCode', 'activeFlag', 'verification', 'fkProfile');
         }
 
-        return array('__isInitialized__', 'pkUser', 'name', 'username', 'email', 'password', 'activeCode', 'activeFlag', 'fkProfile');
+        return array('__isInitialized__', 'pkUser', 'name', 'username', 'email', 'password', 'activeCode', 'activeFlag', 'verification', 'fkProfile');
     }
 
     /**
@@ -351,6 +351,28 @@ class User extends \Alae\Entity\User implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFkProfile', array($fkProfile));
 
         return parent::setFkProfile($fkProfile);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getVerification()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getVerification', array());
+
+        return parent::getVerification();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setVerification()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setVerification', array());
+
+        return parent::setVerification();
     }
 
     /**

@@ -1,5 +1,6 @@
-<form id="datatable-form" action="#" method="POST">
+<form id="datatable-form" action="" method="POST">
     <div id="datatable"></div>
+    <input type="hidden" name="id" value="<?php echo $pkBatch; ?>"/>
 </form>
 <script>
     $("#datatable-form").validate();
@@ -12,4 +13,4 @@
     var editable = <?php echo $editable; ?>;
     var filtersHtml = '<?php echo $filters; ?>';
 </script>
-<script type="text/javascript" src="/alae/public/js/datatable.js"></script>
+<script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>

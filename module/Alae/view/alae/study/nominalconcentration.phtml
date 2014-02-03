@@ -1,27 +1,32 @@
-<div>
+<div id="logo">
+    <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
+</div>
+<div id="cerrar">
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/study/edit/' . $AnaStudy->getFkStudy()->getPkStudy(); ?>">cerrar ficha</a>]&nbsp;
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
+</div>
+<div id="<?php echo str_replace(" ", "_", strtolower($User->getFkProfile()->getName())) ?>">
     <div id="encab">
         <h2><?php echo $AnaStudy->getFkStudy()->getCode(); ?></h2>
     </div>
     <form id="nominalconcentration-form" action="" method="POST">
-        <div id="top">
+        <div class="nominalconcentration-form-buttons">
             <ul>
+                <?php if ($AnaStudy->getStatus() && $User->isAdministrador()) : ?>
                 <li>
-                    <!-- Guardar Perfil Laboratorio, Director de Estudio y Administrador -->
+                    <button class="btn" type="button" onclick="changeStatus('/study/unlock', <?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-reject"></span>desbloquear</button>
+                </li>
+                <li>
+                    <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $AnaStudy->getFkUser()->getUsername(), $AnaStudy->getFkUser()->getFkProfile()->getname(), $AnaStudy->getUpdatedAt()); ?></p>
+                </li>
+                <?php endif; ?>
+                <?php if(!$AnaStudy->getStatus() && ($User->isAdministrador() || $User->isDirectorEstudio())) : ?>
+                <li>
                     <input type="submit" class="btn" value="guardar" />
                 </li>
-                <?php if ($AnaStudy->getStatus()) : ?>
-                    <li>
-                        <!-- Validar Perfil Director de Estudio y Administrador -->
-                                <button id="desbloquear" class="btn" type="button"><img src="img/unlock.png">desbloquear</button>
-                        </li>
-                <?php else : ?>
-                    <li>
-                        <!-- Desbloquear Perfil  Administrador -->
-                                <button id="validar" class="btn" type="button"><img src="img/validar.png"> aprobar</button>
-                        </li>
-                    <li>
-                        <p>aprobado por: Nombre Usuario (Director de Estudio). dd/mmm/aaaa hh:mm</p>
-                    </li>
+                <li>
+                    <button class="btn" type="button" onclick="changeStatus('/study/approvenc',<?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-validate"></span>aprobar</button>
+                </li>
                 <?php endif; ?>
             </ul>
             <p>Arbol de Dilución: (1)</p>
@@ -33,7 +38,7 @@
                 <?php for ($i = 0; $i < $AnaStudy->getCsNumber(); $i++) : ?>
                     <li>
                         <label>CS<?php echo $i + 1; ?>*</label>
-                        <input type="text" value="<?php echo isset($cs_number[$i]) ? $cs_number[$i] : ""; ?>" name="cs_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
+                        <input type="text" value="<?php echo isset($cs_number[$i]) ? $cs_number[$i] : ""; ?>" <?php echo $disabled; ?> name="cs_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -42,7 +47,7 @@
                 <?php for ($i = 0; $i < $AnaStudy->getQcNumber(); $i++) : ?>
                     <li>
                         <label>QC<?php echo $i + 1; ?>*</label>
-                        <input type="text" value="<?php echo isset($qc_number[$i]) ? $qc_number[$i] : ""; ?>" name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
+                        <input type="text" value="<?php echo isset($qc_number[$i]) ? $qc_number[$i] : ""; ?>" <?php echo $disabled; ?> name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -58,5 +63,28 @@
             regex: true
         });
         $("#nominalconcentration-form").validate();
+    </script>
+    <script>
+        function changeStatus(url, id)
+        {
+            $.ajax
+            ({
+                type: "GET",
+                dataType: "json",
+                url: basePath + url,
+                data: {id: id},
+                success: function(data)
+                {
+                    if (data.status)
+                    {
+                        location.reload();
+                    }
+                    else
+                    {
+                        alert(data.message);
+                    }
+                }
+            });
+        }
     </script>
 </div>
