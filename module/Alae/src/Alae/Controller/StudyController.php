@@ -108,6 +108,10 @@ class StudyController extends BaseController
                 $this->transactionError($error);
             }
         }
+
+        $viewModel = new ViewModel();
+        $viewModel->setVariable('user', $this->_getSession());
+        return $viewModel;
     }
 
     public function deleteanastudyAction()
@@ -402,11 +406,11 @@ class StudyController extends BaseController
         }
     }
 
-    public function downloadAction()
+    protected function download()
     {
         $data     = array();
         $data[]   = array("Código", "Descripción", "Fecha", "Nº Analitos", "Observaciones", "Cerrado (S/N)");
-        $elements = $this->getRepository()->findBy(array("status" => true));
+        $elements = $this->getRepository()->findAll();
 
         foreach ($elements as $study)
         {
@@ -421,12 +425,12 @@ class StudyController extends BaseController
             );
         }
 
-        return new JsonModel($data);
+        return json_encode($data);
     }
 
     public function excelAction()
     {
-        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/study/download", "listado_de_estudios");
+        \Alae\Service\Download::excel("listado_de_estudios", $this->download());
     }
 
     public function approveAction()

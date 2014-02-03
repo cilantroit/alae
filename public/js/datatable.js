@@ -91,6 +91,14 @@ function getInputs(filters) {
             $('#unit > select').attr("name", "create-" + value + "[" + createNumberIncr + "]");
             input += '<td>'+ $('#unit').html() +'</td>';
         }
+        else if (value == 'cs_number')
+        {
+            input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" class="datatable-class-' + value + '" value="8"/></td>';
+        }
+        else if (value == 'qc_number')
+        {
+            input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" class="datatable-class-' + value + '" value="4"/></td>';
+        }
         else{
             input += '<td><input ' + disabled + ' type="text" name="create-' + value + '[' + createNumberIncr + ']" class="datatable-class-' + value + '"/></td>';
         }

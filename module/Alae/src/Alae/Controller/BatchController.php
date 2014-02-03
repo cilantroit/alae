@@ -47,7 +47,7 @@ class BatchController extends BaseController
         return new ViewModel($datatable->getDatatable());
     }
 
-    public function downloadAction()
+    protected function download()
     {
         $data     = array();
         $data[]   = array("# Lote", "Nombre del archivo", "Importado el", "Motivo de descarte");
@@ -63,12 +63,12 @@ class BatchController extends BaseController
             );
         }
 
-        return new JsonModel($data);
+        return json_encode($data);
     }
 
     public function excelAction()
     {
-        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/batch/download", "lotes_sin_asignar");
+        \Alae\Service\Download::excel("lotes_sin_asignar", $this->download());
     }
 
     public function listAction()
@@ -146,7 +146,7 @@ class BatchController extends BaseController
 
         $datatable = new Datatable($data, Datatable::DATATABLE_BATCH);
         $viewModel = new ViewModel($datatable->getDatatable());
-        $viewModel->setVariable('pkAnalyteStudy', $AnaStudy->getPkAnalyteStudy());
+        $viewModel->setVariable('AnaStudy', $AnaStudy);
         return $viewModel;
     }
 }

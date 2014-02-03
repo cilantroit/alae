@@ -137,20 +137,6 @@ class AnalyteController extends BaseController
         return $viewModel;
     }
 
-    public function downloadAction()
-    {
-        $data   = array();
-        $data[] = array("Id", "Nombre Analito", "Abreviatura");
-        $elements = $this->getRepository()->findBy(array("status" => true));
-
-        foreach ($elements as $analyte)
-        {
-            $data[] = array($analyte->getPkAnalyte(), $analyte->getName(), $analyte->getShortening());
-        }
-
-        return new JsonModel($data);
-    }
-
     public function deleteAction()
     {
         $request = $this->getRequest();
@@ -206,13 +192,27 @@ class AnalyteController extends BaseController
         }
     }
 
+    protected function download()
+    {
+        $data   = array();
+        $data[] = array("Id", "Nombre Analito", "Abreviatura");
+        $elements = $this->getRepository()->findBy(array("status" => true));
+
+        foreach ($elements as $analyte)
+        {
+            $data[] = array($analyte->getPkAnalyte(), $analyte->getName(), $analyte->getShortening());
+        }
+
+        return json_encode($data);
+    }
+
     public function excelAction()
     {
-        \Alae\Service\Download::excel(\Alae\Service\Helper::getVarsConfig("base_url") . "/analyte/download", "listado_de_analitos");
+        \Alae\Service\Download::excel("listado_de_analitos", $this->download());
     }
 
     public function pdfAction()
     {
-        \Alae\Service\Download::pdf(\Alae\Service\Helper::getVarsConfig("base_url") . "/analyte/download", "listado_de_analitos");
+        \Alae\Service\Download::pdf("listado_de_analitos", $this->download());
     }
 }

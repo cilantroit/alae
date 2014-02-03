@@ -1,3 +1,10 @@
+<div id="logo">
+    <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
+</div>
+<div id="cerrar">
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/study/index' ?>">cerrar ficha</a>]&nbsp;
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
+</div>
 <div id="cuerpo">
     <div id="encab">
         <h2>ficha del estudio</h2>
@@ -11,6 +18,9 @@
                     <input type="text" name="code" <?php echo $disabled; ?> value="<?php echo $study->getCode(); ?>">
                 </li>
                 <li>
+                    <p>Fecha creación: <?php echo $study->getCreatedAt(); ?></p>
+                </li>
+                <li>
                     <p>Arbol de Dilución: </p>
                     <select <?php echo $disabled; ?> name="dilution_tree">
                         <option>1</option>
@@ -21,7 +31,7 @@
                 </li>
                 <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
                 <li>
-                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>)"><span class="btn-reject"></span>cerrar estudio</button>
+                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>)"><span class="btn-lock"></span> cerrar estudio</button>
                 </li>
                 <?php endif; ?>
             </ul>

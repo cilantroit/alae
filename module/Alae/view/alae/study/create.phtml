@@ -1,26 +1,42 @@
+<div id="logo">
+    <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
+</div>
+<div id="cerrar">
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
+</div>
 <div id="cuerpo" style="height:77%;">
     <div id="encab">
         <h2>ficha del estudio</h2>
     </div>
     <div id="top" style="font-size:0.85em;">
-        <form id="study-form" action="#" method="POST">
-            <h3>Datos Generales del Estudio</h3>
-            <p><label>Código:</label>
-                <input type="text" name="code">
-                <label>Arbol de Dilución:</label>
-                <select name="dilution_tree">
-                    <option>1</option>
-                </select>
-            </p>
+        <form id="study-form" action="" method="POST">
+            <ul>
+                <li>
+                    <p>Código: </p>
+                    <input type="text" name="code" value="">
+                </li>
+                <li>
+                    <p>Arbol de Dilución: </p>
+                    <select name="dilution_tree">
+                        <option>1</option>
+                    </select>
+                </li>
+            </ul>
             <p>
                 <label>Descripción:</label>
-                <textarea name="description"></textarea>
+                <textarea name="description" rows="2" cols="50"></textarea>
             </p>
             <p>
                 <label>Observaciones:</label>
-                <textarea name="observation"></textarea>
-                <input type="submit" class="btn" value="guardar" />
+                <textarea name="observation" rows="2" cols="50"></textarea>
             </p>
+            <ul>
+                <?php if ($user->isAdministrador() || $user->isDirectorEstudio()) : ?>
+                    <li>
+                        <input type="submit" class="btn" value="guardar" />
+                    </li>
+                <?php endif; ?>
+            </ul>
         </form>
     </div>
 </div>

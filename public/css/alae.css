@@ -1,14 +1,5 @@
 
-body {margin:20px; font:100.1%/1.1 Verdana, Arial, Helvetica, sans-serif; background-color:#eee; }
-h1 {font: Tahoma, Arial;color:#008B8B; font-size: 2em;text-align:left;}
-h2 {
-    font: 'Century Gothic', Tahoma, Helvetica;
-    color: #008B8B;
-    font-size: 1.8em;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;}
-h3 {color:#838c98; font-size: 1em;}
-h4 {background-color:#008B8B; color:#fff; font-size: 1.1em; margin:0; line-height:1.6em; text-align:center;}
+
 img.vinculo {border:1px solid #EEE; width:155px; height:100px;}
 a {text-decoration: none; }
 a:link,
@@ -145,8 +136,7 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 #centrado ul {text-indent:0px;text-align: left;list-style-image:url('../img/xls.png'); outline: solid 1px #008B8B; font-size: 0.9em;  }
 #centrado li {margin: 0 10px 0 10px;}
 
-#pie{ margin:0 auto; bottom:1%; border-top:1px solid #ccc; margin-top: 40px; }
-#pie p{font-size: 0.8em; margin: 5px; line-height: 1.5em; color: #666;}
+
 
 .centro{text-align:center;}
 .izq{text-align:left;}
@@ -157,13 +147,53 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 #contenedor ul li { display: inline-block; margin: 5px; }
 
 /************Nuevo***************/
-
-.nominalconcentration-form-buttons ul {
-    list-style:none;
+body {
+    margin:20px; 
+    font:100.1%/1.1 Verdana, Arial, Helvetica, sans-serif; 
+    background-color:#eee; 
+    min-height: 700px;
+    position: relative;
+    min-width: 1000px;
+    padding-top: 60px;
 }
-.nominalconcentration-form-buttons ul li {
-    display: inline-block;
-    margin-left: 10px;
+h1 {
+    font: Tahoma, Arial;
+    color:#008B8B; 
+    font-size: 2em;
+    text-align:left;
+}
+h2 {
+    font: 'Century Gothic', Tahoma, Helvetica;
+    color: #008B8B;
+    font-size: 1.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;}
+h3 {color:#838c98; font-size: 1em;}
+h4 {background-color:#008B8B; color:#fff; font-size: 1.1em; margin:0; line-height:1.6em; text-align:center;}
+h5{
+    background-color: #1DD300;
+    color: #fff;
+    font-size: 1.1em;
+    margin: 0;
+    line-height: 35px;
+    text-align: center;
+}
+#pie{
+    border-top: 1px solid #ccc;
+    margin-top: 10px;
+    position: absolute;
+    bottom: 0;
+    width: 98%;
+}
+#container {
+    margin: 20px;
+    width: 98%;
+}
+#pie p{
+    font-size: 0.8em; 
+    margin: 5px; 
+    line-height: 1.5em; 
+    color: #666;
 }
 #director_estudio .nominalconcentration-form-buttons,
 #administrador .nominalconcentration-form-buttons{
@@ -202,7 +232,7 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
     display: inline-block;   
 }
 #study-form p {
-    margin: 0;
+    margin: 10px 0 10px 0;
     padding: 0;
 }
 #study-form p label{
@@ -217,11 +247,10 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
     font-size: 1.1em;
     vertical-align: bottom;
 }
-h5{
-    background-color: #1DD300;
-    color: #fff;
-    font-size: 1.1em;
-    margin: 0;
-    line-height: 35px;
-    text-align: center;
+.nominalconcentration-form-buttons ul {
+    list-style:none;
+}
+.nominalconcentration-form-buttons ul li {
+    display: inline-block;
+    margin-left: 10px;
 }

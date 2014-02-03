@@ -139,10 +139,6 @@
 #analyte_is,
 #unit
 { display:none; }
-.container
-{
-    margin: 25px;
-}
 .error{
     border: 1px solid red !important;
     color: red !important;
@@ -201,11 +197,19 @@
     display: inline-block;
     vertical-align: middle;
 }
+.btn-lock{
+    background: url(../img/lock.png) no-repeat left;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+}
 #datatable .btn{
     height: 30px;
 }
 
 #parameter-index .administrador tbody tr .yui3-datatable-col-edit,
+#parameter-index .administrador tbody tr .form-datatable-edit,
 #study-index .administrador tbody tr .yui3-datatable-col-edit,
 #study-index .administrador tbody tr .form-datatable-edit,
 #study-index .director_estudio tbody tr .yui3-datatable-col-edit,
