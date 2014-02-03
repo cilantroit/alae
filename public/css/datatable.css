@@ -207,9 +207,13 @@
 
 #parameter-index .administrador tbody tr .yui3-datatable-col-edit,
 #study-index .administrador tbody tr .yui3-datatable-col-edit,
+#study-index .administrador tbody tr .form-datatable-edit,
 #study-index .director_estudio tbody tr .yui3-datatable-col-edit,
+#study-index .director_estudio tbody tr .form-datatable-edit,
 #create-analyte .administrador tbody tr .yui3-datatable-col-edit,
+#create-analyte .administrador tbody tr .form-datatable-edit,
 #create-analyte .sustancias tbody tr .yui3-datatable-col-edit,
+#create-analyte .sustancias tbody tr .form-datatable-edit,
 #edit-study .datatable-form-edit .administrador tbody tr .yui3-datatable-col-edit,
 #edit-study .datatable-form-edit .administrador tbody tr .form-datatable-edit,
 #edit-study .datatable-form-edit .director_estudio tbody tr .yui3-datatable-col-edit,
