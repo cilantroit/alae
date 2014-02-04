@@ -9,6 +9,7 @@
         <h2>ficha del estudio</h2>
     </div>
     <div id="top" style="font-size:0.85em;">
+        <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
         <form id="study-form" action="" method="POST">
             <ul>
                 <li>
@@ -45,10 +46,28 @@
         return this.optional(element) || /^[A-Z0-9]+(\-[0-9]+)?$/.test(value);
     }, "Please enter a valid Rule");
     $("#study-form").validate({
-        rules:{
+        rules: {
             code: {
                 required: true,
                 regex: true
+            }
+        },
+        messages: {
+            code: {
+                required: "El campo <strong>Código</strong> es requerido",
+                regex: "Por favor, ingreso un <strong>Código</strong> válido. Ejm: ANE2013-1234"
+            }
+        },
+        errorLabelContainer: "#errorBox",
+        wrapper: "li",
+        submitHandler: function(form){
+            answer = confirm("¿Desea guardar los cambios?");
+            if (answer === true){
+                form.submit();
+                return true;
+            }
+            else{
+                return false;
             }
         }
     });

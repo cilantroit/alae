@@ -64,10 +64,10 @@ class Study extends \Alae\Entity\Study implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'duplicate', 'fkDilutionTree', 'fkUser');
+            return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'approve', 'duplicate', 'fkDilutionTree', 'fkUser');
         }
 
-        return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'duplicate', 'fkDilutionTree', 'fkUser');
+        return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'approve', 'duplicate', 'fkDilutionTree', 'fkUser');
     }
 
     /**
@@ -351,6 +351,28 @@ class Study extends \Alae\Entity\Study implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStatus', array($status));
 
         return parent::setStatus($status);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getApprove()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getApprove', array());
+
+        return parent::getApprove();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setApprove($approve)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setApprove', array($approve));
+
+        return parent::setApprove($approve);
     }
 
     /**

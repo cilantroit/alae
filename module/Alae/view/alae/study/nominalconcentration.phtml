@@ -62,29 +62,44 @@
             required: true,
             regex: true
         });
-        $("#nominalconcentration-form").validate();
+        $("#nominalconcentration-form").validate({
+            submitHandler: function(form){
+                answer = confirm("¿Desea guardar los cambios?");
+                if (answer === true){
+                    form.submit();
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        });
     </script>
     <script>
         function changeStatus(url, id)
         {
-            $.ajax
-            ({
-                type: "GET",
-                dataType: "json",
-                url: basePath + url,
-                data: {id: id},
-                success: function(data)
-                {
-                    if (data.status)
+            answer = confirm('¿Desea aprobar las concentraciones nominales?');
+            if (answer === true)
+            {
+                $.ajax
+                ({
+                    type: "GET",
+                    dataType: "json",
+                    url: basePath + url,
+                    data: {id: id},
+                    success: function(data)
                     {
-                        location.reload();
+                        if (data.status)
+                        {
+                            location.reload();
+                        }
+                        else
+                        {
+                            alert(data.message);
+                        }
                     }
-                    else
-                    {
-                        alert(data.message);
-                    }
-                }
-            });
+                });
+            }
         }
     </script>
 </div>

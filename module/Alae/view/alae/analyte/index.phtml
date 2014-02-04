@@ -18,7 +18,18 @@
         jQuery.validator.addClassRules('datatable-class-shortname', {
             required: true
         });
-        $("#datatable-form").validate();
+        $("#datatable-form").validate({
+            submitHandler: function(form){
+                answer = confirm("¿Desea guardar los cambios?");
+                if (answer === true){
+                    form.submit();
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        });
     </script>
     <script>
         var createNumberIncr = 0;

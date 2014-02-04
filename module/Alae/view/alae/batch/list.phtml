@@ -5,19 +5,30 @@
     [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/study/edit/' . $AnaStudy->getFkStudy()->getPkStudy(); ?>">cerrar ficha</a>]&nbsp;
     [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
 </div>
-<div>
+<div id="batch-list">
     <div id="encab">
         <h2>ESTUDIO <?php echo $AnaStudy->getFkStudy()->getCode() ?></h2>
     </div>
     <form id="datatable-form" action="" method="POST">
-        <div id="datatable"></div>
+        <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
         <input type="hidden" name="id" value="<?php echo $AnaStudy->getPkAnalyteStudy(); ?>"/>
     </form>
     <script>
         jQuery.validator.addClassRules('datatable-class-justification', {
             required: true
         });
-        $("#datatable-form").validate();
+        $("#datatable-form").validate({
+            submitHandler: function(form){
+                var answer = confirm("¿Desea guardar los cambios?");
+                if (answer === true){
+                    form.submit();
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        });
     </script>
     <script>
         var createNumberIncr = 0;

@@ -107,72 +107,127 @@ function getInputs(filters) {
     return input + '</tr>';
 }
 
-function changeElement(element, pk) {
-    var parentId = '#' + $(element).parent().parent().attr('id');
-    var input = '';
+function changeElement(element, pk) 
+{    
+    var answer = confirm("¿Desea editar esta información?");
+    if (answer === true)
+    {
+        var parentId = '#' + $(element).parent().parent().attr('id');
+        var input = '';
 
-    $.each(editable, function(key, value) {
-        if (value == "use"){
-            $(parentId + ' .yui3-datatable-col-' + value + ' > input').prop('disabled',false);
-            $(parentId + ' .yui3-datatable-col-' + value + ' > input').attr("name", "update-" + value + "[" + pk + "]");
-        }
-        else if (value == 'analyte_is')
-        {
-            $('#analyte_is > select').attr("name", "update-" + value + "[" + pk + "]");
-            input = $('#analyte_is').html();
-            $(parentId + ' .yui3-datatable-col-' + value).html(input);
-        }
-        else if (value == 'unit')
-        {
-            $('#unit > select').attr("name", "update-" + value + "[" + pk + "]");
-            input = $('#unit').html();
-            $(parentId + ' .yui3-datatable-col-' + value).html(input);
-        }
-        else if (value == 'accepted_flag')
-        {
-            var response = 1; 
-            $(element).attr("disabled", true);
-            alert($(element).children().attr('class'));
-            if ($(element).children().attr('class') == "btn-reject") 
-            {
-                response = 0;
+        $.each(editable, function(key, value) {
+            if (value == "use"){
+                $(parentId + ' .yui3-datatable-col-' + value + ' > input').prop('disabled',false);
+                $(parentId + ' .yui3-datatable-col-' + value + ' > input').attr("name", "update-" + value + "[" + pk + "]");
             }
-            input = '<input type="hidden" value="' + response + '" name="update-' + value + '[' + pk + ']"/>';
-            $(parentId + ' .yui3-datatable-col-' + value).html(input);
-        }
-        else{
-            input = '<input class="datatable-class-' + value + '" type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" name="update-' + value + '[' + pk + ']"/>';
-            $(parentId + ' .yui3-datatable-col-' + value).html(input);
-        }
-    });
+            else if (value == 'analyte_is')
+            {
+                $('#analyte_is > select').attr("name", "update-" + value + "[" + pk + "]");
+                input = $('#analyte_is').html();
+                $(parentId + ' .yui3-datatable-col-' + value).html(input);
+            }
+            else if (value == 'unit')
+            {
+                $('#unit > select').attr("name", "update-" + value + "[" + pk + "]");
+                input = $('#unit').html();
+                $(parentId + ' .yui3-datatable-col-' + value).html(input);
+            }
+            else if (value == 'accepted_flag')
+            {
+                var response = 1; 
+                $(element).attr("disabled", true);
+                if ($(element).children().attr('class') == "btn-reject") 
+                {
+                    response = 0;
+                }
+                input = $(parentId + ' .yui3-datatable-col-' + value).html() + '<input type="hidden" value="' + response + '" name="update-' + value + '[' + pk + ']"/>';
+                $(parentId + ' .yui3-datatable-col-' + value).html(input);
+            }
+            else{
+                input = '<input class="datatable-class-' + value + '" type="text" value="' + $(parentId + ' .yui3-datatable-col-' + value).html() + '" name="update-' + value + '[' + pk + ']"/>';
+                $(parentId + ' .yui3-datatable-col-' + value).html(input);
+            }
+        });
+    }
+    else{
+        return false;
+    }
 }
 
 function removeElement(element, pk)
 {
-    $.ajax({
-	type: "GET",
-	dataType: "json",
-	url: deleteUrl,
-	data: {pk: pk},
-	success: function(data) {
-	    if (data.status) {
-		$(element).parent().parent().remove();
-		$("#yui3-datatable-filter-id option").each(function() {
-		    if ($(this).text() == pk) {
-			$(".yui3-datatable-filter option[value='" + $(this).val() + "']").remove();
-		    }
-		});
-
-		$.each(data, function(key, value) {
-		    if (value.id == pk) {
-			delete data[key];
-			table.removeRow(value.id);
-		    }
-		});
-	    } else {
-		alert(data.message);
-	    }
-	}
-    });
+    var answer = confirm("¿Desea eliminar este dato?");
+    if (answer === true)
+    {
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: deleteUrl,
+            data: {pk: pk},
+            success: function(data) {
+                if (data.status) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            }
+        });
+    }
+    else{
+        return false;
+    }
 }
 
+function excel(id)
+{    
+    switch(id)
+    {
+        case 1:
+            var name = "listado_de_analitos";
+            break;
+        case 2:
+            var name = "listado_de_estudios";
+            break;
+        case 3:
+            var name = "parametros_de_verificacion_de_lotes";
+            break;
+        case 4:
+            var name = "codigos_no_automatizables";
+            break;
+        case 5:
+            var name = "lotes_sin_asignar";
+            break;
+        case 6:
+            var name = "listado_de_usuarios";
+            break;
+        default:
+            var name = "listado";
+            break;
+    }
+    
+    var headers = '';
+    $(".yui3-datatable-columns tr").each(function (index) {
+         headers += '<tr>';
+         $(this).children("th").each(function (index2) {
+            if($(this).children("div").is(':visible')){
+                headers += '<th>'+$(this).children("div").text()+'</th>';
+            }
+         });
+         headers += '</tr>';
+     });
+
+    var rows = '';
+     $(".yui3-datatable-data tr").each(function (index) {
+         if($(this).is(':visible'))
+         {
+            rows += '<tr>';
+            $(this).children("td").each(function (index2) {
+                rows += '<td>'+$(this).text()+'</td>';
+            });
+            rows += '</tr>';
+         }
+     });
+
+    var content = '<table><thead>'+headers+'</thead><tbody>'+rows+'</tbody></table>';
+    window.open(basePath + '/excel.php?data=' + encodeURIComponent(content)+'&name='+name);
+}

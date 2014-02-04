@@ -32,7 +32,7 @@ class StudyController extends BaseController
     public function indexAction()
     {
         $data     = array();
-        $elements = $this->getRepository()->findAll();
+        $elements = $this->getRepository()->findBy(array("status" => true));
 
         foreach ($elements as $study)
         {
@@ -57,59 +57,70 @@ class StudyController extends BaseController
     public function createAction()
     {
         $request = $this->getRequest();
+        $viewModel = new ViewModel();
 
         if ($request->isPost())
         {
             $User = $this->_getSession();
+            $elements = $this->getRepository()->findBy(array("code" => $request->getPost('code')));
 
-            /*
-             * Creación de los datos básicos del estudio
-             */
-            try
+            if(count($elements) > 0)
             {
-                $Study = new \Alae\Entity\Study();
-                $Study->setCode($request->getPost('code'));
-                $Study->setDescription($request->getPost('description'));
-                $Study->setCreatedAt(new \DateTime('now'));
-                $Study->setObservation($request->getPost('observation'));
-                $Study->setFkDilutionTree($request->getPost('dilution_tree'));
-                $Study->setStatus(false);
-                $Study->setDuplicate(false);
-                $Study->setFkUser($User);
-                $this->getEntityManager()->persist($Study);
-                $this->getEntityManager()->flush();
-                $this->transaction(__METHOD__, sprintf("Ingreso del estudio #%s", $Study->getCode()), json_encode(array(
-                    "User"         => $User->getUsername(),
-                    "Code"         => $Study->getCode(),
-                    "Description"  => $Study->getDescription(),
-                    "Observation"  => $Study->getObservation(),
-                    "DilutionTree" => $Study->getFkDilutionTree()
-                )));
-                return $this->redirect()->toRoute('study', array(
-                            'controller' => 'study',
-                            'action'     => 'edit',
-                            'id'         => $Study->getPkStudy()
-                ));
+                $viewModel->setVariable('error', "<li>Este estudio ya existe. Intente con otro código, por favor<li>");
             }
-            catch (Exception $e)
+            else
             {
-                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
-                    "User"         => $User->getUsername(),
-                    "Code"         => $request->getPost('code'),
-                    "Description"  => $request->getPost('description'),
-                    "Observation"  => $request->getPost('observation'),
-                    "DilutionTree" => $request->getPost('dilution_tree')
-                )));
-                $error   = array(
-                    "description" => $message,
-                    "message"     => $e,
-                    "section"     => __METHOD__
-                );
-                $this->transactionError($error);
+                /*
+                 * Creación de los datos básicos del estudio
+                 */
+                try
+                {
+                    $Study = new \Alae\Entity\Study();
+                    $Study->setCode($request->getPost('code'));
+                    $Study->setDescription($request->getPost('description'));
+                    $Study->setCreatedAt(new \DateTime('now'));
+                    $Study->setObservation($request->getPost('observation'));
+                    $Study->setFkDilutionTree($request->getPost('dilution_tree'));
+                    $Study->setStatus(true);
+                    $Study->setCloseFlag(false);
+                    $Study->setApprove(false);
+                    $Study->setDuplicate(false);
+                    $Study->setFkUser($User);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(__METHOD__, sprintf("Ingreso del estudio #%s", $Study->getCode()), json_encode(array(
+                        "User"         => $User->getUsername(),
+                        "Code"         => $Study->getCode(),
+                        "Description"  => $Study->getDescription(),
+                        "Observation"  => $Study->getObservation(),
+                        "DilutionTree" => $Study->getFkDilutionTree()
+                    )));
+                    return $this->redirect()->toRoute('study', array(
+                                'controller' => 'study',
+                                'action'     => 'edit',
+                                'id'         => $Study->getPkStudy()
+                    ));
+                }
+                catch (Exception $e)
+                {
+                    $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
+                        "User"         => $User->getUsername(),
+                        "Code"         => $request->getPost('code'),
+                        "Description"  => $request->getPost('description'),
+                        "Observation"  => $request->getPost('observation'),
+                        "DilutionTree" => $request->getPost('dilution_tree')
+                    )));
+                    $error   = array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    );
+                    $this->transactionError($error);
+                }
             }
         }
 
-        $viewModel = new ViewModel();
+
         $viewModel->setVariable('user', $this->_getSession());
         return $viewModel;
     }
@@ -171,38 +182,46 @@ class StudyController extends BaseController
              */
             if ($request->getPost('form') == 1)
             {
-                try
+                $elements = $this->getRepository()->findBy(array("code" => $request->getPost('code')));
+                if(count($elements) > 0)
                 {
-                    $Study->setCode($request->getPost('code'));
-                    $Study->setDescription($request->getPost('description'));
-                    $Study->setObservation($request->getPost('observation'));
-                    $Study->setFkDilutionTree($request->getPost('dilution_tree'));
-                    $Study->setFkUser($User);
-                    $this->getEntityManager()->persist($Study);
-                    $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("Ingreso del estudio #%s", $Study->getCode()), json_encode(array(
-                        "User"         => $User->getUsername(),
-                        "Code"         => $Study->getCode(),
-                        "Description"  => $Study->getDescription(),
-                        "Observation"  => $Study->getObservation(),
-                        "DilutionTree" => $Study->getFkDilutionTree()
-                    )));
+                    $error = "<li>Este estudio ya existe. Intente con otro código, por favor<li>";
                 }
-                catch (Exception $e)
+                else
                 {
-                    $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
-                        "User"         => $User->getUsername(),
-                        "Code"         => $request->getPost('code'),
-                        "Description"  => $request->getPost('description'),
-                        "Observation"  => $request->getPost('observation'),
-                        "DilutionTree" => $request->getPost('dilution_tree')
-                    )));
-                    $error   = array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    );
-                    $this->transactionError($error);
+                    try
+                    {
+                        $Study->setCode($request->getPost('code'));
+                        $Study->setDescription($request->getPost('description'));
+                        $Study->setObservation($request->getPost('observation'));
+                        $Study->setFkDilutionTree($request->getPost('dilution_tree'));
+                        $Study->setFkUser($User);
+                        $this->getEntityManager()->persist($Study);
+                        $this->getEntityManager()->flush();
+                        $this->transaction(__METHOD__, sprintf("Ingreso del estudio #%s", $Study->getCode()), json_encode(array(
+                            "User"         => $User->getUsername(),
+                            "Code"         => $Study->getCode(),
+                            "Description"  => $Study->getDescription(),
+                            "Observation"  => $Study->getObservation(),
+                            "DilutionTree" => $Study->getFkDilutionTree()
+                        )));
+                    }
+                    catch (Exception $e)
+                    {
+                        $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
+                            "User"         => $User->getUsername(),
+                            "Code"         => $request->getPost('code'),
+                            "Description"  => $request->getPost('description'),
+                            "Observation"  => $request->getPost('observation'),
+                            "DilutionTree" => $request->getPost('dilution_tree')
+                        )));
+                        $error   = array(
+                            "description" => $message,
+                            "message"     => $e,
+                            "section"     => __METHOD__
+                        );
+                        $this->transactionError($error);
+                    }
                 }
             }
 
@@ -361,6 +380,7 @@ class StudyController extends BaseController
         $datatable = new Datatable($data, Datatable::DATATABLE_ANASTUDY);
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('study', $Study);
+        $viewModel->setVariable('error', (isset($error) ? $error : ""));
         $viewModel->setVariable('analytes', $Analyte);
         $viewModel->setVariable('units', $Unit);
         $viewModel->setVariable('user', $this->_getSession());
@@ -383,7 +403,7 @@ class StudyController extends BaseController
                     $Study->setFkUser($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("Se ha descativado el estudio con código #%d", $Study->getCode()), json_encode(array(
+                    $this->transaction(__METHOD__, sprintf("Se ha desactivado el estudio con código #%d", $Study->getCode()), json_encode(array(
                         "User"        => $User->getUsername(),
                         "Code"        => $Study->getCode(),
                         "Description" => $Study->getDescription(),
@@ -446,7 +466,7 @@ class StudyController extends BaseController
                 try
                 {
                     $User = $this->_getSession();
-                    $Study->setStatus(true);
+                    $Study->setApprove(true);
                     $Study->setFkUser($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
@@ -532,7 +552,8 @@ class StudyController extends BaseController
                     $newStudy->setObservation($Study->getObservation());
                     $newStudy->setCode($Study->getCode(). count($studies));
                     $newStudy->setCloseFlag(false);
-                    $newStudy->setStatus(false);
+                    $newStudy->setStatus(true);
+                    $newStudy->setApprove(false);
                     $newStudy->setDuplicate(true);
                     $newStudy->setCreatedAt(new \DateTime('now'));
                     $newStudy->setFkUser($User);

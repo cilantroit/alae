@@ -147,6 +147,7 @@ class BatchController extends BaseController
         $datatable = new Datatable($data, Datatable::DATATABLE_BATCH);
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('AnaStudy', $AnaStudy);
+        $viewModel->setVariable('user', $this->_getSession());
         return $viewModel;
     }
 }
