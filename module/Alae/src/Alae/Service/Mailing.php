@@ -27,7 +27,7 @@ class Mailing
 	return $options;
     }
 
-    public function send($emails, $view)
+    public function send($emails, $view, $subject)
     {
 	$html = new MimePart($view);
 	$html->type = "text/html";
@@ -38,7 +38,7 @@ class Mailing
 	$message = new \Zend\Mail\Message();
 	$message->setBody($body);
 	$message->setFrom(Helper::getVarsConfig("mail_admin_email"));
-	$message->setSubject('Administrador de ALAE');
+	$message->setSubject($subject);
 
 	foreach ($emails as $email)
 	{

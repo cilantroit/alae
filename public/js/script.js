@@ -7,28 +7,35 @@ function inicio() {
 //	return this.optional(element) || /^(((([a-z][\.\-\+_]?)*)[a-z0-9])+)@anapharmeurope.com$/.test(value);
 //    }, "El formato del correo debe ser anapharmeurope");
 
+//    jQuery.validator.addMethod("email", function(value, element, params) {
+//	return this.optional(element) || /^(((([a-z][\.\-\+_]?)*)[a-z0-9])+)@cilantroit.com$/.test(value);
+//    }, "El formato del correo debe ser anapharmeurope");
+
     $("#newaccount").validate({
 	rules: {
 	    username: {
 		required: true
-			//customvalidation: true
-	    },
-	    email: {required: true,
-		email: true
-			//customemailvalidatorexist: true
 
+	    },
+	    email: {
+		required: true,
+//		email: true
 	    }
 	},
 	messages: {
 	    username: {
-		required: "Este campo es de uso oblogatorio"
-			//customvalidation: "hola",
+		required: "Este campo es de uso obligatorio",
 	    },
 	    email: {
-		required: "Este campo es de uso oblogatorio"
+		required: "Este campo es de uso oblgatorio"
 	    }
 
-	}
+	},
+	wrapper: "div",
+//	errorPlacement: function(label, elem) {
+//	    elem.closest("td").find(".errorBox").append(label);
+//	}
+//	errorLabelContainer: ".errorBox",
     });
 
 

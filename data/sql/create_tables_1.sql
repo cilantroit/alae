@@ -32,7 +32,8 @@ INSERT INTO alae_profile (name) VALUES
 	('Director Estudio'),
 	('UGC'),
 	('Administrador'),
-        ('Cron');
+        ('Cron'),
+	('Sin asignar');
 
 CREATE TABLE IF NOT EXISTS alae_user(
 	pk_user		bigint(20) 		unsigned NOT NULL auto_increment,

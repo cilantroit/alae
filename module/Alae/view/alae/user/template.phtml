@@ -9,17 +9,14 @@
 	<div id="cuerpo">
 	    <a href="../alae.html"><img src="img/alaelogo.png" width="400px"/></a>
 	    <div id="central" style="text-align:left; font-size:1.1em;">
-		<h4>Mail que le llegar&aacute; al nuevo usuario</h4>
-		<p><label>De:</label>Administrador de ALAE</p>
-		<p><label>Para:</label>[nombre de usuario] [correo@anapharmeurope.com]</p>
-		<p><label>Asunto:</label>Solicitud de Acceso a ALAE</p>
 		<hr/>
 		<blockquote>
 		    <p>Ha solicitado una cuenta en ALAE con el nombre de usuario: <br/>
 			<strong><?php echo $user; ?></strong>. </p>
 		    <p>Para completar el registro, <br/>
 			visite la siguiente URL e ingrese la contrase&ntilde;a que desee:</p>
-		    <a href="http://localhost/alae/public/user/register?active_code=   <?php echo $active_code ?> &email= <?php echo $email; ?>  ">formulario para indicar la contraseña. clicar aquí</a>;
+
+		    <a href="<?php $link ?>?active_code=   <?php echo $active_code ?> &email= <?php echo $email; ?>  ">formulario para indicar la contraseña. clicar aquí</a>;
 		    <blockquote>
 
 			<span class="peq">(formulario para indicar la contrase&ntilde;a.clica)</span>

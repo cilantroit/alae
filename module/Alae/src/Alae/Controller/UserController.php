@@ -33,10 +33,9 @@ class UserController extends BaseController
 	if ($request->isPost())
 	{
 	    $user = new \Alae\Entity\User();
-	    $email = $request->getPost('email');
-	    $username = $request->getPost('username');
-	    $findemail = $this->getRepository()->findBy(array('email' => $email));
-	    $findusername = $this->getRepository()->findBy(array('username' => $username));
+	    $findemail = $this->getRepository()->findBy(array('email' => $request->getPost('email')));
+	    $findusername = $this->getRepository()->findBy(array('username' => $request->getPost('username')));
+
 	    if (!empty($findusername))
 	    {
 		$message['usr'] = 'Este usuario ya existe';
@@ -47,20 +46,26 @@ class UserController extends BaseController
 	    }
 	    else
 	    {
+		$Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
 		$user->setUsername($request->getPost('username'));
 		$user->setEmail($request->getPost('email'));
-		//$password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
-		//$password = '3350';
+//		$password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
 		$password = '3350';
 		$user->setPassword($password);
 		$user->setActiveCode($password);
+		$user->setFkProfile($Profile[0]);
 		$this->getEntityManager()->persist($user);
 		$this->getEntityManager()->flush();
-
 		if ($user->getPkUser())
 		{
 		    $mail = new \Alae\Service\Mailing();
-		    $mail->send(array('daniel.farnos.e@gmail.com'), $this->render('alae/user/template_new_usr_sol', array('password' => $user->getPassword(), 'user' => $user->getUsername())));
+		    $Profile = $this->getRepository("\\Alae\\Entity\Profile")->findBy(array("name" => "Administrador"));
+		    $admins = $this->getRepository()->findBy(array("fkProfile" => $Profile));
+		    $subject = 'El Usuario ' . $user->getUsername() . ' a solicitado acceso';
+		    foreach ($admins as $Admin)
+		    {
+			$mail->send(array($Admin->getEmail()), $this->render('alae/user/template_new_usr_sol', array('password' => $user->getPassword(), 'user' => $user->getUsername())), $subject);
+		    }
 		}
 	    }
 	}
@@ -96,7 +101,9 @@ class UserController extends BaseController
 	}
 
 	$datatable = new Datatable($data, Datatable::DATATABLE_ADMIN);
-	return new ViewModel($datatable->getDatatable());
+	$viewModel = new ViewModel($datatable->getDatatable());
+	$viewModel->setVariable('user', $this->_getSession());
+	return $viewModel;
     }
 
     public function approveAction()
@@ -118,9 +125,10 @@ class UserController extends BaseController
 	    $this->getEntityManager()->persist($User);
 	    $this->getEntityManager()->flush();
 
+	    $subject = 'El Usuario ' . $user->getUsername() . ' a Solicitud de Acceso a ALAE';
 
 	    $mail = new \Alae\Service\Mailing();
-	    $mail->send(array($User->getEmail()), $this->render('alae/user/template', array('active_code' => $User->getActiveCode(), 'email' => $User->getEmail())));
+	    $mail->send(array($User->getEmail()), $this->render('alae/user/template', array('active_code' => $User->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/register', 'email' => $User->getEmail())), $subject);
 	    $jsonModel = new JsonModel();
 	    return $jsonModel;
 	}
@@ -201,17 +209,12 @@ class UserController extends BaseController
 	{
 	    $User = $this->getRepository()->find($request->getQuery('id'));
 	    $verification = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
-
-
+	    $subject = 'C&oacute;digo de verificaci&oacute;n';
 	    $User->setVerification($verification);
 	    $this->getEntityManager()->persist($User);
 	    $this->getEntityManager()->flush();
 	    $mail = new \Alae\Service\Mailing();
-	    $mail->send(array($User->getEmail()), $this->render('alae/user/template_verification', array('verification' => $verification, 'email' => $User->getEmail(), 'name' => $User->getEmail())));
-
-
-//	    $jsonModel = new JsonModel();
-//	    return $jsonModel;
+	    $mail->send(array($User->getEmail()), $this->render('alae/user/template_verification', array('verification' => $verification, 'email' => $User->getEmail(), 'name' => $User->getEmail())), $subject);
 	}
     }
 
@@ -230,7 +233,7 @@ class UserController extends BaseController
 		$this->getEntityManager()->persist($User[0]);
 		$this->getEntityManager()->flush();
 		$mail = new \Alae\Service\Mailing();
-		$mail->send(array('daniel.farnos.e@gmail.com'), $this->render('alae/user/template_reset_pass', array('active_code' => $User[0]->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 'username' => $User[0]->getName())));
+		$mail->send(array($User->getEmail()), $this->render('alae/user/template_reset_pass', array('active_code' => $User[0]->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 'username' => $User[0]->getName())));
 	    }
 	    else
 	    {
