@@ -107,7 +107,6 @@
     padding-left: 2px;
 }
 #datatable table tbody tr td{  padding: 2px; vertical-align: middle; }
-#datatable table tbody tr td label[class=error]{ display: none !important; }
 #datatable table thead .yui3-datatable-col-edit{ display:none; }
 #datatable .yui3-datatable-message .yui3-datatable-filter,
 .form-datatable-select{
@@ -139,10 +138,6 @@
 #analyte_is,
 #unit
 { display:none; }
-.error{
-    border: 1px solid red !important;
-    color: red !important;
-}
 .btn{
     color: #000000;
     display: inline-block;
@@ -206,6 +201,22 @@
 }
 #datatable .btn{
     height: 30px;
+}
+
+input[class=error]{
+    border: 1px solid red !important;
+    color: red !important;
+}
+#errorBox label{
+    color: red;
+}
+#errorBox ul{
+    margin: 20px 0;
+}
+#errorBox li{
+    padding-left: 1em; 
+    text-indent: -.7em;
+    color: red;
 }
 
 #parameter-index .administrador tbody tr .yui3-datatable-col-edit,
