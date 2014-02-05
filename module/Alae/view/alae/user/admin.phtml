@@ -1,87 +1,92 @@
-<div id="datatable">
-    <div id="cerrar">[  <a href="<?php echo $this->basePath() ?>/index/menu">regresar al menú</a>]</div>
-    <div id="cerrar">[  <a href="<?php echo $this->basePath() ?>/index/logout">logout</a>]</div>
-    <img src="<?php echo $this->basePath() . '/img/alaepeq.png' ?> "  title="volver a contenido" />
-    <div id="encab"><h2>administración de usuarios</h2></div>
+<div id="logo">
+    <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
 </div>
-<input type="hidden" id="profile" value=""/>
-<script>
-    var createNumberIncr = 0;
-    var data = <?php echo $data; ?>;
-    var filters = <?php echo $header; ?>;
-    var columns = <?php echo $columns; ?>;
-    var editable = <?php echo $editable; ?>;
-    var filtersHtml = '<?php echo $filters; ?>';
-    var profile = '';
-</script>
-<script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
-<script>
+<div id="cerrar">
+    [<a href="<?php echo $this->basePath() ?>/index/logout">logout</a>]&nbsp;
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
+</div>
+<div id="user-admin">
+    <div id="encab">
+        <h2>administración de usuarios</h2>
+    </div>
+    <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
+    <input type="hidden" id="profile" value=""/>
+    <script>
+        var createNumberIncr = 0;
+        var data = <?php echo $data; ?>;
+        var filters = <?php echo $header; ?>;
+        var columns = <?php echo $columns; ?>;
+        var editable = <?php echo $editable; ?>;
+        var filtersHtml = '<?php echo $filters; ?>';
+        var profile = '';
+    </script>
+    <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
+    <script>
+        function approve(id)
+        {
+            var answer = confirm("¿Desea aprobar al usuario?");
+            if (answer === true){
+                var profile = $("#profile").val();
+                var result = false;
+                $.ajax
+                ({
+                    type: "GET",
+                    dataType: "json",
+                    url: basePath + "/user/approve",
+                    data: {id: id, profile: profile},
+                    success: function(data)
+                    {
+                        location.reload();
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
 
-    $(document).on("ready", inicio);
+        function reject(id)
+        {
+            var answer = confirm("¿Desea desactivar al usuario?");
+            if (answer === true){
+                $.ajax
+                ({
+                    type: "GET",
+                    dataType: "json",
+                    url: basePath + "/user/reject",
+                    data: {id: id},
+                    success: function(data)
+                    {
 
-    function inicio()
-    {
-	approve(id);
+                        location.reload();
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
 
-	alert('inicio')
-    }
+        function sentpassword(id)
+        {
+            var answer = confirm("¿Desea enviar password?");
+            if (answer === true){
+                $.ajax
+                ({
+                    type: "GET",
+                    dataType: "json",
+                    url: basePath + "/user/sentverification",
+                    data: {id: id},
+                    success: function(data)
+                    {
 
-    function approve(id)
-    {
-	var profile = $("#profile").val();
-	var result = false;
-	$.ajax
-		({
-		    type: "GET",
-		    dataType: "json",
-		    url: basePath + "/user/approve",
-		    data: {id: id, profile: profile},
-		    success: function(data)
-		    {
-			location.reload();
-		    }
-		});
-    }
-
-
-    function reject(id)
-    {
-
-	$.ajax
-		({
-		    type: "GET",
-		    dataType: "json",
-		    url: basePath + "/user/reject",
-		    data: {id: id},
-		    success: function(data)
-		    {
-
-			location.reload();
-		    }
-		});
-    }
-
-
-    function sentpassword(id)
-    {
-	$.ajax
-		({
-		    type: "GET",
-		    dataType: "json",
-		    url: basePath + "/user/sentverification",
-		    data: {id: id},
-		    success: function(data)
-		    {
-
-			location.reload();
-		    }
-		});
-    }
-
-
-
-
-
-
-</script>
-
+                        location.reload();
+                    }
+                });
+            }
+            else{
+                return false;
+            }
+        }
+    </script>
+</div>

@@ -202,13 +202,19 @@
 #datatable .btn{
     height: 30px;
 }
-
 input[class=error]{
     border: 1px solid red !important;
     color: red !important;
 }
 #errorBox label{
     color: red;
+}
+#datatable table tbody tr td .error{ 
+    border: 1px solid red !important;
+    color: red !important;
+}
+#datatable table tbody tr td label[class=error]{ 
+    display: none !important; 
 }
 #errorBox ul{
     margin: 20px 0;
@@ -219,6 +225,9 @@ input[class=error]{
     color: red;
 }
 
+#user-admin .administrador tbody tr .yui3-datatable-col-edit,
+#user-admin .administrador tbody tr .form-datatable-edit,
+#batch-list .administrador tbody tr .form-datatable-edit,
 #parameter-index .administrador tbody tr .yui3-datatable-col-edit,
 #parameter-index .administrador tbody tr .form-datatable-edit,
 #study-index .administrador tbody tr .yui3-datatable-col-edit,
