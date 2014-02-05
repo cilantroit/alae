@@ -11,6 +11,7 @@
     </div>
     <div id="edit-study" style="font-size:0.85em;">
         <h3>Datos Generales del Estudio</h3>
+        <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
         <form id="study-form" action="" method="POST">
             <ul>
                 <li>
@@ -31,7 +32,7 @@
                 </li>
                 <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
                 <li>
-                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>)"><span class="btn-lock"></span> cerrar estudio</button>
+                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>, '¿Desea cerrar el estudio?')"><span class="btn-lock"></span> cerrar estudio</button>
                 </li>
                 <?php endif; ?>
             </ul>
@@ -45,9 +46,9 @@
             </p>
             <ul>
                 <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
-                    <?php if(!$study->getStatus()) : ?>
+                    <?php if(!$study->getApprove()) : ?>
                     <li>
-                        <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>)"><span class="btn-validate"></span>aprobar</button>
+                        <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, '¿Desea aprobar el estudio?')"><span class="btn-validate"></span>aprobar</button>
                     </li>
                     <?php endif; ?>
                     <?php if ($user->isAdministrador()) : ?>
@@ -59,10 +60,13 @@
                 <?php endif; ?>
                 <?php if($user->isAdministrador() && !$study->getDuplicate()) : ?>
                 <li>
-                    <a class="btn" href="<?php echo $this->basePath() ?>/study/duplicate/<?php echo $study->getPkStudy(); ?>"><span class="btn-validate"></span>duplicar</a>
+                    <button class="btn" type="button" onclick="duplicate('<?php echo $this->basePath() ?>/study/duplicate/<?php echo $study->getPkStudy(); ?>', '¿Desea duplicar el estudio?')">
+                        <span class="btn-validate"></span>
+                        duplicar
+                    </button>
                 </li>
                 <?php endif; ?>
-                <?php if($study->getStatus()) : ?>
+                <?php if($study->getApprove()) : ?>
                 <li>
                     <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $study->getFkUser()->getUsername(), $study->getFkUser()->getFkProfile()->getname(), $study->getUpdatedAt()); ?></p>
                 </li>
@@ -81,32 +85,63 @@
                         required: true,
                         regex: true
                     }
+                },
+                messages: {
+                    code: {
+                        required: "El campo <strong>Código</strong> es requerido",
+                        regex: "Por favor, ingreso un <strong>Código</strong> válido. Ejm: ANE2013-1234"
+                    }
+                },
+                errorLabelContainer: "#errorBox",
+                wrapper: "li",
+                submitHandler: function(form){
+                    answer = confirm("¿Desea guardar los cambios?");
+                    if (answer === true){
+                        form.submit();
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
                 }
             });
 
-            function changeStatus(url, id)
+            function duplicate(url, message)
             {
-                $.ajax
-                ({
-                    type: "GET",
-                    dataType: "json",
-                    url: basePath + url,
-                    data: {id: id},
-                    success: function(data)
-                    {
-                        if (data.status)
+                answer = confirm(message);
+                if (answer === true)
+                {
+                    window.location = url;
+                }
+            }
+
+            function changeStatus(url, id, message)
+            {
+                answer = confirm(message);
+                if (answer === true)
+                {
+                    $.ajax
+                    ({
+                        type: "GET",
+                        dataType: "json",
+                        url: basePath + url,
+                        data: {id: id},
+                        success: function(data)
                         {
-                            location.reload();
+                            if (data.status)
+                            {
+                                location.reload();
+                            }
+                            else
+                            {
+                                alert(data.message);
+                            }
                         }
-                        else
-                        {
-                            alert(data.message);
-                        }
-                    }
-                });
+                    });
+                }
             }
         </script>
-        <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && $study->getStatus()) : ?>
+        <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && $study->getApprove()) : ?>
         <form id="datatable-form" class="<?php echo !$study->getCloseFlag() ? "datatable-form-edit" : ""; ?>" action="" method="POST">
             <h5>ANALITOS DEL ESTUDIO</h5>
             <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
@@ -144,7 +179,18 @@
                 required: true,
                 rule: true
             });
-            $("#datatable-form").validate();
+            $("#datatable-form").validate({
+                submitHandler: function(form){
+                    answer = confirm("¿Desea guardar los cambios?");
+                    if (answer === true){
+                        form.submit();
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+            });
         </script>
         <div id="analyte">
             <select class="form-datatable-select">

@@ -270,22 +270,22 @@ class Datatable
 	switch ($this->_datatable)
 	{
 	    case Datatable::DATATABLE_ANALYTE:
-		$elements = '<span class="form-datatable-new"></span><a href="' . $this->_base_url . '/analyte/excel"><span class="form-download-excel"></span></a><a href="' . $this->_base_url . '/analyte/pdf"><span class="form-download-pdf"></span></a><input value="" type="submit"/>';
-		break;
+		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><a href="' . $this->_base_url . '/analyte/pdf"><span class="form-download-pdf"></span></a><input value="" type="submit"/>';
+                break;
 	    case Datatable::DATATABLE_STUDY:
-		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><a href="' . $this->_base_url . '/study/excel"><span class="form-download-excel"></span></a>';
+		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><span class="form-download-excel" onclick="excel(2);"></span>';
 		break;
 	    case Datatable::DATATABLE_PARAMETER:
-		$elements = '<a href="' . $this->_base_url . '/parameter/excel/1"><span class="form-download-excel"></span></a><input value="" type="submit"/>';
+		$elements = '<span class="form-download-excel" onclick="excel(3);"></span><input value="" type="submit"/>';
 		break;
 	    case Datatable::DATATABLE_REASON:
-		$elements = '<span class="form-datatable-new"></span><a href="' . $this->_base_url . '/parameter/excel/2"><span class="form-download-excel"></span></a><input value="" type="submit"/>';
+		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(4);"></span><input value="" type="submit"/>';
 		break;
 	    case Datatable::DATATABLE_UNFILLED:
-		$elements = '<a href="' . $this->_base_url . '/batch/excel"><span class="form-download-excel"></span></a>';
+		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
 		break;
 	    case Datatable::DATATABLE_ADMIN:
-		$elements = '<a href="' . $this->_base_url . '/user/excel"><span class="form-download-excel"></span></a>';
+		$elements = '<span class="form-download-excel" onclick="excel(6);"></span>';
 		break;
             case Datatable::DATATABLE_ANASTUDY:
                 $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
@@ -301,9 +301,14 @@ class Datatable
     protected function getOptions($data)
     {
 	$options = '<option value="-1">autofiltro</option>';
+        $aux = array();
 	foreach ($data as $key => $value)
 	{
-	    $options .= '<option value="' . $key . '">' . $value . '</option>';
+            if(!in_array($value, $aux))
+            {
+                $aux[] = $value;
+                $options .= '<option value="' . $key . '">' . $value . '</option>';
+            }
 	}
 	return $options;
     }

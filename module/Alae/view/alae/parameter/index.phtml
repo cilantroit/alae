@@ -7,7 +7,7 @@
 </div>
 <div id="parameter-index">
     <div id="encab">
-        <h2>ESTUDIOS REGISTRADOS</h2>
+        <h2>PARÁMETROS DEL SISTEMA</h2>
     </div>
     <form id="datatable-form" action="#" method="POST">
         <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
@@ -36,7 +36,18 @@
         jQuery.validator.addClassRules('datatable-class-code_error', {
             code_error: true
         });
-        $("#datatable-form").validate();
+        $("#datatable-form").validate({
+            submitHandler: function(form){
+                answer = confirm("¿Desea guardar los cambios?");
+                if (answer === true){
+                    form.submit();
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        });
     </script>
     <script>
         var createNumberIncr = 0;

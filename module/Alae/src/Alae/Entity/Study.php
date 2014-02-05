@@ -62,21 +62,28 @@ class Study
      *
      * @ORM\Column(name="close_flag", type="boolean", nullable=false)
      */
-    protected $closeFlag = '0';
+    protected $closeFlag;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="status", type="boolean", nullable=false)
      */
-    protected $status = '0';
+    protected $status;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="approve", type="boolean", nullable=false)
+     */
+    protected $approve;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="duplicate", type="boolean", nullable=false)
      */
-    protected $duplicate = '0';
+    protected $duplicate;
 
     /**
      * @var integer
@@ -178,6 +185,16 @@ class Study
     public function setStatus($status)
     {
         $this->status = $status;
+    }
+
+    public function getApprove()
+    {
+        return $this->approve;
+    }
+
+    public function setApprove($approve)
+    {
+        $this->approve = $approve;
     }
 
     public function getDuplicate()
