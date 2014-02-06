@@ -1,32 +1,29 @@
-<head>
-    <title>ALAE</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <style type="text/css" media="Screen"> /*\*/@import url("./css/alae.css");/**/ </style>
-    <link rel="shortcut icon" href="img/favicon.ico">
-</head>
-<body>
-    <div id="principal">
-	<div id="cuerpo">
-	    <a href="../alae.html"><img src="img/alaelogo.png" width="400px"/></a>
-	    <div id="central" style="text-align:left; font-size:1.1em;">
-		<hr/>
-		<blockquote>
-		    <p>Ha solicitado una cuenta en ALAE con el nombre de usuario: <br/>
-			<strong><?php echo $user; ?></strong>. </p>
-		    <p>Para completar el registro, <br/>
-			visite la siguiente URL e ingrese la contrase&ntilde;a que desee:</p>
+<html>
+    <head>
+        <title>ALAE</title>
+        <style type="text/css" media="Screen"> /*\*/@import url("./css/alae.css");/**/ </style>
+        <link rel="shortcut icon" href="img/favicon.ico">
+    </head>
+    <body>
+        <div id="principal">
+            <div id="cuerpo">
+                <div id="central" style="text-align:left; font-size:1.1em;">
+                    <hr/>
+                    <blockquote>
+                        <p>
+                            Ha solicitado una cuenta en ALAE con el nombre de usuario:<br/>
+                            <strong><?php echo $user; ?></strong>.
+                        </p>
+                        <p>
+                            Para completar el registro, <br/>
+                            visite la siguiente URL e ingrese la contrase&ntilde;a que desee:
+                        </p>
+                        <a href="<?php echo $link ?>"><?php echo $link ?></a>
+                        <p>Si usted no solicit&oacute; el registro, ignore este mensaje.</p>
+                    </blockquote>
+                </div>
+            </div>
 
-		    <a href="<?php $link ?>?active_code=   <?php echo $active_code ?> &email= <?php echo $email; ?>  ">formulario para indicar la contraseña. clicar aquí</a>;
-		    <blockquote>
-
-			<span class="peq">(formulario para indicar la contrase&ntilde;a.clica)</span>
-			<span class="peq">
-			</span>
-		    </blockquote>
-		    <p>Si usted no solicit&oacute; el registro, ignore este mensaje.</p></blockquote>
-	    </div>
-	</div>
-
-    </div>
-</body>
+        </div>
+    </body>
 </html>

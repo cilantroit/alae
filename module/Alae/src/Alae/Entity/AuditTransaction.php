@@ -87,7 +87,7 @@ class AuditTransaction
 
     public function getCreatedAt()
     {
-        return $this->createdAt;
+        return $this->createdAt->format('Y-m-d H:i:s');
     }
 
     public function setCreatedAt(\DateTime $createdAt)

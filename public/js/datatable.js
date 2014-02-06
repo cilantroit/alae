@@ -41,11 +41,11 @@ YUI().use('datatable', function(Y) {
 
     $('.form-datatable-profile').on("change", function(event) {
 	event.stopPropagation();
-	var elementId = $(this).attr('id');
-	$('.form-datatable-profile').each(function(k, v) {
-	    if ($(this).attr('id') != elementId)
-		$(this).children().removeAttr("selected");
-	});
+//	var elementId = $(this).attr('id');
+//	$('.form-datatable-profile').each(function(k, v) {
+//	    if ($(this).attr('id') != elementId)
+//		$(this).children().removeAttr("selected");
+//	});
 	$("#profile").val(this.value);
     });
     

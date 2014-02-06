@@ -28,48 +28,79 @@ class UserController extends BaseController
     public function newaccountAction()
     {
 	$request = $this->getRequest();
-	$message = array("usr" => " ", "email" => "");
+	$error = array(
+            "username"  => false,
+            "email"     => false
+        );
 
 	if ($request->isPost())
 	{
-	    $user = new \Alae\Entity\User();
-	    $findemail = $this->getRepository()->findBy(array('email' => $request->getPost('email')));
-	    $findusername = $this->getRepository()->findBy(array('username' => $request->getPost('username')));
+	    $email      = $this->getRepository()->findBy(array('email' => $request->getPost('email')));
+	    $username   = $this->getRepository()->findBy(array('username' => $request->getPost('username')));
 
-	    if (!empty($findusername))
+	    if (count($username) > 0)
 	    {
-		$message['usr'] = 'Este usuario ya existe';
+		$error['username'] = true;
 	    }
-	    else if (!empty($findemail))
+	    else if (count($email) > 0)
 	    {
-		$message['email'] = 'Este email ya existe';
+		$error['email'] = true;
 	    }
 	    else
 	    {
-		$Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
-		$user->setUsername($request->getPost('username'));
-		$user->setEmail($request->getPost('email'));
-//		$password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
-		$password = '3350';
-		$user->setPassword($password);
-		$user->setActiveCode($password);
-		$user->setFkProfile($Profile[0]);
-		$this->getEntityManager()->persist($user);
-		$this->getEntityManager()->flush();
-		if ($user->getPkUser())
-		{
-		    $mail = new \Alae\Service\Mailing();
-		    $Profile = $this->getRepository("\\Alae\\Entity\Profile")->findBy(array("name" => "Administrador"));
-		    $admins = $this->getRepository()->findBy(array("fkProfile" => $Profile));
-		    $subject = 'El Usuario ' . $user->getUsername() . ' a solicitado acceso';
-		    foreach ($admins as $Admin)
+                try
+                {
+                    $Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
+                    $password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
+
+                    $User = new \Alae\Entity\User();
+                    $User->setUsername($request->getPost('username'));
+                    $User->setEmail($request->getPost('email'));
+                    $User->setPassword($password);
+                    $User->setActiveCode($password);
+                    $User->setFkProfile($Profile[0]);
+                    $this->getEntityManager()->persist($User);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(__METHOD__, "Solicitud de cuenta", json_encode(array("Username" => $User->getUsername(), "Email" => $User->getEmail())), true);
+
+                    $mail = new \Alae\Service\Mailing();
+                    $mail->send(array(
+                    $User->getEmail()),
+                    $this->render('alae/user/template', array(
+                        'user' => $User->getUsername(),
+                        'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/register?active_code=' . $User->getActiveCode() . '&email=' . $User->getEmail())), 'Solicitud de Acceso a ALAE');
+
+                    $Profile  = $this->getRepository("\\Alae\\Entity\Profile")->findBy(array("name" => "Administrador"));
+                    $elements = $this->getRepository()->findBy(array('fkProfile' => $Profile, 'activeFlag' => 1));
+		    foreach ($elements as $Admin)
 		    {
-			$mail->send(array($Admin->getEmail()), $this->render('alae/user/template_new_usr_sol', array('password' => $user->getPassword(), 'user' => $user->getUsername())), $subject);
+			$mail->send(
+                            array($Admin->getEmail()),
+                            $this->render('alae/user/template_new_account_admin',
+                            array('email' => $User->getEmail(), 'user' => $User->getUsername())),
+                            'Solicitud de Acceso a ALAE'
+                        );
 		    }
-		}
+
+                    return $this->redirect()->toRoute('index', array(
+                        'controller' => 'index',
+                        'action'     => 'login'
+                    ));
+                }
+                catch (Exception $ex)
+                {
+                    $message = sprintf("Error! en solicitud de cuenta: %s", json_encode(array("Username" => $request->getPost('username'), "Email" => $request->getPost('email'))));
+                    $error   = array(
+                        "description" => $message,
+                        "message"     => $e,
+                        "section"     => __METHOD__
+                    );
+
+                    $this->transactionError($error);
+                }
 	    }
 	}
-	return new ViewModel(array('error' => $message));
+	return new ViewModel($error);
     }
 
     protected function getProfileOptions($pkProfile)
@@ -94,9 +125,9 @@ class UserController extends BaseController
 		"username" => utf8_encode($user->getUsername()),
 		"email" => utf8_encode($user->getEmail()),
 		"profile" => '<select class="form-datatable-profile" id="form-datatable-profile-' . $user->getPkUser() . '">' . $this->getProfileOptions($user->getFkProfile()->getPkProfile()) . '</select>',
-		"password" => $user->getPkUser(),
+		"password" => ($user->isAdministrador() || $user->isDirectorEstudio()) ? '<button class="btn" type="button" onclick="sentpassword(' . $user->getPkUser() . ');"><span class="btn-mail"></span>enviar contraseña</button>' : '',
 		"status" => $user->getActiveFlag() ? "S" : "N",
-		"edit" => $user->getPkUser()
+		"edit" => $user->getActiveFlag() ? '<span class="form-datatable-reject" onclick="reject(' . $user->getPkUser() . ');"></span>': '<span class="form-datatable-approve" onclick="approve(' . $user->getPkUser() . ')"></span>'
 	    );
 	}
 
@@ -109,81 +140,109 @@ class UserController extends BaseController
     public function approveAction()
     {
 	$request = $this->getRequest();
-	$return = false;
 
-	if ($request->isGet())
+	if ($request->isGet() && $request->getQuery('profile') != "" && $request->getQuery('id') != "")
 	{
-	    $User = $this->getRepository()->find($request->getQuery('id'));
-	    $Profile = $this->getRepository('\\Alae\\Entity\\Profile')->find($request->getQuery('profile'));
-	    $User->setActiveFlag(\Alae\Entity\User::USER_ACTIVE_FLAG);
+            $Profile = $this->getRepository('\\Alae\\Entity\\Profile')->find($request->getQuery('profile'));
+            $User = $this->getRepository()->find($request->getQuery('id'));
+            try
+            {
+                $User->setActiveFlag(\Alae\Entity\User::USER_ACTIVE_FLAG);
+                $User->setFkProfile($Profile);
+                $this->getEntityManager()->persist($User);
+                $this->getEntityManager()->flush();
+                $this->transaction(__METHOD__, "Activación de usuario: %s", json_encode(array(
+                    "User" => $User->getUsername()
+                )));
 
-	    if (!$this->getRequest()->isXmlHttpRequest())
-	    {
-		return array();
-	    }
-	    $User->setFkProfile($Profile);
-	    $this->getEntityManager()->persist($User);
-	    $this->getEntityManager()->flush();
+                $mail = new \Alae\Service\Mailing();
+                $mail->send(
+                    array($User->getEmail()),
+                    $this->render('alae/user/template_new_account_user',
+                    array('email' => $User->getEmail(), 'user' => $User->getUsername())),
+                    'Solicitud de Acceso a ALAE'
+                );
+            }
+            catch (Exception $e)
+            {
+                $message = sprintf("Error! Al intentar activar al usuario: %s", json_encode(array(
+                    "User" => $User->getUsername()
+                )));
+                $error   = array(
+                    "description" => $message,
+                    "message"     => $e,
+                    "section"     => __METHOD__
+                );
 
-	    $subject = 'El Usuario ' . $user->getUsername() . ' a Solicitud de Acceso a ALAE';
-
-	    $mail = new \Alae\Service\Mailing();
-	    $mail->send(array($User->getEmail()), $this->render('alae/user/template', array('active_code' => $User->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/register', 'email' => $User->getEmail())), $subject);
-	    $jsonModel = new JsonModel();
-	    return $jsonModel;
+                $this->transactionError($error);
+            }
 	}
+
+        return new JsonModel();
     }
 
     public function registerAction()
     {
-	/**
-	 * Recibe un GET con el email del user + active code
-	 */
-	$showForm = false;
-	$message = "";
-	$pkUser = 0;
-	$username = "";
-	$email = "";
-	$request = $this->getRequest();
-	$request->getQuery('email');
-	if ($request->isGet() && $request->getQuery('email') && $request->getQuery('active_code'))
+        $request = $this->getRequest();
+        $data = array(
+            "showForm" => false,
+            "error"    => false,
+            "pkUser"   => 0,
+            "username" => "",
+            "email"    => "",
+        );
+
+        if ($request->isGet() && $request->getQuery('email') && $request->getQuery('active_code'))
 	{
 	    $User = $this->getRepository()->findBy(array("email" => trim($request->getQuery('email'))));
-	    $username = $User[0]->getUsername();
-	    $email = $User[0]->getEmail();
-	    $pkUser = $User[0]->getPkUser();
-	    /*
-	     * Verificamos que el activeCode registrado = al activeCode del GET
-	     */
-	    if ($User && $User[0]->getActiveCode() == trim($request->getQuery('active_code')))
+            if ($User && $User[0]->getActiveCode() == trim($request->getQuery('active_code')))
 	    {
-		$showForm = true;
-		$pkUser = $User[0]->getPkUser();
+		$data['showForm'] = true;
+		$data['username'] = $User[0]->getUsername();
+                $data['email']    = $User[0]->getEmail();
+                $data['pkUser']   = $User[0]->getPkUser();
 	    }
 	    else
 	    {
-		$message = "<div class='error'>El código de activación ha caducado...</div>";
-	    }
+		$data['error'] = true;
+            }
 	}
 
 	if ($request->isPost())
 	{
-	    $User = $this->getRepository()->find($request->getPost('id'));
-	    $User->setPassword($request->getPost('password'));
-	    $User->setName($request->getPost('name'));
-	    $User->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
-	    $this->getEntityManager()->persist($User);
-	    $this->getEntityManager()->flush();
-	    $message = '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/index/login">Se ha registrado la información de manera exitosa!!! Para acceder inicie sesion;</a>';
-	}
+            $User = $this->getRepository()->find($request->getPost('id'));
+            try
+            {
+                $User->setPassword($request->getPost('password'));
+                $User->setName($request->getPost('name'));
+                $User->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
+                $this->getEntityManager()->persist($User);
+                $this->getEntityManager()->flush();
 
-	return new ViewModel(array(
-	    "showForm" => $showForm,
-	    "message" => $message,
-	    "pkUser" => $pkUser,
-	    "username" => $username,
-	    "email" => $email,
-	));
+                $this->transaction(__METHOD__, "Registro de usuario: %s", json_encode(array(
+                    "User" => $User->getUsername(),
+                    "Name" => $User->getName()
+                )), true);
+
+                header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url"));
+                exit;
+            }
+            catch (Exception $e)
+            {
+                $message = sprintf("Error! Al intentar registrar los datos del usuario: %s", json_encode(array(
+                    "User" => $User->getUsername()
+                )));
+                $error   = array(
+                    "description" => $message,
+                    "message"     => $e,
+                    "section"     => __METHOD__
+                );
+
+                $this->transactionError($error);
+            }
+        }
+
+	return new ViewModel($data);
     }
 
     public function rejectAction()
@@ -192,12 +251,36 @@ class UserController extends BaseController
 
 	if ($request->isGet())
 	{
-	    $User = $this->getRepository()->find($request->getQuery('id'));
-	    $User->setActiveFlag(\Alae\Entity\User::USER_INACTIVE_FLAG);
-	    $this->getEntityManager()->persist($User);
-	    $this->getEntityManager()->flush();
-	    $jsonModel = new JsonModel();
-	    return $jsonModel;
+            $User = $this->getRepository()->find($request->getQuery('id'));
+            try
+            {
+                $Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
+                $User->setFkProfile($Profile);
+                $User->setActiveFlag(\Alae\Entity\User::USER_INACTIVE_FLAG);
+                $this->getEntityManager()->persist($User);
+                $this->getEntityManager()->flush();
+
+                $this->transaction(__METHOD__, "Se ha desativado al usurios: %s", json_encode(array(
+                    "User" => $User->getUsername(),
+                    "Name" => $User->getName(),
+                    "Name" => $User->getEmail()
+                )));
+            }
+            catch (Exception $ex)
+            {
+                $message = sprintf("Error! Al desactivar el usuario: %s", json_encode(array(
+                    "User" => $User->getUsername()
+                )));
+                $error   = array(
+                    "description" => $message,
+                    "message"     => $e,
+                    "section"     => __METHOD__
+                );
+
+                $this->transactionError($error);
+            }
+
+	    return new JsonModel();
 	}
     }
 
@@ -207,14 +290,21 @@ class UserController extends BaseController
 
 	if ($request->isGet())
 	{
+            $verification = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
+
 	    $User = $this->getRepository()->find($request->getQuery('id'));
-	    $verification = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
-	    $subject = 'C&oacute;digo de verificaci&oacute;n';
 	    $User->setVerification($verification);
 	    $this->getEntityManager()->persist($User);
 	    $this->getEntityManager()->flush();
+
+            $this->transaction(__METHOD__, "Se ha desativado al usurios: %s", json_encode(array(
+                "User" => $User->getUsername()
+            )));
+
 	    $mail = new \Alae\Service\Mailing();
-	    $mail->send(array($User->getEmail()), $this->render('alae/user/template_verification', array('verification' => $verification, 'email' => $User->getEmail(), 'name' => $User->getEmail())), $subject);
+	    $mail->send(array($User->getEmail()), $this->render('alae/user/template_verification',
+                    array('verification' => $verification, 'email' => $User->getEmail(), 'name' => $User->getEmail())),
+                    'Generación de Firma Digital');
 	}
     }
 

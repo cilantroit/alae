@@ -50,15 +50,23 @@ abstract class BaseController extends AbstractActionController
 
     protected function _setSession(\Alae\Entity\User $user)
     {
-	$session = new \Zend\Session\Container('user');
-	$session->id = $user->getPkUser();
+        $config = new \Zend\Session\Config\StandardConfig();
+        $config->setOptions(array(
+            'remember_me_seconds' => 900,
+            'name'                => 'zf2',
+        ));
+        $manager = new \Zend\Session\SessionManager($config);
+	$session = new \Zend\Session\Container('user', $manager);
+        $session->id = $user->getPkUser();
 	$session->name = $user->getName();
 	$session->profile = $user->getFkProfile()->getName();
 
-	$audit = new \Alae\Entity\AuditSession();
-	$audit->setFkUser($user);
-	$this->getEntityManager()->persist($audit);
-	$this->getEntityManager()->flush();
+        $this->transaction(__METHOD__, "El usuario %s ha iniciado sesión", json_encode(array(
+            "User"    => $user->getUsername(),
+            "Name"    => $user->getName(),
+            "Email"   => $user->getEmail(),
+            "Profile" => $user->getFkProfile()->getName()
+        )));
     }
 
     protected function _getSession()
@@ -67,11 +75,12 @@ abstract class BaseController extends AbstractActionController
 	return $this->getRepository("\\Alae\\Entity\\User")->find($session->id);
     }
 
-    protected function transaction($_method = false, $section = false, $description = false)
+    protected function transaction($_method = false, $section = false, $description = false, $system = false)
     {
+        $user = $system ? $this->_getSystem() : $this->_getSession();
 	$audit = new \Alae\Entity\AuditTransaction();
 	$audit->__prepare($_method, $section, $description);
-	$audit->setFkUser($this->_getSession());
+	$audit->setFkUser($user);
 	$this->getEntityManager()->persist($audit);
 	$this->getEntityManager()->flush();
     }

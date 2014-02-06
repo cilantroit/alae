@@ -169,7 +169,7 @@ class User
 	return $this->verifiction;
     }
 
-    public function setVerification()
+    public function setVerification($verification)
     {
 	$this->verifiction = $verification;
     }

@@ -254,3 +254,12 @@ h5{
     display: inline-block;
     margin-left: 10px;
 }
+
+#errorContainer ul{
+    margin: 20px 0;
+}
+#errorContainer li{
+    padding-left: 1em; 
+    text-indent: -.7em;
+    color: red;
+}

@@ -367,12 +367,12 @@ class User extends \Alae\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setVerification()
+    public function setVerification($verification)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setVerification', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setVerification', array($verification));
 
-        return parent::setVerification();
+        return parent::setVerification($verification);
     }
 
     /**

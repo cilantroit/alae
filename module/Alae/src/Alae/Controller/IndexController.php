@@ -18,16 +18,24 @@ class IndexController extends BaseController
 
     public function init()
     {
-        
+
     }
 
     public function logoutAction()
     {
+        $User = $this->_getSession();
+
+        $this->transaction(__METHOD__, "El usuario %s ha cerrado sesión", json_encode(array(
+            "User"    => $User->getUsername(),
+            "Name"    => $User->getName(),
+            "Email"   => $User->getEmail(),
+            "Profile" => $User->getFkProfile()->getName()
+        )));
+
 	$session_user = new \Zend\Session\Container('user');
 	$session_user->getManager()->getStorage()->clear('user');
-	$viewModel = new ViewModel();
-	$viewModel->setTerminal(true);
-	return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
+
+	return new ViewModel(array("username" => $User->getUsername()));
     }
 
     public function menuAction()
@@ -36,48 +44,47 @@ class IndexController extends BaseController
         {
             return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
         }
-        return new ViewModel();
+        return new ViewModel(array("user" => $this->_getSession()));
     }
 
     public function loginAction()
     {
 	$request = $this->getRequest();
-        $message = "";
+
+        $error = array(
+            "inactive"  => false,
+            "incorrect" => false
+        );
 
         if ($request->isPost())
         {
-	    $elements = $this->getRepository('\\Alae\\Entity\\User')
-		    ->findBy(array('username' => $request->getPost('username'), 'password' => md5(sha1($request->getPost('password')))));
-
-
+	    $elements = $this->getRepository('\\Alae\\Entity\\User')->findBy(array(
+                'username' => $request->getPost('username'),
+                'password' => md5(sha1($request->getPost('password')
+            ))));
 
 	    if ((!empty($elements)))
 	    {
-
-
 		foreach ($elements as $element)
 		{
 		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
 		    {
-
-
 			$this->_setSession($element);
 			return $this->redirect()->toRoute('index', array('controller' => 'index', 'action' => 'menu'));
 		    }
 		    else
 		    {
-			$message = 'Este usuario no tiene permiso de acceso. Por favor contacte al administrador.';
+                        $error['inactive'] = true;
 		    }
 		}
 	    }
 	    else
 	    {
-		$message = 'Usuario o contraseña invalidos. Por favor revise los campos.';
+                $error['incorrect'] = true;
 	    }
 	}
 
-
-	return new ViewModel(array('error' => $message));
+	return new ViewModel($error);
     }
 
 }

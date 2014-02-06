@@ -1,26 +1,27 @@
-<head>
-    <title>ALAE</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<html>
+    <head>
+        <title>ALAE</title>
+        <style type="text/css" media="Screen"> /*\*/@import url("./css/alae.css");/**/ </style>
+        <link rel="shortcut icon" href="img/favicon.ico">
+    </head>
+    <body>
+        <div id="principal">
+            <div id="cuerpo">
+                <div id="central" style="text-align:left; font-size:1.1em;">
+                    <hr/>
+                    <blockquote>
+                        <p>
+                            Se ha generado su firma digital.<br>
+                            Firma digital: <strong><?php echo $verification ?></strong>
+                        </p>
+                        <blockquote>
+                            <span class="peq"></span>
+                        </blockquote>
+                        <p>Si usted no solicit&oacute; el c&oacute;digo, ignore este mensaje.</p>
+                    </blockquote>
+                </div>
+            </div>
 
-    <link rel="shortcut icon" href="img/favicon.ico">
-</head>
-<body>
-    <div id="principal">
-	<div id="cuerpo">
-	    <a href="../alae.html"><img src="img/alaelogo.png"></a>
-	    <div id="central" style="text-align:left; font-size:1.1em;">
-		<hr/>
-		<blockquote>
-		    <p> Su Código de verificacin es :<?php echo $verification ?></p>
-		    <blockquote>
-
-			<span class="peq"></span>
-		    </blockquote>
-		    <p>Si usted no solicit&oacute; el c&oacute;digo, ignore este mensaje.</p>
-		</blockquote>
-	    </div>
-	</div>
-
-    </div>
-</body>
+        </div>
+    </body>
 </html>

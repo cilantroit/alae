@@ -24,24 +24,31 @@
     <script>
         function approve(id)
         {
-            var answer = confirm("¿Desea aprobar al usuario?");
-            if (answer === true){
-                var profile = $("#profile").val();
-                var result = false;
-                $.ajax
-                ({
-                    type: "GET",
-                    dataType: "json",
-                    url: basePath + "/user/approve",
-                    data: {id: id, profile: profile},
-                    success: function(data)
-                    {
-                        location.reload();
-                    }
-                });
+            var profile = $("#profile").val();
+            if (profile === '')
+            {
+                alert("Debe asignar un Nivel de acceso");
             }
-            else{
-                return false;
+            else
+            {
+                var answer = confirm("¿Desea aprobar al usuario?");
+                if (answer === true)
+                {
+                    $.ajax
+                    ({
+                        type: "GET",
+                        dataType: "json",
+                        url: basePath + "/user/approve",
+                        data: {id: id, profile: profile},
+                        success: function(data)
+                        {
+                            location.reload();
+                        }
+                    });
+                }
+                else{
+                    return false;
+                }
             }
         }
 
@@ -57,7 +64,6 @@
                     data: {id: id},
                     success: function(data)
                     {
-
                         location.reload();
                     }
                 });
@@ -79,7 +85,6 @@
                     data: {id: id},
                     success: function(data)
                     {
-
                         location.reload();
                     }
                 });

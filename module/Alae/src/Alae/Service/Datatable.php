@@ -20,6 +20,7 @@ class Datatable
     const DATATABLE_ANASTUDY     = 'analyte_study';
     const DATATABLE_BATCH        = 'batch';
     const DATATABLE_SAMPLE_BATCH = 'sample_batch';
+    const DATATABLE_AUDIT_TRAIL  = 'audit';
 
     protected $_data;
     protected $_datatable;
@@ -148,10 +149,10 @@ class Datatable
 	    "columns" => json_encode(array(
 		array("key" => "username", "label" => "Nombre de Usuario", "sortable" => true),
 		array("key" => "email", "label" => "Correo electrónico", "sortable" => true),
-		array("key" => "profile", "label" => "Nivel de Acceso", "sortable" => true, "allowHTML" => true),
-		array("key" => "password", "label" => "Contraseña validación", "sortable" => true, "allowHTML" => true, "formatter" => '<button class="mail" type="button" onclick="sentpassword({value});"><img src="img/mail.png" > enviar contraseña</button>'),
+		array("key" => "profile", "label" => "Nivel de Acceso", "sortable" => false, "allowHTML" => true),
+		array("key" => "password", "label" => "Contraseña validación", "sortable" => false, "allowHTML" => true),
 		array("key" => "status", "label" => "Activo (S/N)", "sortable" => true),
-		array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-approve" onclick="approve({value})"></span><span class="form-datatable-reject" onclick="reject({value});"></span>')
+		array("key" => "edit", "allowHTML" => true)
 	    )),
 	    "editable" => 0,
 	    "header" => json_encode($header),
@@ -227,6 +228,26 @@ class Datatable
         );
     }
 
+    protected function getAuditColumns()
+    {
+        $header = array("created_at", "section", "description", "user");
+	$data = $this->getData();
+
+	return array(
+	    "data" => (!empty($data)) ? json_encode($data) : 0,
+	    "columns" => json_encode(array(
+		array("key" => "created_at", "label" => "Id", "sortable" => true),
+		array("key" => "section", "label" => "Nombre Analito", "sortable" => true),
+		array("key" => "description", "label" => "Abreviatura", "sortable" => false, "allowHTML" => true),
+                array("key" => "user", "label" => "Abreviatura", "sortable" => true, "allowHTML" => true),
+		array("key" => "edit", "allowHTML" => true)
+	    )),
+	    "editable" => 0,
+	    "header" => json_encode($header),
+	    "filters" => ""
+	);
+    }
+
     protected function prepare($headers)
     {
 	$options = array();
@@ -293,6 +314,9 @@ class Datatable
             case Datatable::DATATABLE_BATCH:
                 $elements = '<input value="" type="submit"/>';
                 break;
+            case Datatable::DATATABLE_AUDIT_TRAIL:
+		$elements = '<span class="form-download-excel" onclick="excel(6);"></span>';
+		break;
         }
 
 	return sprintf('<tr>%1$s<td class="form-datatable-edit">%2$s</td></tr>', $filters, $elements);
@@ -345,6 +369,9 @@ class Datatable
                 break;
             case Datatable::DATATABLE_SAMPLE_BATCH:
                 $response = $this->getSampleBatchColumns();
+                break;
+            case Datatable::DATATABLE_AUDIT_TRAIL:
+                $response = $this->getAuditColumns();
                 break;
         }
 

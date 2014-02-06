@@ -14,6 +14,7 @@ return array(
 	    'Alae\Controller\Study' => 'Alae\Controller\StudyController',
 	    'Alae\Controller\Batch'        => 'Alae\Controller\BatchController',
             'Alae\Controller\Verification' => 'Alae\Controller\VerificationController',
+            'Alae\Controller\Report' => 'Alae\Controller\ReportController',
         ),
     ),
     // The following section is new and should be added to your file
@@ -128,6 +129,19 @@ return array(
                     ),
                 ),
             ),
+            'report' => array(
+		'type' => 'segment',
+		'options' => array(
+		    'route' => '/report[/][:action][/:id]',
+		    'constraints' => array(
+			'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+		    ),
+		    'defaults' => array(
+			'controller' => 'Alae\Controller\Report',
+			'action' => 'audit',
+		    ),
+		),
+	    ),
         ),
     ),
     'view_manager' => array(

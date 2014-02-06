@@ -8,6 +8,9 @@
     <div id="encab">
         <h2>tabla de analitos</h2>
     </div>
+    <ul id="errorBox" <?php if ($error == "") : ?>style="display: none;"<?php endif; ?>>
+        <?php echo $error ? $error : ""; ?>
+    </ul>
     <form id="datatable-form" action="#" method="POST">
         <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
     </form>

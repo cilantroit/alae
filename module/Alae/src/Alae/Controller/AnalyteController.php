@@ -32,6 +32,8 @@ class AnalyteController extends BaseController
     {
         $request = $this->getRequest();
 
+        $error = "";
+
         if ($request->isPost())
         {
             $createNames      = $request->getPost('create-name');
@@ -45,31 +47,42 @@ class AnalyteController extends BaseController
 
                 foreach ($createNames as $key => $value)
                 {
-                    try
+                    $findByName       = $this->getRepository()->findBy(array("name" => $value));
+                    $findByShortnames = $this->getRepository()->findBy(array("shortening" => $createShortnames[$key]));
+                    if (count($findByName) > 0)
                     {
-                        $Analyte = new \Alae\Entity\Analyte();
-                        $Analyte->setName($value);
-                        $Analyte->setShortening($createShortnames[$key]);
-                        $Analyte->setFkUser($User);
-                        $this->getEntityManager()->persist($Analyte);
-                        $this->getEntityManager()->flush();
-                        $this->transaction(__METHOD__, "Ingreso de analitos", json_encode(array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())));
+                        $error .= sprintf('<li>El analito %s ya está registrado. Por favor, intente de nuevo<li>', $value);
                     }
-                    catch (Exception $e)
+                    elseif (count($findByShortnames) > 0)
                     {
-                        $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("User" => $User->getUsername(), "Name" => $value, "Shortening" => $createShortnames[$key])));
-                        /*
-                         * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
-                         */
-                        $error   = array(
-                            "description" => $message,
-                            "message"     => $e,
-                            "section"     => __METHOD__
-                        );
+                        $error .= sprintf('<li>La abreviatura %s ya está registrada. Por favor, intente de nuevo<li>', $createShortnames[$key]);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            $Analyte = new \Alae\Entity\Analyte();
+                            $Analyte->setName($value);
+                            $Analyte->setShortening($createShortnames[$key]);
+                            $Analyte->setFkUser($User);
+                            $this->getEntityManager()->persist($Analyte);
+                            $this->getEntityManager()->flush();
+                            $this->transaction(__METHOD__, "Ingreso de analitos", json_encode(array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())));
+                        }
+                        catch (Exception $e)
+                        {
+                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("User" => $User->getUsername(), "Name" => $value, "Shortening" => $createShortnames[$key])));
+                            $error   = array(
+                                "description" => $message,
+                                "message"     => $e,
+                                "section"     => __METHOD__
+                            );
 
-                        $this->transactionError($error);
+                            $this->transactionError($error);
+                        }
                     }
                 }
+
             }
 
             if (!empty($updateNames))
@@ -82,36 +95,46 @@ class AnalyteController extends BaseController
 
                     if ($Analyte && $Analyte->getPkAnalyte())
                     {
-                        try
+                        $findByName       = $this->getRepository()->findBy(array("name" => $value));
+                        $findByShortnames = $this->getRepository()->findBy(array("shortening" => $updateShortnames[$key]));
+                        if (count($findByName) > 0)
                         {
-                            $older = array("User" => $Analyte->getFkUser()->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening());
-
-                            $Analyte->setName($updateNames[$key]);
-                            $Analyte->setShortening($updateShortnames[$key]);
-                            $Analyte->setFkUser($User);
-                            $this->getEntityManager()->persist($Analyte);
-                            $this->getEntityManager()->flush();
-
-                            $audit = array(
-                                "Antiguos valores" => $older,
-                                "Nuevos valores"   => array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())
-                            );
-
-                            $this->transaction(__METHOD__, sprintf("Actualización de datos del analito con identificador #%d", $Analyte->getPkAnalyte()), json_encode($audit));
+                            $error .= sprintf('<li>El analito %s ya está registrado. Por favor, intente de nuevo<li>', $value);
                         }
-                        catch (Exception $e)
+                        elseif (count($findByShortnames) > 0)
                         {
-                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Analyte->getPkAnalyte(), "User" => $User->getUsername(), "Name" => $updateNames[$key], "Shortening" => $updateShortnames[$key])));
-                            /*
-                             * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
-                             */
-                            $error   = array(
-                                "description" => $message,
-                                "message"     => $e,
-                                "section"     => __METHOD__
-                            );
+                            $error .= sprintf('<li>La abreviatura %s ya está registrada. Por favor, intente de nuevo<li>', $createShortnames[$key]);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                $older = array("User" => $Analyte->getFkUser()->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening());
 
-                            $this->transactionError($error);
+                                $Analyte->setName($updateNames[$key]);
+                                $Analyte->setShortening($updateShortnames[$key]);
+                                $Analyte->setFkUser($User);
+                                $this->getEntityManager()->persist($Analyte);
+                                $this->getEntityManager()->flush();
+
+                                $audit = array(
+                                    "Antiguos valores" => $older,
+                                    "Nuevos valores"   => array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())
+                                );
+
+                                $this->transaction(__METHOD__, sprintf("Actualización de datos del analito con identificador #%d", $Analyte->getPkAnalyte()), json_encode($audit));
+                            }
+                            catch (Exception $e)
+                            {
+                                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Analyte->getPkAnalyte(), "User" => $User->getUsername(), "Name" => $updateNames[$key], "Shortening" => $updateShortnames[$key])));
+                                $error   = array(
+                                    "description" => $message,
+                                    "message"     => $e,
+                                    "section"     => __METHOD__
+                                );
+
+                                $this->transactionError($error);
+                            }
                         }
                     }
                 }
@@ -134,6 +157,7 @@ class AnalyteController extends BaseController
         $datatable = new Datatable($data, Datatable::DATATABLE_ANALYTE);
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('user', $this->_getSession());
+        $viewModel->setVariable('error', $error);
         return $viewModel;
     }
 

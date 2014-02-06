@@ -1,21 +1,24 @@
-<div id="cerrar"><a href="index.html"><img title="regresar a la pantalla de login" src="img/close.png"></a></div>
+<div id="cerrar">
+    <a href="<?php echo $this->url('index', array('action' => 'login')); ?>">
+        <img title="regresar a la pantalla de login" src="<?php echo $this->basePath(); ?>/img/close.png"/>
+    </a>
+</div>
 <div id="principal">
     <div id="cuerpo">
 	<div id="central">
 	    <a href="<?php echo $this->url('user', array('action' => 'login')); ?>">
-		<img src="<?php echo $this->basePath() . '/img/alaelogo.png'; ?>"/>
+		<img src="<?php echo $this->basePath() . '/img/alaepeq.png'; ?>"/>
 	    </a>
-	    <?php if ($message != "") : ?>
-    	    <div>
-    		<p class="peq" style="color:#f00">(*) Requerido</p>
-		    <?php echo $message; ?>
-    	    </div>
-	    <?php endif; ?>
 	    <?php if ($showForm) : ?>
     	    <div id="login">
     		<h1>Indique su contraseña</h1>
-    		<form method="POST"  id="register" action="<?php echo $this->url('user', array('action' => 'register')); ?>">
-    		    <input type="text"   name="id" id="id"  value="<?php echo $pkUser ?>">
+    		<form method="POST"  id="register" action="">
+    		    <input type="hidden" name="id" value="<?php echo $pkUser ?>">
+                    <ul id="errorContainer" <?php if (!$error) : ?>style="display: none;"<?php endif; ?>>
+                        <?php if ($error) : ?>
+                        <li>El código de activación ha caducado...</li>
+                        <?php endif; ?>
+                    </ul>
     		    <table>
     			<tbody>
     			    <tr>
@@ -52,12 +55,53 @@
     			</tbody>
     		    </table>
     		</form>
+                <script>
+                    $("#register").validate({
+                        rules: {
+                            pwd: {
+                                required: true,
+                                minlength: 6,
+                            },
+                            name: {
+                                required: true
+                            },
+                            password: {
+                                required: true, equalTo: "#pwd",
+                            }
+                        },
+                        messages: {
+                            pwd: {
+                                required: "La <strong>Contraseña</strong> es obligatoria",
+                                minlength: "La <strong>Contraseña</strong> debe contener un mínimo de 6 carácteres"
+                            },
+                            name: {
+                                required: "El <strong>Nombre de usuario</strong> es obligatorio"
+                            },
+                            password: {
+                                required: "El <strong>Confirmar contraseña</strong> es obligatorio",
+                                equalTo: "Las contraseñas no coinciden"
+                            }
+
+                        },
+                        errorLabelContainer: "#errorContainer",
+                        wrapper: "li",
+                        errorPlacement: function(error, element) {
+                            $(".auto").hide();
+                        },
+                        submitHandler: function(form){
+                            answer = confirm("¿Desea guardar los cambios?");
+                            if (answer === true){
+                                form.submit();
+                                return true;
+                            }
+                            else{
+                                return false;
+                            }
+                        }
+                    });
+                </script>
     	    </div>
 	    <?php endif; ?>
 	</div>
-    </div>
-    <div id="pie">
-	<p>
-
     </div>
 </div>

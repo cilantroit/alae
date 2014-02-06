@@ -1,0 +1,26 @@
+<div id="principal">
+    <div id="cuerpo">
+        <div id="central">
+            <div id="login">
+                <div class="izq" style="padding: 15px;">
+                    <p title="">
+                        <?php
+                        $dias  = array("Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado");
+                        $meses = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+                        echo $dias[date('w')] . ", " . date('d') . " " . $meses[date('n') - 1] . " " . date('Y') . date(' - H:i:s');
+                        ?>
+                    </p>
+                    <p>El usuario <?php echo $username; ?> ha sido desconectado.</p>
+                    <br><blockquote>
+                    <h3>ALAE Software. </h3>
+                    <p>xxx Estudios Registrados</p>
+                    <p>xxx Analitos Guardados</p>
+                    <p>xxx Lotes Analizados</p>
+                    </blockquote><br>
+                    <p class="peq">Copyright © Anapharm, 2014.</p>
+                    <p>[ <a href="<?php echo $this->url('index', array('action' => 'login')); ?>">Inicio de sesión</a> ]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

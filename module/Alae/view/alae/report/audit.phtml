@@ -1,0 +1,22 @@
+<div id="logo">
+    <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
+</div>
+<div id="cerrar">
+    [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
+</div>
+<div id="create-analyte">
+    <div id="encab">
+        <h2>transacciones del sistema</h2>
+    </div>
+    <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
+    <script>
+        var createNumberIncr = 0;
+        var data = <?php echo $data; ?>;
+        var filters = <?php echo $header; ?>;
+        var columns = <?php echo $columns; ?>;
+        var editable = <?php echo $editable; ?>;
+        var deleteUrl = basePath + '/analyte/delete';
+        var filtersHtml = '<?php echo $filters; ?>';
+    </script>
+    <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
+</div>
