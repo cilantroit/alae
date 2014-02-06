@@ -25,12 +25,14 @@ class Datatable
     protected $_data;
     protected $_datatable;
     protected $_base_url;
+    protected $_notFilterable;
 
     public function __construct($data, $datatable)
     {
 	$this->_data = $data;
 	$this->_datatable = $datatable;
 	$this->_base_url = \Alae\Service\Helper::getVarsConfig("base_url");
+        $this->_notFilterable = array ("use", "valid_flag", "modify", "accepted_flag", "password", "profile");
     }
 
     protected function getData()
@@ -281,11 +283,12 @@ class Datatable
 
 	foreach ($data as $key => $value)
 	{
-	    $filter = '<select id="yui3-datatable-filter-' . $key . '" class="yui3-datatable-filter">' . $this->getOptions($value) . '</select>';
+            //$filter = (!in_array($key, $this->_notFilterable)) ? '<select id="yui3-datatable-filter-' . $key . '" class="yui3-datatable-filter">' . getOptions($value) . '</select>' : "";
+	    $filter = (!in_array($key, $this->_notFilterable)) ? '<select id="yui3-datatable-filter-' . $key . '" class="yui3-datatable-filter">' . $this->getOptions($value) . '</select>' : "";
 	    $filters .= sprintf("<td>%s</td>", $filter);
 	}
 
-	if ($filters == "")
+	if ($filters == "" && !in_array($key, $this->_notFilterable))
 	    $filters = $this->getAutoFilter($headers);
 
 	switch ($this->_datatable)

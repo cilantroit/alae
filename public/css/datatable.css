@@ -130,12 +130,12 @@
 #datatable .form-datatable-add-block .form-datatable-add{ display:block; }
 #datatable .form-datatable-add,
 #datatable .form-datatable-add-block .form-datatable-remove,
-#yui3-datatable-filter-use,
+/*#yui3-datatable-filter-use,
 #yui3-datatable-filter-valid_flag,
 #yui3-datatable-filter-modify,
 #yui3-datatable-filter-accepted_flag,
 #yui3-datatable-filter-password,
-#yui3-datatable-filter-profile,
+#yui3-datatable-filter-profile,*/
 #analyte,
 #analyte_is,
 #unit

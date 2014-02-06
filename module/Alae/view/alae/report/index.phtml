@@ -1,0 +1,56 @@
+<div id="principal">
+    <div id="logo">
+        <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
+    </div>
+    <div id="cerrar">
+        [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
+    </div>
+    <div id="cuerpo">
+        <div id="encab">
+            <h2>informes estad&iacute;sticos</h2>
+        </div>
+        <div id="centrado" style="font-size:1em;">
+            <p>
+                <label>C&oacute;digo del Estudio:</label>
+                <select id="study">
+                    <?php foreach ($studies as $study) : ?>
+                    <option value="<?php $study->getPkStudy(); ?>"><?php $study->getCode(); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+            <p id="ajax" style="display: none">
+                <label>Analito (*): </label>
+                <select id="analyte"  title="Informes del 3 al 9"></select>
+            </p>
+            <h4>Seleccione el informe deseado:</h4>
+            <ul class="pdf"><br/>
+                <li><a href="redirect('<?php echo $this->basePath() ?>/report/r1', false);" target="_blank">01. Información General de un Estudio</a></li>
+                <li><a href="alae0302.xlsx" target="_blank">02. Resumen de Lotes de un Estudio</a></li>
+                <li><a href="alae0303.xlsx" target="_blank">03. Listado de Muestras a Repetir (*)</a></li>
+            </ul>
+            <ul class="xls">
+                <li><a href="alae0304.xlsx" target="_blank">04. Summary of Calibration Curve Parameters (*)</a></li>
+                <li><a href="alae0305.xlsx" target="_blank">05. Back-Calculated Concentration of Calibration Standard (*)</a></li>
+                <li><a href="alae0306.xlsx" target="_blank">06. Calculated % Nominal Concentration of Calibration Standards (*)</a></li>
+                <li><a href="alae0307.xlsx" target="_blank">07. Between-Run Accuracy and Precision of Quality Control Samples (*)</a></li>
+                <li><a href="alae0308.xlsx" target="_blank">08. Between-Run Accuracy and Precision of Dilution Quality Control Samples (*)</a></li>
+            </ul>
+        </div>
+    </div>
+    <blockquote class="peq">
+        Los reportes con (*) requieren que se seleccione un Analito de la lista deplegable <strong>Analito (*)</strong>
+    </blockquote>
+</div>
+<script>
+    function redirect(url, isAnalyte)
+    {
+        url = url + "?" + $("#study").val();
+
+        if (isAnalyte)
+        {
+            url = url + "&" + $("#analyte").val();
+        }
+
+        window.location = url;
+    }
+</script>

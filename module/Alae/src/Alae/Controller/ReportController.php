@@ -49,4 +49,57 @@ class ReportController extends BaseController
         $viewModel->setVariable('user', $this->_getSession());
         return $viewModel;
     }
+
+    public function ajaxAction()
+    {
+        $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $this->getEvent()->getRouteMatch()->getParam('id')));
+        $data = "";
+        foreach ($elements as $anaStudy)
+        {
+            $data .= '<option value="'.$anaStudy->getFkAnalyte()->getPkAnalyte().'">'.$anaStudy->getFkAnalyte()->getName().'</option>';
+        }
+
+        return new JsonModel(array("data" => $data));
+    }
+
+    public function indexAction()
+    {
+        $elements = $this->getRepository("\\Alae\\Entity\\Study")->findBy(array("status" => true));
+
+        return new ViewModel(array("studies" => $elements));
+    }
+
+    /**
+     * Información General del Estudio (pdf)
+     */
+    public function r1Action()
+    {
+        $viewModel = new ViewModel();
+
+        $data     = array();
+        $study = $this->getRepository()->find($this->getEvent()->getRouteMatch()->getParam('id'));
+        $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
+        $data[]         = array(
+            "code"     => $study->getCode(),
+            "analyte"  => $counterAnalyte,
+            "dilution" => $study->getFkDilutionTree()
+        );
+        $viewModel->setVariable('study', $data);
+
+
+
+
+        return $viewModel;
+    }
+
+    protected function counterAnalyte($pkStudy)
+    {
+        $query = $this->getEntityManager()->createQuery("
+            SELECT COUNT(a.fkAnalyte)
+            FROM \Alae\Entity\AnalyteStudy a
+            WHERE a.fkStudy = " . $pkStudy . "
+            GROUP BY a.fkStudy");
+        $response = $query->execute();
+        return $response ? $query->getSingleScalarResult() : 0;
+    }
 }
