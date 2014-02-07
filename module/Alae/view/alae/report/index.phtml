@@ -13,18 +13,18 @@
             <p>
                 <label>C&oacute;digo del Estudio:</label>
                 <select id="study">
-                    <?php foreach ($studies as $study) : ?>
-                    <option value="<?php $study->getPkStudy(); ?>"><?php $study->getCode(); ?></option>
-                    <?php endforeach; ?>
+		    <?php foreach ($studies as $study) : ?>
+    		    <option value="<?php echo $study->getPkStudy(); ?>"><?php echo $study->getCode(); ?></option>
+		    <?php endforeach; ?>
                 </select>
             </p>
             <p id="ajax" style="display: none">
                 <label>Analito (*): </label>
-                <select id="analyte"  title="Informes del 3 al 9"></select>
+                <select id="analyte"></select>
             </p>
             <h4>Seleccione el informe deseado:</h4>
             <ul class="pdf"><br/>
-                <li><a href="redirect('<?php echo $this->basePath() ?>/report/r1', false);" target="_blank">01. Información General de un Estudio</a></li>
+                <li><span onclick="reports('<?php echo $this->basePath() ?>/report/r1', false);">01. Información General de un Estudio</span></li>
                 <li><a href="alae0302.xlsx" target="_blank">02. Resumen de Lotes de un Estudio</a></li>
                 <li><a href="alae0303.xlsx" target="_blank">03. Listado de Muestras a Repetir (*)</a></li>
             </ul>
@@ -42,15 +42,48 @@
     </blockquote>
 </div>
 <script>
-    function redirect(url, isAnalyte)
+
+
+
+
+    function reports(url, isAnalyte)
     {
-        url = url + "?" + $("#study").val();
+	alert("hola");
+	url = url + "?id=" + $("#study").val();
+	if (isAnalyte)
+	{
+	    url = url + "/an=" + $("#analyte").val();
+	}
 
-        if (isAnalyte)
-        {
-            url = url + "&" + $("#analyte").val();
-        }
-
-        window.location = url;
+	window.location = url;
     }
+
+    $('#study').on('change', function() {
+	var optionSelected = $("option:selected", this);
+	var id = this.value;
+	$.ajax
+		({
+		    type: "GET",
+		    dataType: "json",
+		    url: basePath + "/report/ajax",
+		    data: {id: id},
+		    success: function(data)
+		    {
+			$('#analyte').html(data.data);
+			$('#ajax').show();
+			$('#analyte').show();
+		    }
+		});
+    });
+
+
+
+
+
+
+
+
+
+
+
 </script>

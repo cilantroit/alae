@@ -1,17 +1,245 @@
+<?php
+//header('Content-Disposition: attachment; filename="prueba.xls";');
+//header('Content-Type: application/vnd.ms-excel');
+?>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
+
 <html>
     <head>
         <meta charset="UTF-8">
         <title></title>
     </head>
     <body>
-        <?php
-        // put your code here
-        ?>
+	<div class="table-container">
+	    <?php
+	    foreach ($study as $data)
+	    {
+		echo $data['code'];
+		echo $data['analyte'];
+		echo $data['dilution'];
+	    }
+	    ?>
+
+	    <h3>INFORMACIÓN GENERAL DE UN ESTUDIO</h3>
+	    <table width="890" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;">
+		<tr>
+		    <td width="200" bgcolor="#FFFFFF">
+		    </td>
+		</tr>
+		<tr>
+		    <td width="200" align="center" height="20" bgcolor="#252525" style="color:#fff;text-aling:justify;">
+			Código del Estudio
+		    </td>
+		    <td width="71" height="20" bgcolor="#FFFF99" style="border: black 1px solid;">
+
+		    </td>
+		    <td width="49" height="20">
+
+		    </td>
+		    <td width="202" align="center" height="20" bgcolor="#252525" style="color:#fff; border: black 1px solid;">
+			Nº de Analitos
+		    </td>
+		    <td width="71" height="20" bgcolor="#FFFF99" style="border: black 1px solid;">
+
+		    </td>
+		    <td width="33" height="20">
+
+		    </td>
+		    <td width="201" height="20" bgcolor="#252525" style="color:#fff; border: black 1px solid;">
+			Arbol de Dilución Nº
+
+		    </td>
+		    <td width="63" height="20" bgcolor="#FFFF99" style="border: black 1px solid;">
+
+		    </td>
+		</tr>
+	    </table>
+	    <div class="cler"></div>
+	    <div class="table-left">
+
+		<table width="279" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center">
+		    <tr>
+			<td width="108" bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td colspan="2" align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" >
+			    Analitos
+			</td>
+		    </tr>
+		    <tr>
+			<td width="108" bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td width="56" align="center"  bgcolor="#D8D8D8" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Nombre</td>
+			<td width="115" align="center"  bgcolor="#D8D8D8" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Abreviatura</td>
+		    </tr>
+		    <tr>
+			<td width="108" bgcolor="#F1DADA" style="color:#fff; border:0;">
+			</td>
+			<td width="56" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="115" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">&nbsp;</td>
+		    </tr>
+		</table>
+	    </div>
+	    <div class="table-right">
+
+
+		<table width="349" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center">
+		    <tr>
+			<td width="2" bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td colspan="4" align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center;" >
+			    Patrón inteno
+			</td>
+		    </tr>
+		    <tr>
+			<td bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#D8D8D8" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Nombre</td>
+			<td width="94" align="center"  bgcolor="#D8D8D8" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Abreviatura</td>
+			<td width="102" align="center"  bgcolor="#D8D8D8" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">% Variabilidad</td>
+			<td width="62" align="center"  bgcolor="#D8D8D8" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Usar</td>
+
+
+		    </tr>
+		    <tr>
+			<td width="2" bgcolor="#F1DADA" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="94" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="102" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="62" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+		    </tr>
+
+		</table>
+	    </div>
+	    <div class="clear"></div>
+	    <div class="table-row">
+		<p><strong>Concentración Nominal de los Estándares de Calibración</strong></p>
+		<table width="600" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center">
+		    <tr>
+			<td  bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Identificación
+			    de la muestra
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Conc. ANA1
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Conc. ANA2
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Conc. ANA3
+			</td>
+		    </tr>
+		    <tr>
+			<td bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#000" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Nombre</td>
+			<td width="94" align="center"  bgcolor="#000" style="color:#CCCCCC; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">(unidades)</td>
+			<td width="102" align="center"  bgcolor="#000" style="color:#CCCCCC; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">(unidades)</td>
+			<td width="62" align="center"  bgcolor="#000" style="color:#CCCCCC; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">(unidades)</td>
+		    </tr>
+		    <tr>
+			<td width="2" bgcolor="#F1DADA" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="94" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="102" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="62" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+		    </tr>
+		    <tr>
+			<td width="2" bgcolor="#F1DADA" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#F1DADA" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="94" align="center"  bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="102" align="center"  bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="62" align="center"  bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+		    </tr>
+		</table>
+	    </div>
+	    <div class="table-row">
+		<p><strong>Concentración Nominal de los Controles de Calidad</strong></p>
+		<table width="600" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center">
+		    <tr>
+			<td  bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Identificación
+			    de la muestra
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Conc. ANA1
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Conc. ANA2
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center" colspna="2">
+			    Conc. ANA3
+			</td>
+		    </tr>
+		    <tr>
+			<td bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#000" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">Nombre</td>
+			<td width="94" align="center"  bgcolor="#000" style="color:#CCCCCC; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">(unidades)</td>
+			<td width="102" align="center"  bgcolor="#000" style="color:#CCCCCC; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">(unidades)</td>
+			<td width="62" align="center"  bgcolor="#000" style="color:#CCCCCC; border: black 1px solid;text-aling:center;font-size:11px;padding:4px">(unidades)</td>
+		    </tr>
+		    <tr>
+			<td width="2" bgcolor="#F1DADA" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="94" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="102" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="62" align="center"  bgcolor="#FFFF99" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+		    </tr>
+		    <tr>
+			<td width="2" bgcolor="#F1DADA" style="color:#fff; border:0;">
+			</td>
+			<td width="89" align="center"  bgcolor="#F1DADA" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="94" align="center"  bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="102" align="center"  bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+			<td width="62" align="center"  bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;text-aling:center;font-size:11px;padding:4px"></td>
+		    </tr>
+		</table>
+	    </div>
+	    <div class="table-row">
+		<table width="400" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center;">
+		    <tr>
+			<td  bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center;">
+			    Elaboración:
+			</td>
+			<td align="center" bgcolor="#fff" style="text-aling:center;" >
+			    (nombre de usuario)
+
+			</td>
+		    </tr>
+		    <tr>
+			<td  bgcolor="#FFFFFF" style="color:#fff; border:0;">
+			</td>
+			<td align="center" bgcolor="#252525" style="color:#fff; border: black 1px solid;text-aling:center;">
+			    Aprobación:
+			</td>
+			<td align="center" bgcolor="#fff" style="text-aling:center;" >
+			    (nombre de usuario)
+			</td>
+		    </tr>
+		    <tr>
+
+		    <tr>
+			<td align="center" bgcolor="#fff" style="text-aling:center;" >
+
+			</td>
+			<td align="center" bgcolor="#fff" style="text-aling:center;" >
+			    Fecha y Hora de aprobación
+
+			</td>
+		    </tr>
+		</table>
+	    </div>
+
     </body>
 </html>
