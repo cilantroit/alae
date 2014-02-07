@@ -326,7 +326,7 @@ class Datatable
 
     protected function getOptions($data)
     {
-	$options = '<option value="-1">autofiltro</option>';
+	$options = '<option value="-1">TODOS</option>';
         $aux = array();
 	foreach ($data as $key => $value)
 	{

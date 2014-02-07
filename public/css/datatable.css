@@ -234,6 +234,8 @@ input[class=error]{
     color: red;
 }
 
+
+
 #user-admin .administrador tbody tr .yui3-datatable-col-edit,
 #user-admin .administrador tbody tr .form-datatable-edit,
 #batch-list .administrador tbody tr .form-datatable-edit,
@@ -245,6 +247,11 @@ input[class=error]{
 #study-index .ugc tbody tr .form-datatable-edit,
 #study-index .director_estudio tbody tr .yui3-datatable-col-edit,
 #study-index .director_estudio tbody tr .form-datatable-edit,
+
+#study-index .ugc tbody tr td a .form-datatable-nominal,
+#study-index .ugc tbody tr td a .form-datatable-batch,
+
+
 #create-analyte .administrador tbody tr .yui3-datatable-col-edit,
 #create-analyte .administrador tbody tr .form-datatable-edit,
 #create-analyte .sustancias tbody tr .yui3-datatable-col-edit,
@@ -256,3 +263,7 @@ input[class=error]{
     display: block;
 }   
 
+#study-index .ugc tbody tr .yui3-datatable-col-edit .form-datatable-delete,
+#study-index .ugc tbody tr .form-datatable-edit .form-datatable-new{
+    display: none;
+}

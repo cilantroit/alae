@@ -138,7 +138,7 @@
                 }
             }
         </script>
-        <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && $study->getApprove()) : ?>
+        <?php if (($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC()) && $study->getApprove()) : ?>
         <form id="datatable-form" class="<?php echo !$study->getCloseFlag() ? "datatable-form-edit" : ""; ?>" action="" method="POST">
             <h5>ANALITOS DEL ESTUDIO</h5>
             <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
