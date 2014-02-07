@@ -48,14 +48,8 @@ class VerificationController extends BaseController
                     WHERE s.parameters IS NOT NULL");
                 $error = $query->getSingleScalarResult();
                 
-                if($error > 0)                
-                {
-                    $this->rejectBatch($Batch);
-                }
-                else
-                {
-                    $this->acceptedBatch($Batch);
-                }
+                $status = ($error > 0) ? false : true;
+                $this->updateBatch($Batch, $status);
             }
             else
             {
@@ -80,6 +74,16 @@ class VerificationController extends BaseController
             'action'     => 'list',
             'id'         => $AnaStudy[0]->getPkAnalyteStudy()
         ));
+    }
+    
+    protected function updateBatch(\Alae\Entity\Batch $Batch, $valid = true)
+    {
+        $Batch->setValidFlag($valid);
+        $Batch->setValidationDate(new \DateTime('now'));
+        $Batch->setFkUser($this->_getSession());
+        $this->getEntityManager()->persist($Batch);
+        $this->getEntityManager()->flush();
+        $this->back($Batch);
     }
 
     protected function acceptedBatch(\Alae\Entity\Batch $Batch)
