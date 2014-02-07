@@ -270,7 +270,7 @@ class Datatable
 	$filters = "";
 	foreach ($headers as $key => $value)
 	{
-	    $filter = '<select id="yui3-datatable-filter-' . $value . '" class="yui3-datatable-filter"><option value="-1">autofiltro</option></select>';
+	    $filter = '<select id="yui3-datatable-filter-' . $value . '" class="yui3-datatable-filter"><option value="-1">TODOS</option></select>';
 	    $filters .= sprintf("<td>%s</td>", $filter);
 	}
 	return $filters;
