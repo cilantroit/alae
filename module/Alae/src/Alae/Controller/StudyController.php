@@ -417,7 +417,7 @@ class StudyController extends BaseController
                 {
                     $User = $this->_getSession();
                     $Study->setApprove(true);
-                    $Study->setFkUser($User);
+                    $Study->setFkUserApprove($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
                     $this->transaction(
@@ -452,7 +452,7 @@ class StudyController extends BaseController
                 {
                     $User = $this->_getSession();
                     $Study->setCloseFlag(true);
-                    $Study->setFkUser($User);
+                    $Study->setFkUserClose($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
                     $this->transaction(
@@ -489,7 +489,7 @@ class StudyController extends BaseController
                     $newStudy = new \Alae\Entity\Study();
                     $newStudy->setDescription($Study->getDescription());
                     $newStudy->setObservation($Study->getObservation());
-                    $newStudy->setCode($Study->getCode(). count($studies));
+                    $newStudy->setCode($Study->getCode(). "R" .count($studies));
                     $newStudy->setCloseFlag(false);
                     $newStudy->setStatus(true);
                     $newStudy->setApprove(false);
@@ -508,8 +508,6 @@ class StudyController extends BaseController
                         $newAnaStudy->setFkStudy($newStudy);
                         $newAnaStudy->setCsNumber($AnaStudy->getCsNumber());
                         $newAnaStudy->setQcNumber($AnaStudy->getQcNumber());
-                        $newAnaStudy->setCsValues($AnaStudy->getCsValues());
-                        $newAnaStudy->setQcValues($AnaStudy->getQcValues());
                         $newAnaStudy->setFkUnit($AnaStudy->getFkUnit());
                         $newAnaStudy->setInternalStandard($AnaStudy->getInternalStandard());
                         $newAnaStudy->setStatus(false);
@@ -570,7 +568,7 @@ class StudyController extends BaseController
                 {
                     $User = $this->_getSession();
                     $AnaStudy->setStatus(true);
-                    $AnaStudy->setFkUser($User);
+                    $AnaStudy->setFkUserApprove($User);
                     $this->getEntityManager()->persist($AnaStudy);
                     $this->getEntityManager()->flush();
                     $this->transaction(

@@ -17,29 +17,20 @@ header('Content-Type: application/vnd.ms-excel');
 			Código del estudio:
 		    </td>
 		    <td width="205" height="20" style="border: black 1px solid;padding: 4px;">
-
+                        <?php echo $batch->getFkStudy()->getCode(); ?>
 		    </td>
 		    <td width="273" height="20" bgcolor="#000000" style="border: black 1px solid;color:#F1DADA;padding: 4px">
 			Analito
-
 		    </td>
 		    <td width="174" align="center" height="20" style="border: black 1px solid;">
-
+                        <?php echo $batch->getFkAnalyte()->getName(); ?>
 		    </td>
-
 		</tr>
 	    </table>
 	    <div class="table-row">
-
-
 		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#ffffff;margin-top:10px;font-size:11px;">
-		    <td  align="left" height="20"  style="padding:4px;">
-
-		    </td>
-		    <td  align="left" height="20" style="padding:4px;">
-
-		    </td>
-
+		    <td  align="left" height="20"  style="padding:4px;"></td>
+		    <td  align="left" height="20" style="padding:4px;"></td>
 		    <tr>
 			<td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding:4px;font-size:11px;">
 			    Identificación de la muestra
@@ -49,30 +40,29 @@ header('Content-Type: application/vnd.ms-excel');
 			</td>
 			<td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#F1DADA;padding: 4px">
 			    Motivo de reanálisis
-
 			</td>
 		    </tr>
+		    <?php foreach ($list as $key => $value) : ?>
+                        <tr>
+                            <td width="238" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
+                                <?php echo $value['sample_name']; ?>
+                            </td>
+                            <td width="238" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
+                                <?php echo $value['status']; ?>
+                            </td>
+                            <td width="238" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
+                                <?php echo $value['error']; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
 		    <tr>
-
-			<td width="238" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-
-			</td>
-			<td width="238" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-
-			</td>
-			<td width="238" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
-
-			</td>
-
-
-		    </tr>
-		    <tr>
-			<td  align="right" height="20" colspan="3">
-			    Fecha de la Evaluación:
-
-			</td>
-
-
+                        <td align="right" height="20" colspan="2">
+                            Fecha de la Evaluación:
+                        </td>
+                        <td  align="left" height="20">
+                            <?php echo $batch->getValidationDate(); ?>
+                        </td>
+                    </tr>
 		</table>
 	    </div>
     </body>

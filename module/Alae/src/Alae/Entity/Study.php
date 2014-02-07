@@ -102,6 +102,26 @@ class Study
      */
     protected $fkUser;
 
+    /**
+     * @var \Alae\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_user_approve", referencedColumnName="pk_user")
+     * })
+     */
+    protected $fkUserApprove;
+
+    /**
+     * @var \Alae\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_user_close", referencedColumnName="pk_user")
+     * })
+     */
+    protected $fkUserClose;
+
     public function __construct()
     {
         $this->updatedAt = new \DateTime('now');
@@ -129,7 +149,7 @@ class Study
 
     public function getCreatedAt()
     {
-        return $this->createdAt->format('Y-m-d H:i:s');
+        return $this->createdAt->format('d.m.Y H:i:s');
     }
 
     public function setCreatedAt(\DateTime $createdAt)
@@ -139,7 +159,7 @@ class Study
 
     public function getUpdatedAt()
     {
-        return $this->updatedAt->format('Y-m-d H:i:s');
+        return $this->updatedAt->format('d.m.Y H:i:s');
     }
 
     public function setUpdatedAt(\DateTime $updatedAt)
@@ -225,6 +245,26 @@ class Study
     public function setFkUser(\Alae\Entity\User $fkUser)
     {
         $this->fkUser = $fkUser;
+    }
+
+    public function getFkUserApprove()
+    {
+        return $this->fkUserApprove;
+    }
+
+    public function setFkUserApprove(\Alae\Entity\User $fkUser)
+    {
+        $this->fkUserApprove = $fkUser;
+    }
+
+    public function getFkUserClose()
+    {
+        return $this->fkUserClose;
+    }
+
+    public function setFkUserClose(\Alae\Entity\User $fkUser)
+    {
+        $this->fkUserClose = $fkUser;
     }
 
 }
