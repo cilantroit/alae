@@ -33,6 +33,7 @@ class ReportController extends BaseController
                 SELECT a
                 FROM Alae\Entity\AuditTransaction a
                 ORDER BY a.createdAt DESC");
+
 	$elements = $query->getResult();
 	$data = array();
 	foreach ($elements as $AuditTransaction)
@@ -40,8 +41,8 @@ class ReportController extends BaseController
 	    $data[] = array(
 		"created_at" => $AuditTransaction->getCreatedAt(),
 		"section" => $AuditTransaction->getSection(),
-		"description" => $AuditTransaction->getDescription(),
-		"user" => "mariaguija"//$AuditTransaction->getFkUser()->getUsername()
+		"audit_description" => $AuditTransaction->getDescription(),
+		"user" => $AuditTransaction->getFkUser()->getUsername()
 	    );
 	}
 

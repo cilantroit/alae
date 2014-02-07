@@ -42,7 +42,14 @@ class VerificationController extends BaseController
             if ($response)
             {
                 $this->V13_24($Batch);
-                $this->acceptedBatch($Batch);
+                $query = $this->getEntityManager()->createQuery("
+                    SELECT COUNT(s.pkSampleBatch)
+                    FROM Alae\Entity\SampleBatch s
+                    WHERE s.parameters IS NOT NULL");
+                $error = $query->getSingleScalarResult();
+                
+                $status = ($error > 0) ? false : true;
+                $this->updateBatch($Batch, $status);
             }
             else
             {
@@ -67,6 +74,16 @@ class VerificationController extends BaseController
             'action'     => 'list',
             'id'         => $AnaStudy[0]->getPkAnalyteStudy()
         ));
+    }
+    
+    protected function updateBatch(\Alae\Entity\Batch $Batch, $valid = true)
+    {
+        $Batch->setValidFlag($valid);
+        $Batch->setValidationDate(new \DateTime('now'));
+        $Batch->setFkUser($this->_getSession());
+        $this->getEntityManager()->persist($Batch);
+        $this->getEntityManager()->flush();
+        $this->back($Batch);
     }
 
     protected function acceptedBatch(\Alae\Entity\Batch $Batch)

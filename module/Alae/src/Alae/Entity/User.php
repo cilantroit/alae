@@ -166,12 +166,12 @@ class User
 
     public function getVerification()
     {
-	return $this->verifiction;
+	return $this->verification;
     }
 
     public function setVerification($verification)
     {
-	$this->verifiction = $verification;
+	$this->verification = $verification;
     }
 
     public function isSustancias()

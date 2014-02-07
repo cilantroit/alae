@@ -67,18 +67,18 @@ class AnalyteController extends BaseController
                             $Analyte->setFkUser($User);
                             $this->getEntityManager()->persist($Analyte);
                             $this->getEntityManager()->flush();
-                            $this->transaction(__METHOD__, "Ingreso de analitos", json_encode(array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())));
+                            $this->transaction(
+                                "Ingreso de analitos",
+                                sprintf('Se ha ingresado el analito %1$s(%2$s)',
+                                    $Analyte->getName(),
+                                    $Analyte->getShortening()
+                                ),
+                                false
+                            );
                         }
                         catch (Exception $e)
                         {
-                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("User" => $User->getUsername(), "Name" => $value, "Shortening" => $createShortnames[$key])));
-                            $error   = array(
-                                "description" => $message,
-                                "message"     => $e,
-                                "section"     => __METHOD__
-                            );
-
-                            $this->transactionError($error);
+                            exit;
                         }
                     }
                 }
@@ -109,31 +109,29 @@ class AnalyteController extends BaseController
                         {
                             try
                             {
-                                $older = array("User" => $Analyte->getFkUser()->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening());
-
+                                $older = sprintf('Valores antiguos -> %1$s(%2$s)',
+                                    $Analyte->getName(),
+                                    $Analyte->getShortening()
+                                );
                                 $Analyte->setName($updateNames[$key]);
                                 $Analyte->setShortening($updateShortnames[$key]);
                                 $Analyte->setFkUser($User);
                                 $this->getEntityManager()->persist($Analyte);
                                 $this->getEntityManager()->flush();
 
-                                $audit = array(
-                                    "Antiguos valores" => $older,
-                                    "Nuevos valores"   => array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())
+                                $this->transaction(
+                                    "Editar analito",
+                                    sprintf('%1$s<br> Valores nuevos -> %2$s(%3$s)',
+                                        $older,
+                                        $updateNames[$key],
+                                        $updateShortnames[$key]
+                                    ),
+                                    false
                                 );
-
-                                $this->transaction(__METHOD__, sprintf("Actualización de datos del analito con identificador #%d", $Analyte->getPkAnalyte()), json_encode($audit));
                             }
                             catch (Exception $e)
                             {
-                                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Analyte->getPkAnalyte(), "User" => $User->getUsername(), "Name" => $updateNames[$key], "Shortening" => $updateShortnames[$key])));
-                                $error   = array(
-                                    "description" => $message,
-                                    "message"     => $e,
-                                    "section"     => __METHOD__
-                                );
-
-                                $this->transactionError($error);
+                                exit;
                             }
                         }
                     }
@@ -183,34 +181,20 @@ class AnalyteController extends BaseController
                         $Analyte->setFkUser($User);
                         $this->getEntityManager()->persist($Analyte);
                         $this->getEntityManager()->flush();
-                        $this->transaction(__METHOD__, sprintf("Se ha descativado el analito con identificador #%d", $Analyte->getPkAnalyte()), json_encode(array("User" => $User->getUsername(), "Name" => $Analyte->getName(), "Shortening" => $Analyte->getShortening())));
+                        $this->transaction(
+                            "Eliminar analito",
+                            sprintf('Se ha eliminado el analito %1$s(%2$s)',
+                                $Analyte->getName(),
+                                $Analyte->getShortening()
+                            ),
+                            false
+                        );
                         return new JsonModel(array("status" => true));
                     }
                     catch (Exception $e)
                     {
-                        $message = sprintf("Se ha presentado un error al desactivar el analito con identificador #%d", $Analyte->getPkAnalyte());
-                        /*
-                         * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
-                         */
-                        $error   = array(
-                            "description" => $message,
-                            "message"     => $e,
-                            "section"     => __METHOD__
-                        );
-                        $this->transactionError($error);
-                        return new JsonModel(array("status" => false, "message" => $message));
+                        exit;
                     }
-                }
-                else
-                {
-                    $message = sprintf("El analito con identificador #%d, no puede desactivarse debido que esta asociado a uno o más estudios", $Analyte->getPkAnalyte());
-                    $error   = array(
-                        "description" => $message,
-                        "message"     => "",
-                        "section"     => __METHOD__
-                    );
-
-                    return new JsonModel(array("status" => false, "message" => $message));
                 }
             }
         }

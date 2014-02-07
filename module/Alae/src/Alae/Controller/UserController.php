@@ -61,8 +61,14 @@ class UserController extends BaseController
                     $User->setFkProfile($Profile[0]);
                     $this->getEntityManager()->persist($User);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, "Solicitud de cuenta", json_encode(array("Username" => $User->getUsername(), "Email" => $User->getEmail())), true);
-
+                    $this->transaction(
+                        "Solicitud de cuenta",
+                        sprintf('El usuario %1$s ha solicitado cuenta en ALAE - Email: %2$s',
+                            $User->getUsername(),
+                            $User->getEmail()
+                        ),
+                        true
+                    );
                     $mail = new \Alae\Service\Mailing();
                     $mail->send(array(
                     $User->getEmail()),
@@ -89,14 +95,7 @@ class UserController extends BaseController
                 }
                 catch (Exception $ex)
                 {
-                    $message = sprintf("Error! en solicitud de cuenta: %s", json_encode(array("Username" => $request->getPost('username'), "Email" => $request->getPost('email'))));
-                    $error   = array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    );
-
-                    $this->transactionError($error);
+                    exit;
                 }
 	    }
 	}
@@ -151,9 +150,13 @@ class UserController extends BaseController
                 $User->setFkProfile($Profile);
                 $this->getEntityManager()->persist($User);
                 $this->getEntityManager()->flush();
-                $this->transaction(__METHOD__, "Activación de usuario: %s", json_encode(array(
-                    "User" => $User->getUsername()
-                )));
+                $this->transaction(
+                    "Aprobación de acceso",
+                    sprintf('Se ha aceptado la solicitud de ingreso en ALAE a %1$s',
+                        $User->getUsername()
+                    ),
+                    false
+                );
 
                 $mail = new \Alae\Service\Mailing();
                 $mail->send(
@@ -165,16 +168,7 @@ class UserController extends BaseController
             }
             catch (Exception $e)
             {
-                $message = sprintf("Error! Al intentar activar al usuario: %s", json_encode(array(
-                    "User" => $User->getUsername()
-                )));
-                $error   = array(
-                    "description" => $message,
-                    "message"     => $e,
-                    "section"     => __METHOD__
-                );
-
-                $this->transactionError($error);
+                exit;
             }
 	}
 
@@ -218,27 +212,20 @@ class UserController extends BaseController
                 $User->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
                 $this->getEntityManager()->persist($User);
                 $this->getEntityManager()->flush();
-
-                $this->transaction(__METHOD__, "Registro de usuario: %s", json_encode(array(
-                    "User" => $User->getUsername(),
-                    "Name" => $User->getName()
-                )), true);
+                $this->transaction(
+                    "Registro de usuario",
+                    sprintf('El usuario %1$s ha registrado sus datos',
+                        $User->getUsername()
+                    ),
+                    true
+                );
 
                 header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url"));
                 exit;
             }
             catch (Exception $e)
             {
-                $message = sprintf("Error! Al intentar registrar los datos del usuario: %s", json_encode(array(
-                    "User" => $User->getUsername()
-                )));
-                $error   = array(
-                    "description" => $message,
-                    "message"     => $e,
-                    "section"     => __METHOD__
-                );
-
-                $this->transactionError($error);
+                exit;
             }
         }
 
@@ -259,25 +246,17 @@ class UserController extends BaseController
                 $User->setActiveFlag(\Alae\Entity\User::USER_INACTIVE_FLAG);
                 $this->getEntityManager()->persist($User);
                 $this->getEntityManager()->flush();
-
-                $this->transaction(__METHOD__, "Se ha desativado al usurios: %s", json_encode(array(
-                    "User" => $User->getUsername(),
-                    "Name" => $User->getName(),
-                    "Name" => $User->getEmail()
-                )));
+                $this->transaction(
+                    "Baja de usuario",
+                    sprintf('Se ha dado de baja al usuario %1$s',
+                        $User->getUsername()
+                    ),
+                    false
+                );
             }
             catch (Exception $ex)
             {
-                $message = sprintf("Error! Al desactivar el usuario: %s", json_encode(array(
-                    "User" => $User->getUsername()
-                )));
-                $error   = array(
-                    "description" => $message,
-                    "message"     => $e,
-                    "section"     => __METHOD__
-                );
-
-                $this->transactionError($error);
+                exit;
             }
 
 	    return new JsonModel();
@@ -297,9 +276,13 @@ class UserController extends BaseController
 	    $this->getEntityManager()->persist($User);
 	    $this->getEntityManager()->flush();
 
-            $this->transaction(__METHOD__, "Se ha desativado al usurios: %s", json_encode(array(
-                "User" => $User->getUsername()
-            )));
+            $this->transaction(
+                "Generación de firma electrónica",
+                sprintf('Se le ha generado la firma electrónica al usuario %1$s',
+                    $User->getUsername()
+                ),
+                false
+            );
 
 	    $mail = new \Alae\Service\Mailing();
 	    $mail->send(array($User->getEmail()), $this->render('alae/user/template_verification',

@@ -86,7 +86,7 @@ input{ margin: 0; padding: 0; }
 }
 
 #central{width: 60%; margin:0 auto;}
-#logo{position: absolute; top:0%; left:0%; width: 50%; 	height:15%; z-index:10;}
+#logo{position: absolute; top:0%; left:0%;}
 #mnu{position: absolute; top:2%; left:55%; width: 40%; z-index:10; text-align:right;}
 #mnu p{font: Verdana; color: Blue; font-size: 0.8em;}
 th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8B;}
