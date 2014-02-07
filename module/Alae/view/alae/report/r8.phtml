@@ -1,6 +1,7 @@
 <?php
 header('Content-Disposition: attachment; filename="prueba.xls";');
 header('Content-Type: application/vnd.ms-excel');
+//
 ?>
 <!DOCTYPE html>
 <html>
@@ -29,7 +30,7 @@ header('Content-Type: application/vnd.ms-excel');
 		<tr>
 
 		    <td width="238" colspan="2" align="left" height="20"  style="padding:10px 0 0 0;">
-			<strong>Back-Calculated Concentration of Calibration Standards</strong>
+			<strong>Between-Run Accuracy and Precision of Quality Control Samples </strong>
 		    </td>
 		</tr>
 		<tr>
@@ -52,16 +53,7 @@ header('Content-Type: application/vnd.ms-excel');
 		    </td>
 
 		</tr>
-		<tr>
-		    <td width="238" align="left" height="20"  style="padding: 10px 00 0">
 
-			Concentration Units:
-		    </td>
-		    <td width="205" height="20" style="">
-
-		    </td>
-
-		</tr>
 	    </table>
 
 	    <div class="cler"></div>
@@ -72,33 +64,69 @@ header('Content-Type: application/vnd.ms-excel');
 			<td  colspan="2" align="center"></td>
 		    </tr>
 		    <tr>
-			<td  align="center" colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Calibration Standards</strong> </td>
-			<td  align="center"  colspan="2" style=" border: black 1px solid;padding:2px">CS1</td>
-			<td  align="center"  colspan="2" style=" border: black 1px solid;padding:2px">CS2</td>
-			<td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px">CS3</td>
-			<td  align="center" colspan="2"  style=" border: black 1px solid;padding:2px">CS4</td>
-			<td  align="center" colspan="2"  style=" border: black 1px solid;padding:2px">CS5</td>
-			<td  align="center"  colspan="2" style=" border: black 1px solid;padding:2px">CS6</td>
-			<td  align="center"  colspan="2" style=" border: black 1px solid;padding:2px">CS7</td>
-			<td  align="center"  colspan="2" style=" border: black 1px solid;padding:2px;font-style:bold;">CS8</td>
-		    </tr>
-		    <tr>
-			<td  align="center"  colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   colspan="2" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-
+			<td  align="center" colspan="4"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Batch Results
+				Table No.</strong> </td>
+			<td  align="center"  colspan="4" style=" border: black 1px solid;padding:2px">QC1</td>
+			<td  align="center"  colspan="4" style=" border: black 1px solid;padding:2px">QC2</td>
+			<td  align="center"   colspan="4" style=" border: black 1px solid;padding:2px">QC3</td>
+			<td  align="center" colspan="4"  style=" border: black 1px solid;padding:2px">QC4</td>
 
 		    </tr>
 		    <tr>
-			<td colspan="9" align="left" style="border: black 1px solid;padding:2px"></td>
-
+			<td  align="center"  colspan="4" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
+			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">1.82 ng/Ml</td>
+			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">45.41 ng/mL</td>
+			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">105.95 ng/mL</td>
+			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">xxx.xx ng/mL</td>
 		    </tr>
+		    <tr>
+			<td  align="center"  bgcolor="#B7CCE3" colspan="4" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+		    </tr>
+		    <tr>
+			<td  align="center"  bgcolor="#B7CCE3" colspan="4" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong></strong> </td>
+			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
+
+			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
+
+			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
+
+			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
+		    </tr>
+		    <tr>
+			<td colspan="20">
+
+			</td>
+		    </tr>
+		    <tr>
+
+			<td  align="center"   colspan="4"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>N</strong> </td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+		    </tr>
+
+
 		</table>
 		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="margin-top:10px;text-aling:center;">
 		    <tr>
@@ -181,11 +209,26 @@ header('Content-Type: application/vnd.ms-excel');
 			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
 		    </tr>
 		    <tr>
-			<td colspan="20" align="left" style="padding: 10px;">Acceptance criteria: </td>
+			<td colspan="20" align="left" style="padding: 10px 0 2px 0;">Acceptance criteria: </td>
 		    </tr>
 		    <tr>
-			<td colspan="20" align="left" style="padding: 10px;">CV (%) ≤15% except LLOQ ≤ 20%</td>
+			<td colspan="20" align="left" style="padding: wpx;">67% Total QCs must be 100 ± 15% nominal values</td>
 		    </tr>
+		    <tr>
+			<td colspan="20" align="left" style="padding: 2px;">50% QCs per level must be 100 ± 15% nominal values</td>
+		    </tr>
+		    <tr>
+			<td colspan="20" align="left" style="padding: 2px;">Mean % nominal 100 ± 15% </td>
+		    </tr>
+		    <tr>
+			<td colspan="20" align="left" style="padding: 10px;">CV (%) ≤ 15%  </td>
+		    </tr>
+		    <tr>
+			<td colspan="20" align="left" style="padding: 10px;">(2) RCS: Rejected Calibration Standard  </td>
+		    </tr>
+
+
+
 		</table>
 	    </div>
 	</div>
