@@ -32,7 +32,7 @@ class Datatable
 	$this->_data = $data;
 	$this->_datatable = $datatable;
 	$this->_base_url = \Alae\Service\Helper::getVarsConfig("base_url");
-        $this->_notFilterable = array ("use", "valid_flag", "modify", "accepted_flag", "password", "profile");
+        $this->_notFilterable = array ("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at");
     }
 
     protected function getData()
@@ -232,21 +232,21 @@ class Datatable
 
     protected function getAuditColumns()
     {
-        $header = array("created_at", "section", "description", "user");
+        $header = array("created_at", "user", "section", "audit_description");
 	$data = $this->getData();
 
 	return array(
 	    "data" => (!empty($data)) ? json_encode($data) : 0,
 	    "columns" => json_encode(array(
-		array("key" => "created_at", "label" => "Id", "sortable" => true),
-		array("key" => "section", "label" => "Nombre Analito", "sortable" => true),
-		array("key" => "description", "label" => "Abreviatura", "sortable" => false, "allowHTML" => true),
-                array("key" => "user", "label" => "Abreviatura", "sortable" => true, "allowHTML" => true),
+		array("key" => "created_at", "label" => "Fecha y hora", "sortable" => true),
+		array("key" => "user", "label" => "Usuario", "sortable" => true),
+		array("key" => "section", "label" => "Acción", "sortable" => true),
+                array("key" => "audit_description", "label" => "Descripción", "sortable" => false, "allowHTML" => true),
 		array("key" => "edit", "allowHTML" => true)
 	    )),
 	    "editable" => 0,
 	    "header" => json_encode($header),
-	    "filters" => ""
+	    "filters" => $this->getFilters($header)
 	);
     }
 
@@ -283,12 +283,11 @@ class Datatable
 
 	foreach ($data as $key => $value)
 	{
-            //$filter = (!in_array($key, $this->_notFilterable)) ? '<select id="yui3-datatable-filter-' . $key . '" class="yui3-datatable-filter">' . getOptions($value) . '</select>' : "";
-	    $filter = (!in_array($key, $this->_notFilterable)) ? '<select id="yui3-datatable-filter-' . $key . '" class="yui3-datatable-filter">' . $this->getOptions($value) . '</select>' : "";
+            $filter = (!in_array($key, $this->_notFilterable)) ? '<select id="yui3-datatable-filter-' . $key . '" class="yui3-datatable-filter">' . $this->getOptions($value) . '</select>' : "";
 	    $filters .= sprintf("<td>%s</td>", $filter);
 	}
 
-	if ($filters == "" && !in_array($key, $this->_notFilterable))
+	if ($filters == "")
 	    $filters = $this->getAutoFilter($headers);
 
 	switch ($this->_datatable)

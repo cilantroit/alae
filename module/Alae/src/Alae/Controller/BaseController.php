@@ -61,12 +61,11 @@ abstract class BaseController extends AbstractActionController
 	$session->name = $user->getName();
 	$session->profile = $user->getFkProfile()->getName();
 
-        $this->transaction(__METHOD__, "El usuario %s ha iniciado sesión", json_encode(array(
-            "User"    => $user->getUsername(),
-            "Name"    => $user->getName(),
-            "Email"   => $user->getEmail(),
-            "Profile" => $user->getFkProfile()->getName()
-        )));
+        $this->transaction(
+            "Inicio de sesión",
+            sprintf("El usuario %s ha iniciado sesión", $user->getUsername()),
+            false
+        );
     }
 
     protected function _getSession()
@@ -75,11 +74,12 @@ abstract class BaseController extends AbstractActionController
 	return $this->getRepository("\\Alae\\Entity\\User")->find($session->id);
     }
 
-    protected function transaction($_method = false, $section = false, $description = false, $system = false)
+    protected function transaction($section, $description, $system = false)
     {
         $user = $system ? $this->_getSystem() : $this->_getSession();
 	$audit = new \Alae\Entity\AuditTransaction();
-	$audit->__prepare($_method, $section, $description);
+        $audit->setSection($section);
+        $audit->setDescription($description);
 	$audit->setFkUser($user);
 	$this->getEntityManager()->persist($audit);
 	$this->getEntityManager()->flush();

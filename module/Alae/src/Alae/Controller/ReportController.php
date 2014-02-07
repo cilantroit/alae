@@ -37,10 +37,10 @@ class ReportController extends BaseController
         foreach ($elements as $AuditTransaction)
         {
             $data[] = array(
-                "created_at"  => $AuditTransaction->getCreatedAt(),
-                "section"     => $AuditTransaction->getSection(),
-                "description" => $AuditTransaction->getDescription(),
-                "user"        => "mariaguija"//$AuditTransaction->getFkUser()->getUsername()
+                "created_at"        => $AuditTransaction->getCreatedAt(),
+                "section"           => $AuditTransaction->getSection(),
+                "audit_description" => $AuditTransaction->getDescription(),
+                "user"              => $AuditTransaction->getFkUser()->getUsername()
             );
         }
 

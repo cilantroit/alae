@@ -10,3 +10,5 @@ UPDATE alae_parameter SET rule = "V12.8" WHERE pk_parameter = 41;
 ALTER TABLE  `alae_study` CHANGE  `status`  `status` TINYINT(1) NOT NULL DEFAULT  '0';
 ALTER TABLE  `alae_study` ADD  `duplicate` TINYINT(1) NOT NULL DEFAULT  '0' AFTER  `status` ;
 ALTER TABLE  `alae_study` ADD  `approve` TINYINT(1) NOT NULL DEFAULT  '0' AFTER  `status` ;
+
+ALTER TABLE  `alae_audit_transaction` CHANGE  `description`  `description` VARCHAR( 500 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ;

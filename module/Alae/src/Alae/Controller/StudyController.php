@@ -88,34 +88,25 @@ class StudyController extends BaseController
                     $Study->setFkUser($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("Ingreso del estudio #%s", $Study->getCode()), json_encode(array(
-                        "User"         => $User->getUsername(),
-                        "Code"         => $Study->getCode(),
-                        "Description"  => $Study->getDescription(),
-                        "Observation"  => $Study->getObservation(),
-                        "DilutionTree" => $Study->getFkDilutionTree()
-                    )));
+                    $this->transaction(
+                        "Creación de estudio",
+                        sprintf('El usuario %1$s ha creado el estudio %2$s - Código: %2$s, Descripción: %3$s, Observaciones: %4$s',
+                            $User->getUsername(),
+                            $Study->getCode(),
+                            $Study->getDescription(),
+                            $Study->getObservation()
+                        ),
+                        false
+                    );
                     return $this->redirect()->toRoute('study', array(
-                                'controller' => 'study',
-                                'action'     => 'edit',
-                                'id'         => $Study->getPkStudy()
+                        'controller' => 'study',
+                        'action'     => 'edit',
+                        'id'         => $Study->getPkStudy()
                     ));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
-                        "User"         => $User->getUsername(),
-                        "Code"         => $request->getPost('code'),
-                        "Description"  => $request->getPost('description'),
-                        "Observation"  => $request->getPost('observation'),
-                        "DilutionTree" => $request->getPost('dilution_tree')
-                    )));
-                    $error   = array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    );
-                    $this->transactionError($error);
+                    exit;
                 }
             }
         }
@@ -136,28 +127,22 @@ class StudyController extends BaseController
             {
                 try
                 {
-                    $message = sprintf("Se ha descativado el analito %s del estudio %s", $AnaStudy->getFkAnalyte()->getShortening(), $AnaStudy->getFkStudy()->getCode());
-                    $data    = json_encode(array(
-                        "CsNumber"        => $AnaStudy->getCsNumber(),
-                        "QcNumber"        => $AnaStudy->getQcNumber(),
-                        "InternalStandar" => $AnaStudy->getInternalStandard(),
-                        "Use"             => $AnaStudy->getImportedFlag()
-                    ));
                     $this->getEntityManager()->remove($AnaStudy);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, $message, $data);
+                    $this->transaction(
+                        "Eliminar de analito en estudio",
+                        sprintf('El usuario %1$s ha eliminado el analito %2$s del estudio %3$s',
+                            $this->_getSession()->getUsername(),
+                            $AnaStudy->getFkAnalyte()->getShortening(),
+                            $AnaStudy->getFkStudy()->getCode()
+                        ),
+                        false
+                    );
                     return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al desactivar el analito %s del estudio %s", $AnaStudy->getFkAnalyte()->getShortening(), $AnaStudy->getFkStudy()->getCode());
-                    $error   = array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    );
-                    $this->transactionError($error);
-                    return new JsonModel(array("status" => false, "message" => $message));
+                    exit;
                 }
             }
         }
@@ -182,47 +167,37 @@ class StudyController extends BaseController
              */
             if ($request->getPost('form') == 1)
             {
-                $elements = $this->getRepository()->findBy(array("code" => $request->getPost('code')));
-                if(count($elements) > 0)
+                try
                 {
-                    $error = "<li>Este estudio ya existe. Intente con otro código, por favor<li>";
+                    $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s',
+                        $Study->getFkUser()->getUsername(),
+                        $Study->getCode(),
+                        $Study->getDescription(),
+                        $Study->getObservation()
+                    );
+                    $Study->setDescription($request->getPost('description'));
+                    $Study->setObservation($request->getPost('observation'));
+                    $Study->setFkDilutionTree($request->getPost('dilution_tree'));
+                    $Study->setFkUser($User);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(
+                        "Edición de estudios",
+                        sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s',
+                            $User->getUsername(),
+                            $request->getPost('code'),
+                            $older,
+                            $request->getPost('description'),
+                            $request->getPost('observation')
+                        ),
+                        false
+                    );
                 }
-                else
+                catch (Exception $e)
                 {
-                    try
-                    {
-                        $Study->setCode($request->getPost('code'));
-                        $Study->setDescription($request->getPost('description'));
-                        $Study->setObservation($request->getPost('observation'));
-                        $Study->setFkDilutionTree($request->getPost('dilution_tree'));
-                        $Study->setFkUser($User);
-                        $this->getEntityManager()->persist($Study);
-                        $this->getEntityManager()->flush();
-                        $this->transaction(__METHOD__, sprintf("Ingreso del estudio #%s", $Study->getCode()), json_encode(array(
-                            "User"         => $User->getUsername(),
-                            "Code"         => $Study->getCode(),
-                            "Description"  => $Study->getDescription(),
-                            "Observation"  => $Study->getObservation(),
-                            "DilutionTree" => $Study->getFkDilutionTree()
-                        )));
-                    }
-                    catch (Exception $e)
-                    {
-                        $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
-                            "User"         => $User->getUsername(),
-                            "Code"         => $request->getPost('code'),
-                            "Description"  => $request->getPost('description'),
-                            "Observation"  => $request->getPost('observation'),
-                            "DilutionTree" => $request->getPost('dilution_tree')
-                        )));
-                        $error   = array(
-                            "description" => $message,
-                            "message"     => $e,
-                            "section"     => __METHOD__
-                        );
-                        $this->transactionError($error);
-                    }
+                    exit;
                 }
+
             }
 
             /*
@@ -265,37 +240,26 @@ class StudyController extends BaseController
                             $AnaStudy->setFkUser($User);
                             $this->getEntityManager()->persist($AnaStudy);
                             $this->getEntityManager()->flush();
-                            $this->transaction(__METHOD__, sprintf("Asociación del analito (%s) con el estudio (%s)", $Analyte->getShortening(), $Study->getCode()), json_encode(array(
-                                "User"            => $User->getUsername(),
-                                "Analyte"         => $Analyte->getName(),
-                                "AnalyteIS"       => $AnalyteIs->getName(),
-                                "Study"           => $Study->getCode(),
-                                "CsNumber"        => $AnaStudy->getCsNumber(),
-                                "QcNumber"        => $AnaStudy->getQcNumber(),
-                                "Unit"            => $AnaStudy->getFkUnit()->getName(),
-                                "InternalStandar" => $AnaStudy->getInternalStandard(),
-                                "Use"             => $AnaStudy->getIsUsed()
-                            )));
+                            $this->transaction(
+                                "Asociar analitos a estudio",
+                                sprintf('El usuario %1$s ha agrega el analito %2$s(%3$s) al estudio %4$s.<br>Patrón Interno (IS): %5$s, Núm CS: %6$s, Núm QC: %7$s, Unidades: %8$s, % var IS: %9$s, usar: %10$s',
+                                    $User->getUsername(),
+                                    $Analyte->getName(),
+                                    $Analyte->getShortening(),
+                                    $Study->getCode(),
+                                    $AnalyteIs->getName(),
+                                    $createCsNumber[$key],
+                                    $createQcNumber[$key],
+                                    $Unit->getName(),
+                                    $createIs[$key],
+                                    (isset($createUse[$key]) ? "S" : "N")
+                                ),
+                                false
+                            );
                         }
                         catch (Exception $e)
                         {
-                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
-                                "User"            => $User->getUsername(),
-                                "Analyte"         => $Analyte->getName(),
-                                "AnalyteIS"       => $AnalyteIs->getName(),
-                                "Study"           => $Study->getCode(),
-                                "CsNumber"        => $createCsNumber[$key],
-                                "QcNumber"        => $createQcNumber[$key],
-                                "Unit"            => $Unit->getName(),
-                                "InternalStandar" => $createIs[$key],
-                                "Use"             => (isset($createUse[$key]) ? true : false)
-                            )));
-                            $error   = array(
-                                "description" => $message,
-                                "message"     => $e,
-                                "section"     => __METHOD__
-                            );
-                            $this->transactionError($error);
+                            exit;
                         }
                     }
                 }
@@ -310,11 +274,11 @@ class StudyController extends BaseController
                         {
                             try
                             {
-                                $older = array(
-                                    "CsNumber"        => $AnaStudy->getCsNumber(),
-                                    "QcNumber"        => $AnaStudy->getQcNumber(),
-                                    "InternalStandar" => $AnaStudy->getInternalStandard(),
-                                    "Use"             => $AnaStudy->getIsUsed()
+                                $older =  sprintf('Valores antiguos -> Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
+                                    $AnaStudy->getCsNumber(),
+                                    $AnaStudy->getQcNumber(),
+                                    $AnaStudy->getInternalStandard(),
+                                    ($AnaStudy->getIsUsed() ? "S" : "N")
                                 );
                                 $AnaStudy->setCsNumber($updateCsNumber[$key]);
                                 $AnaStudy->setQcNumber($updateQcNumber[$key]);
@@ -322,35 +286,26 @@ class StudyController extends BaseController
                                 $AnaStudy->setIsUsed(isset($updateUse[$key]) ? true : false);
                                 $this->getEntityManager()->persist($AnaStudy);
                                 $this->getEntityManager()->flush();
-
-                                $audit = array(
-                                    "Antiguos valores" => $older,
-                                    "Nuevos valores"   => array(
-                                        "User"            => $User->getUsername(),
-                                        "CsNumber"        => $AnaStudy->getCsNumber(),
-                                        "QcNumber"        => $AnaStudy->getQcNumber(),
-                                        "InternalStandar" => $AnaStudy->getInternalStandard(),
-                                        "Use"             => $AnaStudy->getIsUsed()
-                                    )
+                                $this->transaction(
+                                    "Edición de analitos asociados a estudio",
+                                    sprintf('El usuario %1$s ha editado la información del analito %2$s(%3$s) en el estudio %4$s.<br>%5$s'
+                                            . 'Valores nuevos -> Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
+                                        $User->getUsername(),
+                                        $AnaStudy->getFkAnalyte()->getName(),
+                                        $AnaStudy->getFkAnalyte()->getShortening(),
+                                        $Study->getCode(),
+                                        $older,
+                                        $updateCsNumber[$key],
+                                        $updateQcNumber[$key],
+                                        $updateIs[$key],
+                                        (isset($updateUse[$key]) ? "S" : "N")
+                                    ),
+                                    false
                                 );
-                                $this->transaction(__METHOD__, sprintf("Asociación del analito (%s) con el estudio (%s)", $AnaStudy->getFkAnalyte()->getShortening(), $AnaStudy->getFkStudy()->getCode()), json_encode($audit));
                             }
                             catch (Exception $e)
                             {
-                                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array(
-                                    "Id"              => $AnaStudy->getPkAnalyteStudy(),
-                                    "User"            => $User->getUsername(),
-                                    "CsNumber"        => $updateCsNumber[$key],
-                                    "QcNumber"        => $updateQcNumber[$key],
-                                    "InternalStandar" => $updateIs[$key],
-                                    "Use"             => isset($updateUse[$key]) ? true : false
-                                )));
-                                $error   = array(
-                                    "description" => $message,
-                                    "message"     => $e,
-                                    "section"     => __METHOD__
-                                );
-                                $this->transactionError($error);
+                                exit;
                             }
                         }
                     }
@@ -403,24 +358,19 @@ class StudyController extends BaseController
                     $Study->setFkUser($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("Se ha desactivado el estudio con código #%d", $Study->getCode()), json_encode(array(
-                        "User"        => $User->getUsername(),
-                        "Code"        => $Study->getCode(),
-                        "Description" => $Study->getDescription(),
-                        "Observation" => $Study->getObservation()
-                    )));
+                    $this->transaction(
+                        "Eliminar estudio",
+                        sprintf('El usuario %1$s ha eliminado el estudio %2$s',
+                            $User->getUsername(),
+                            $Study->getCode()
+                        ),
+                        false
+                    );
                     return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al desactivar el estudio con identificador #%d", $Study->getCode());
-                    $error   = array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    );
-                    $this->transactionError($error);
-                    return new JsonModel(array("status" => false, "message" => $message));
+                    exit;
                 }
             }
         }
@@ -470,23 +420,19 @@ class StudyController extends BaseController
                     $Study->setFkUser($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("El estudio %s ha sido aprobado por el usuario %s ",
-                            $Study->getCode(), $User->getUsername()), json_encode(array(
-                                "User"  => $User->getUsername(),
-                                "Study" => $Study->getCode()
-                    )));
+                    $this->transaction(
+                        "Aprobar estudio",
+                        sprintf('El usuario %1$s ha aprobado el estudio %2$s',
+                            $User->getUsername(),
+                            $Study->getCode()
+                        ),
+                        false
+                    );
                     return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al aprobar el estudio %s",
-                            $Study->getCode());
-                    $this->transactionError(array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    ));
-                    return new JsonModel(array("status" => false, "message" => $message));
+                    exit;
                 }
             }
 	}
@@ -509,23 +455,16 @@ class StudyController extends BaseController
                     $Study->setFkUser($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("El estudio %s ha sido cerrado por el usuario %s ",
-                            $Study->getCode(), $User->getUsername()), json_encode(array(
-                                "User"  => $User->getUsername(),
-                                "Study" => $Study->getCode()
-                    )));
+                    $this->transaction(
+                        "Cerrar estudio",
+                        sprintf("El estudio %s ha sido cerrado por el usuario %s ", $Study->getCode(), $User->getUsername()),
+                        false
+                    );
                     return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al cerrar el estudio %s",
-                            $Study->getCode());
-                    $this->transactionError(array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    ));
-                    return new JsonModel(array("status" => false, "message" => $message));
+                    exit;
                 }
             }
 	}
@@ -580,11 +519,14 @@ class StudyController extends BaseController
                         $this->getEntityManager()->flush();
                     }
 
-                    $this->transaction(__METHOD__, sprintf("El estudio %s ha sido duplicado por el usuario %s",
-                        $Study->getCode(), $User->getUsername()), json_encode(array(
-                            "User"  => $User->getUsername(),
-                            "Study" => $Study->getCode()
-                    )));
+                    $this->transaction(
+                        "Duplicar estudio",
+                        sprintf('El usuario %1$s ha duplicado el estudio %2$s.<br>',
+                            $User->getUsername(),
+                            $Study->getCode()
+                        ),
+                        false
+                    );
 
                     return $this->redirect()->toRoute('study', array(
                         'controller' => 'study',
@@ -593,14 +535,7 @@ class StudyController extends BaseController
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al duplicar el estudio %s",
-                            $Study->getCode());
-                    $this->transactionError(array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    ));
-                    $this->back($this->getEvent()->getRouteMatch()->getParam('id'));
+                    exit;
                 }
             }
 	}
@@ -638,26 +573,23 @@ class StudyController extends BaseController
                     $AnaStudy->setFkUser($User);
                     $this->getEntityManager()->persist($AnaStudy);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("El usuario %s ha aprobado las concentraciones nominales para el analito %s del estudio %s: ",
-                            $User->getUsername(), $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode()), json_encode(array(
-                                "User"                       => $User->getUsername(),
-                                "Analyte"                    => $AnaStudy->getFkAnalyte()->getName(),
-                                "Study"                      => $AnaStudy->getFkStudy()->getCode(),
-                                "Nominal Concentration (CS)" => $AnaStudy->getCsValues(),
-                                "Nominal Concentration (QC)" => $AnaStudy->getQcValues()
-                    )));
+                    $this->transaction(
+                        "Aprobación de concentraciones nominales",
+                        sprintf('El usuario %1$s ha aprobado las concentraciones nominales del estudio %2$s<br>'
+                                . 'Concentración Nominal de los Estándares de Calibración: %3$s<br>'
+                                . 'Concentración Nominal de los Controles de Calidad: %4$s',
+                            $User->getUsername(),
+                            $AnaStudy->getFkStudy()->getCode(),
+                            $AnaStudy->getCsValues(),
+                            $AnaStudy->getQcValues()
+                        ),
+                        false
+                    );
                     return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al aprobar las concentraciones nominales para el analito %s del estudio %s",
-                            $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode());
-                    $this->transactionError(array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    ));
-                    return new JsonModel(array("status" => false, "message" => $message));
+                    exit;
                 }
             }
 	}
@@ -680,26 +612,26 @@ class StudyController extends BaseController
                     $AnaStudy->setFkUser($User);
                     $this->getEntityManager()->persist($AnaStudy);
                     $this->getEntityManager()->flush();
-                    $this->transaction(__METHOD__, sprintf("El usuario %s ha desbloqueado las concentraciones nominales para el analito %s del estudio %s: ",
-                            $User->getUsername(), $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode()), json_encode(array(
-                                "User"                       => $User->getUsername(),
-                                "Analyte"                    => $AnaStudy->getFkAnalyte()->getName(),
-                                "Study"                      => $AnaStudy->getFkStudy()->getCode(),
-                                "Nominal Concentration (CS)" => $AnaStudy->getCsValues(),
-                                "Nominal Concentration (QC)" => $AnaStudy->getQcValues()
-                    )));
+
+                    $this->transaction(
+                        "Desbloquear concentraciones nominales",
+                        sprintf('El usuario %1$s ha desbloqueado las concentraciones nominales del estudio %2$s<br>'
+                                . 'Analito: %3$s<br>'
+                                . 'Concentración Nominal de los Estándares de Calibración: %4$s<br>'
+                                . 'Concentración Nominal de los Controles de Calidad: %5$s',
+                            $this->_getSession()->getUsername(),
+                            $AnaStudy->getFkStudy()->getCode(),
+                            $AnaStudy->getFkAnalyte()->getName(),
+                            $AnaStudy->getCsValues(),
+                            $AnaStudy->getQcValues()
+                        ),
+                        false
+                    );
                     return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
-                    $message = sprintf("Se ha presentado un error al desbloquear las concentraciones nominales para el analito %s del estudio %s",
-                            $AnaStudy->getFkAnalyte()->getName(), $AnaStudy->getFkStudy()->getCode());
-                    $this->transactionError(array(
-                        "description" => $message,
-                        "message"     => $e,
-                        "section"     => __METHOD__
-                    ));
-                    return new JsonModel(array("status" => false, "message" => $message));
+                    exit;
                 }
             }
 	}
@@ -721,6 +653,20 @@ class StudyController extends BaseController
             $AnaStudy->setQcValues(implode(",", $request->getPost("qc_number")));
             $this->getEntityManager()->persist($AnaStudy);
             $this->getEntityManager()->flush();
+            $this->transaction(
+                "Ingreso concentraciones nominales",
+                sprintf('El usuario %1$s ha ingresado las concentraciones nominales del estudio %2$s<br>'
+                        . 'Analito: %3$s<br>'
+                        . 'Concentración Nominal de los Estándares de Calibración: %4$s<br>'
+                        . 'Concentración Nominal de los Controles de Calidad: %5$s',
+                    $this->_getSession()->getUsername(),
+                    $AnaStudy->getFkStudy()->getCode(),
+                    $AnaStudy->getFkAnalyte()->getName(),
+                    implode(",", $request->getPost("cs_number")),
+                    implode(",", $request->getPost("qc_number"))
+                ),
+                false
+            );
         }
 
         $viewModel = new ViewModel();

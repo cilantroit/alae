@@ -11,7 +11,8 @@
 namespace Alae\Controller;
 
 use Zend\View\Model\ViewModel,
-    Alae\Controller\BaseController;
+    Alae\Controller\BaseController,
+    Zend\View\Model\JsonModel;
 
 class IndexController extends BaseController
 {
@@ -24,17 +25,13 @@ class IndexController extends BaseController
     public function logoutAction()
     {
         $User = $this->_getSession();
-
-        $this->transaction(__METHOD__, "El usuario %s ha cerrado sesión", json_encode(array(
-            "User"    => $User->getUsername(),
-            "Name"    => $User->getName(),
-            "Email"   => $User->getEmail(),
-            "Profile" => $User->getFkProfile()->getName()
-        )));
-
+        $this->transaction(
+            "Fin de sesión",
+            sprintf("El usuario %s ha cerrado sesión", $User->getUsername()),
+            false
+        );
 	$session_user = new \Zend\Session\Container('user');
 	$session_user->getManager()->getStorage()->clear('user');
-
 	return new ViewModel(array("username" => $User->getUsername()));
     }
 
@@ -85,6 +82,41 @@ class IndexController extends BaseController
 	}
 
 	return new ViewModel($error);
+    }
+
+    public function autenticationAction()
+    {
+	$request = $this->getRequest();
+        $response = false;
+
+        if ($request->isPost())
+	{
+	    $elements = $this->getRepository('\\Alae\\Entity\\User')->findBy(array(
+                'username'      => $request->getPost('name'),
+                'verification'  => $request->getPost('password')
+            ));
+
+	    if ((!empty($elements)))
+	    {
+		foreach ($elements as $element)
+		{
+		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
+		    {
+                        $response = true;
+                        $this->transaction(
+                            "Firma digital",
+                            sprintf("El usuario %s, ha ingresado su firma digital para %s", $request->getPost('name'), $request->getPost('message')),
+                            false
+                        );
+		    }
+		}
+	    }
+	}
+
+        return new JsonModel(array(
+            "response" => $response,
+            "error" => !$response ? "Nombre de usuario o Contraseña incorrecta" : ""
+        ));
     }
 
 }

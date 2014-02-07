@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS alae_audit_transaction (
   	pk_audit_session 	bigint(20) 	unsigned NOT NULL auto_increment,
 	created_at		timestamp	NOT NULL  DEFAULT CURRENT_TIMESTAMP,
 	section			varchar(250) 	NOT NULL,
-	description		varchar(250)	NOT NULL,
+	description		varchar(500)	NOT NULL,
 	fk_user			bigint(20)	unsigned NOT NULL,
 	PRIMARY KEY (pk_audit_session),
 	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user)

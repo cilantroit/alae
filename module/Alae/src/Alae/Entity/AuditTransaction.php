@@ -58,23 +58,6 @@ class AuditTransaction
         $this->createdAt = new \DateTime('now');
     }
 
-    public function __prepare($_method = false, $section = false, $description = false)
-    {
-        switch ($_method)
-        {
-            case "Alae\Controller\IndexController::indexAction":
-                $section     = "Sección de prueba";
-                $description = "Mi primera descripcion";
-                break;
-        }
-
-        if ($section)
-            $this->setSection($section);
-
-        if ($description)
-            $this->setDescription($description);
-    }
-
     public function getPkAuditSession()
     {
         return $this->pkAuditSession;
