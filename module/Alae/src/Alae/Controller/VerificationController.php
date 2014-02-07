@@ -42,7 +42,20 @@ class VerificationController extends BaseController
             if ($response)
             {
                 $this->V13_24($Batch);
-                $this->acceptedBatch($Batch);
+                $query = $this->getEntityManager()->createQuery("
+                    SELECT COUNT(s.pkSampleBatch)
+                    FROM Alae\Entity\SampleBatch s
+                    WHERE s.parameters IS NOT NULL");
+                $error = $query->getSingleScalarResult();
+                
+                if($error > 0)                
+                {
+                    $this->rejectBatch($Batch);
+                }
+                else
+                {
+                    $this->acceptedBatch($Batch);
+                }
             }
             else
             {
