@@ -1,6 +1,6 @@
 <?php
-//header('Content-Disposition: attachment; filename="prueba.xls";');
-//header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment; filename="' . $filename . '.xls";');
+header('Content-Type: application/vnd.ms-excel');
 ?>
 <!DOCTYPE html>
 <html>
@@ -9,100 +9,95 @@
         <title></title>
     </head>
     <body>
-	<div class="table-container">
+        <table width="890" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:10px 0 0 0;">
+            <tr>
+                <td width="238" align="left" height="20">
+                    Study No:
+                </td>
+                <td width="205" height="20" style="">
+                    <?php echo $batch[0]->getFkStudy()->getCode(); ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="238" align="left" height="20"  align="center" style="padding:10px 0 0 0;">
+                    Table
+                </td>
+            </tr>
+            <tr>
+                <td width="238" colspan="2" align="left" height="20"  style="padding:10px 0 0 0;">
+                    <strong>Summary of Calibration Curve Parameters</strong>
+                </td>
+            </tr>
+            <tr>
+                <td width="238" align="left" height="20"  style="padding: 10px 0 0 0">
+                    Analyte:
+                </td>
+                <td width="205" height="20" style="">
+                    <?php echo $batch[0]->getFkAnalyte()->getName(); ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="238" align="left" height="20"  style="padding: 10px 00 0">
+                    Biological Matrix
+                </td>
+                <td width="205" height="20" style="">
 
-	    <table width="890" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:10px 0 0 0;">
-		<tr>
-		    <td width="238" align="left" height="20">
-
-			Study No:
-		    </td>
-		    <td width="205" height="20" style="">
-
-		    </td>
-
-
-		</tr>
-		<tr>
-		    <td width="238" align="left" height="20"  align="center" style="padding:10px 0 0 0;">
-			Table
-		    </td>
-		</tr>
-		<tr>
-
-		    <td width="238" colspan="2" align="left" height="20"  style="padding:10px 0 0 0;">
-			<strong>Summary of Calibration Curve Parameters</strong>
-		    </td>
-		</tr>
-		<tr>
-		    <td width="238" align="left" height="20"  style="padding: 10px 0 0 0">
-
-			Analyte:
-		    </td>
-		    <td width="205" height="20" style="">
-
-		    </td>
-
-		</tr>
-		<tr>
-		    <td width="238" align="left" height="20"  style="padding: 10px 00 0">
-
-			Biological Matrix
-		    </td>
-		    <td width="205" height="20" style="">
-
-		    </td>
-
-		</tr>
-	    </table>
-
-	    <div class="cler"></div>
-	    <div class="table-row">
-
-		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center;">
-		    <tr>
-			<td  colspan="4" align="center"></td>
-		    </tr>
-		    <tr>
-			<td  align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:10px">Batch Results Table No. </td>
-			<td  align="center"  style=" border: black 1px solid;font-size:11px;padding:10px">Slope (m)</td>
-			<td  align="center"   style=" border: black 1px solid;font-size:11px;padding:10px">Y-Intercept (b)</td>
-			<td align="center"   style="border: black 1px solid;font-size:11px;padding:10px"> CorrelationCoefficient ( r ) </td>
-
-
-		    </tr>
-		    <tr>
-
-			<td align="center"  height="20px" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:11px;padding:4px"></td>
-			<td  align="center"   bgcolor="#B7CCE3" style=" border: black 1px solid;font-size:11px;padding:4px"></td>
-			<td  align="center"   bgcolor="#B7CCE3"  style=" border: black 1px solid;font-size:11px;padding:4px"></td>
-			<td  align="center"   bgcolor="#B7CCE3" style="border: black 1px solid;;font-size:11px;padding:4px"> </td>
-
-		    </tr>
-		    <tr>
-
-			<td align="center"  height="20px" style="color:#000; border: black 1px solid;font-size:11px;padding:4px"></td>
-			<td  align="center"  style=" border: black 1px solid;font-size:11px;padding:4px"></td>
-			<td  align="center"    style=" border: black 1px solid;font-size:11px;padding:4px"></td>
-			<td  align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> </td>
-
-		    </tr>
-		    <tr>
-			<td colspan="4" align="left" style="padding: 10px;">Y= mX + b </td>
-
-		    </tr>
-		    <tr>
-			<td colspan="4" align="left" style="padding: 10px;">Acceptance criteria:
-			    r ≥ 0.9900
-			</td>
-
-		    </tr>
-
-		    <tr>
-			<td colspan="4" align="right" style="padding: 10px;">Fecha y hora de impresión</td>
-
-		    </tr>
-		</table>
-
-		</body>
-		</html>
+                </td>
+            </tr>
+        </table>
+        <div class="cler"></div>
+        <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
+            <tr>
+                <td  colspan="4" align="center"></td>
+            </tr>
+            <tr>
+                <td  align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:10px">Batch Results Table No. </td>
+                <td  align="center"  style=" border: black 1px solid;font-size:11px;padding:10px">Slope (m)</td>
+                <td  align="center"   style=" border: black 1px solid;font-size:11px;padding:10px">Y-Intercept (b)</td>
+                <td align="center"   style="border: black 1px solid;font-size:11px;padding:10px"> CorrelationCoefficient ( r ) </td>
+            </tr>
+            <?php $count = 0; foreach($batch as $Batch) : ?>
+            <tr>
+                <td align="center"  height="20px" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
+                    <?php
+                    list($name, $aux) = explode("_", $Batch->getFileName());
+                    echo $name;
+                    ?>
+                </td>
+                <td  align="center"   bgcolor="#B7CCE3" style=" border: black 1px solid;font-size:11px;padding:4px">
+                    <?php echo $Batch->getSlope(); ?>
+                </td>
+                <td  align="center"   bgcolor="#B7CCE3"  style=" border: black 1px solid;font-size:11px;padding:4px">
+                    <?php echo $Batch->getIntercept(); ?>
+                </td>
+                <td  align="center"   bgcolor="#B7CCE3" style="border: black 1px solid;;font-size:11px;padding:4px">
+                    <?php echo $Batch->getCorrelationCoefficient(); ?>
+                </td>
+            </tr>
+            <?php $count++; endforeach; ?>
+            <tr>
+                <td align="center"  height="20px" style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
+                    N
+                </td>
+                <td  align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
+                    <?php echo $count; ?>
+                </td>
+                <td  align="center"    style=" border: black 1px solid;font-size:11px;padding:4px">
+                    <?php echo $count; ?>
+                </td>
+                <td  align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                    <?php echo $count; ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" align="left" style="padding: 10px;">Y= mX + b </td>
+            </tr>
+            <tr>
+                <td colspan="4" align="left" style="padding: 10px;">Acceptance criteria: r ≥ 0.9900</td>
+            </tr>
+            <tr>
+                <td colspan="4" align="right" style="padding: 10px;">Fecha y hora de impresión: <?php echo date("d.m.Y H:i:s"); ?></td>
+            </tr>
+        </table>
+    </body>
+</html>

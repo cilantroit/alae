@@ -1,7 +1,6 @@
 <?php
-header('Content-Disposition: attachment; filename="prueba.xls";');
+header('Content-Disposition: attachment; filename="'. $filename .'.xls";');
 header('Content-Type: application/vnd.ms-excel');
-//
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,15 +10,13 @@ header('Content-Type: application/vnd.ms-excel');
     </head>
     <body>
 	<div class="table-container">
-
 	    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:10px 0 0 0;">
 		<tr>
 		    <td width="238" align="left" height="20">
-
 			Study No:
 		    </td>
 		    <td width="205" height="20" style="">
-
+                        <?php echo $analyte->getFkStudy()->getCode(); ?>
 		    </td>
 		</tr>
 		<tr>
@@ -28,44 +25,46 @@ header('Content-Type: application/vnd.ms-excel');
 		    </td>
 		</tr>
 		<tr>
-
 		    <td width="238" colspan="2" align="left" height="20"  style="padding:10px 0 0 0;">
-			<strong> Between-Run Accuracy and Precision of Quality Control Sample</strong>
+			<strong>Between-Run Accuracy and Precision of Quality Control Samples </strong>
 		    </td>
 		</tr>
 		<tr>
 		    <td width="238" align="left" height="20"  style="padding: 10px 0 0 0">
-
 			Analyte:
 		    </td>
 		    <td width="205" height="20" style="">
-
+                        <?php echo $analyte->getFkAnalyte()->getName(); ?>
 		    </td>
-
 		</tr>
 		<tr>
 		    <td width="238" align="left" height="20"  style="padding: 10px 00 0">
-
 			Biological Matrix
 		    </td>
 		    <td width="205" height="20" style="">
 
 		    </td>
-
 		</tr>
-
+                <tr>
+		    <td width="238" align="left" height="20"  style="padding: 10px 00 0">
+			Concentration Units:
+		    </td>
+		    <td width="205" height="20" style="">
+                        <?php echo $analyte->getFkUnit()->getName(); ?>
+		    </td>
+		</tr>
 	    </table>
-
 	    <div class="cler"></div>
 	    <div class="table-row">
-
 		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
 		    <tr>
 			<td  colspan="2" align="center"></td>
 		    </tr>
 		    <tr>
 			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:10px;font-size: 11px"><strong>Batch Results Table No></strong></td>
-			<td  align="center" bgcolor="#91CCDB" colspan="9" style=" border: black 1px solid;padding:10px;font-size: 11px"><strong>BLDQC 695.80 ng/Ml</strong></td>
+			<td  align="center" bgcolor="#91CCDB" colspan="9" style=" border: black 1px solid;padding:10px;font-size: 11px">
+                            <strong>LDQC</strong>
+                        </td>
 		    </tr>
 		    <tr>
 			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
@@ -73,58 +72,107 @@ header('Content-Type: application/vnd.ms-excel');
 			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">Dilution Factor</td>
 			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> % Nominal (accuracy)</td>
 		    </tr>
+                    <?php foreach($list as $list) : ?>
 		    <tr>
-
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="2" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center"  bgcolor="#F1DADA" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <strong>'<?php echo $list['name']; ?></strong>
+                        </td>
+			<?php foreach ($list['par'] as $key => $value) : ?>
+                        <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[0]; ?>
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $value[1]; ?>
+                        </td>
+                        <td  align="center"  bgcolor="#F1DADA" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $value[2]; ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
+                    <tr>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <strong></strong>
+                        </td>
+			<?php foreach ($list['impar'] as $key => $value) : ?>
+                        <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[0]; ?>
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $value[1]; ?>
+                        </td>
+                        <td  align="center"  bgcolor="#F1DADA" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $value[2]; ?>
+                        </td>
+                        <?php endforeach; ?>
+		    </tr>
+                    <?php endforeach; ?>
 		    <tr>
-
 			<td  align="center"  colspan="12" style=" border: black 1px solid;padding:5px;font-size: 11px"></td>
 		    </tr>
-		    <tr>
-
-			<td  align="center" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"><strong>N</strong></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="2" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center"   colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-
+                    <tr>
+			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <strong>N</strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $calculation['count']; ?>
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            N/AP
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $calculation['count']; ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
 		    <tr>
-
-			<td  align="center" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"><strong>Mean</strong></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="2" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center"   colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-
+                        <td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>Mean</strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $calculation['prom']; ?>
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            N/AP
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            <?php echo $calculation['accu']; ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
 		    <tr>
+			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>SD (±) </strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            =DESVEST(<?php echo $calculation['values']; ?>)
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            N/AP
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
 
-			<td  align="center" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"><strong>SD (±) </strong></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="2" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center"   colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
 		    <tr>
+			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>CV (%)</strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            =DESVEST(<?php echo $calculation['values']; ?>)/PROMEDIO(<?php echo $calculation['values']; ?>)
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                            N/AP
+                        </td>
+                        <td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
 
-			<td  align="center" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"><strong>CV (%)</strong></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center" bgcolor="#B5DCE7" colspan="2" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-			<td  align="center"   colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px"> </td>
-
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
-
-
-
 		    <tr>
 			<td colspan="20" align="left" style="padding: 10px 0 2px 0;">Acceptance criteria: </td>
 		    </tr>

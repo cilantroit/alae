@@ -18,6 +18,7 @@ class CronController extends BaseController
     protected $_Study   = null;
     protected $_Analyte = null;
     protected $_error   = false;
+    protected $_other   = array();
     protected $_analyteConcentrationUnits;
     protected $_calculatedConcentrationUnits;
 
@@ -162,7 +163,7 @@ class CronController extends BaseController
 
         $lines = explode("\n", $content);
         $continue = false;
-        $data = $headers = array();
+        $data = $headers = $other = array();
 
         foreach ($lines as $line)
         {
@@ -175,6 +176,11 @@ class CronController extends BaseController
             {
                 $headers = $this->cleanHeaders(explode("\t", $line));
                 $continue = true;
+            }
+
+            if(!$continue)
+            {
+                $this->_other[] = $line;
             }
         }
 
@@ -216,18 +222,69 @@ class CronController extends BaseController
 
     private function updateBatch($Batch, $Analyte, $Study)
     {
+        $query = $this->getEntityManager()->createQuery("
+            SELECT COUNT(s.pkSampleBatch)
+            FROM Alae\Entity\SampleBatch s
+            WHERE s.parameters IS NOT NULL");
+        $error = $query->getSingleScalarResult();
+        $status = ($error > 0) ? false : true;
+
+        $header = $this->getHeaderInfo($Analyte);
+
+        if (count($header) > 0)
+        {
+            $Batch->setIntercept($header['intercept']);
+            $Batch->setCorrelationCoefficient($header['correlationCoefficient']);
+            $Batch->setSlope($header['slope']);
+        }
+
+        $Batch->setValidFlag($status);
+        $Batch->setValidationDate(new \DateTime('now'));
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
         $this->getEntityManager()->flush();
     }
 
+    private function getHeaderInfo($Analyte)
+    {
+        $header = array();
+        $continue = false;
+        foreach($this->_other as $line)
+        {
+            if (strstr($line, $Analyte->getShortening()))
+            {
+                $continue = true;
+            }
+            if($continue)
+            {
+                if(strstr($line, "Intercept"))
+                {
+                    $aux = explode("\t", $line);
+                    $header['intercept'] = $aux[1];
+                }
+                if(strstr($line, "Slope"))
+                {
+                    $aux = explode("\t", $line);
+                    $header['slope'] = $aux[1];
+                }
+                if(strstr($line, "Correlation coefficient"))
+                {
+                    $aux = explode("\t", $line);
+                    $header['correlationCoefficient'] = $aux[1];
+                }
+            }
+        }
+
+        return $header;
+    }
+
     private function batchVerify($Batch, $Analyte, $fileName)
     {
         $string = substr($fileName, 0, -4);
         list($pkBatch, $aux) = explode("-", $string);
-        $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V1"));
-        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 1, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2"));
+        $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V1", array("s.validFlag = 0")));
+        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 1, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2", array("s.validFlag = 0")));
     }
 
     private function saveSampleBatch($headers, $data, $Batch)

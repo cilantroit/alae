@@ -1,0 +1,218 @@
+<?php
+header('Content-Disposition: attachment; filename="' . $filename . '.xls";');
+header('Content-Type: application/vnd.ms-excel');
+//ob_start();
+?>
+<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">
+<div class="table-container">
+    <table width="890" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;">
+        <tr>
+            <td colspan="4">
+                <h3>ALAE_BATCH RESULTS TABLE</h3>
+            </td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  style="font-size: 11px;font-weight: bold;">
+                Código del estudio:
+            </td>
+            <td width="205" height="20" style="">
+                <?php echo $batch->getFkStudy()->getCode(); ?>
+            </td>
+            <td width="273" height="20" style="font-size: 11px;font-weight: bold;">
+                Calibration Curve Parameters (Y= mX+b)
+            </td>
+            <td width="174" align="center" height="20">
+            </td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  align="center" style="font-size: 11px;font-weight: bold;">
+                Analito:
+            </td>
+            <td width="205" height="20" style="">
+                <?php echo $batch->getFkAnalyte()->getName(); ?>
+            </td>
+            <td width="273" align="center" height="20"  align="center" style="font-size: 11px;font-weight: bold;">
+                m=
+            </td>
+            <td width="174" align="center" height="20">
+
+            </td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  align="center" style="font-size: 11px;font-weight: bold;">
+                Nombre del archivo exportado:
+            </td>
+            <td width="205" height="20" style="">
+                <?php echo $batch->getFileName(); ?>
+            </td>
+            <td width="273" align="center" height="20"  align="center" style="font-size: 11px;font-weight: bold">
+                x=
+
+            </td>
+            <td width="174" align="center" height="20">
+
+            </td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  align="center" style="font-size: 11px;font-weight: bold">
+                Fecha de importación:
+            </td>
+            <td width="205" height="20" style="">
+                <?php echo $batch->getCreatedAt(); ?>
+            </td>
+            <td width="273" align="center" height="20"  align="center" style="font-size: 11px;font-weight: bold;font-weight: bold">
+                r=
+            </td>
+            <td width="174" align="center" height="20">
+
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"></td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  align="center" style="font-size: 11px;font-weight: bold">
+                Resultado de la Evaluación:
+            </td>
+            <td width="205" height="20" style="">
+                <?php echo $batch->getValidFlag(); ?>
+            </td>
+            <td width="273" align="center" height="20"  align="center" style="font-size: 11px;font-weight: bold">
+                Motivo de Rechazo:
+            </td>
+            <td width="174" align="center" height="20">
+                <?php echo $error; ?>
+            </td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  align="center" style="font-size: 11px;font-weight: bold;">
+                Usuario:
+            </td>
+            <td colspan="3" height="20" style="">
+                <?php echo $batch->getFkUser()->getUsername(); ?>
+            </td>
+        </tr>
+        <tr>
+            <td width="238" align="left" height="20"  align="center" style="font-size: 11px;font-weight: bold;">
+                Fecha de la Evaluación:
+            </td>
+            <td colspan="3" height="20" style="">
+                <?php echo $batch->getValidationDate(); ?>
+            </td>
+        </tr>
+    </table>
+    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
+        <tr>
+            <td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">Sample Name</td>
+            <td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">Analyte peak name</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Sample Type</td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> File name </td>
+            <td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">Analyte peak</td>
+            <td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">IS peak name</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Area ratio</td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> Analyte concentration</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Dilution factor</td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> Accuracy</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Use record</td>
+        </tr>
+        <?php foreach ($elements as $SampleBatch) : ?>
+        <tr>
+            <td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getSampleName() ;?>
+            </td>
+            <td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getAnalytePeakName() ;?>
+            </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getSampleType() ;?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getFileName() ;?>
+            </td>
+            <td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getAnalytePeakArea() ;?>
+            </td>
+            <td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getIsPeakName() ;?>
+            </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getIsPeakArea() ;?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getAnalyteConcentration() ;?>
+            </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getDilutionFactor() ;?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getAccuracy() ;?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $SampleBatch->getUseRecord() ;?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        <tr>
+            <td colspan="11" align="right">Fecha y hora de impresión</td>
+            <td colspan="11" align="right"><?php echo date("d.m.Y H:i:s"); ?></td>
+        </tr>
+    </table>
+    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
+        <tr>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Sample name</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Acquisition date</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Analyte integration type</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">IS integration type</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Record modified </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Rejection Reason</td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Message</td>
+        </tr>
+        <?php foreach ($list as $data) : ?>
+        <tr>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $data["sample_name"]; ?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $data["acquisition_date"]; ?>
+            </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $data["analyte_integration_type"]; ?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $data["is_integration_type"]; ?>
+            </td>
+            <td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
+                <?php echo $data["record_modify"]; ?>
+            </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $data["rejection_reason"]; ?>
+            </td>
+            <td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
+                <?php echo $data["message"]; ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        <tr>
+            <td colspan="7" align="right">Fecha y hora de impresión: <?php echo date("d.m.Y H:i:s"); ?></td>
+        </tr>
+    </table>
+    </div>
+</page>
+<?php
+//$content = ob_get_clean();
+//// convert to PDF
+//require_once dirname(__FILE__) . "/html2pdf/html2pdf.class.php";
+////$filename = sprintf('%s.pdf', rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $_REQUEST['name'])));
+//try
+//{
+//    $html2pdf = new HTML2PDF('P', array(432,240), 'en', true, 'UTF-8', array(0, 0, 0, 0));
+//    $html2pdf->setDefaultFont('Arial');
+//    $html2pdf->writeHTML($content);
+//    $html2pdf->Output($filename.".pdf", 'D');
+//}
+//catch(HTML2PDF_exception $e) {
+//    echo $e;
+//}
+//exit;
+
+?>

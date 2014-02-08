@@ -24,17 +24,17 @@
             </p>
             <h4>Seleccione el informe deseado:</h4>
             <ul class="pdf"><br/>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r1', false);">01. Información General de un Estudio</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r2', true);">02. Tabla ALAE de cada lote analítico(*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r3', true);">03. Resumen de Lotes de un Estudio  (*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r4', true);">04. Listado de Muestras a Repetir (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r1c', false);">01. Información General de un Estudio</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r2c', true);">02. Tabla ALAE de cada lote analítico(*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r3c', true);">03. Resumen de Lotes de un Estudio  (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r4c', true);">04. Listado de Muestras a Repetir (*)</a></li>
             </ul>
             <ul class="xls">
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r4', true);">05. Summary of Calibration Curve Parameters (*)</a></li>
-                <li><a href="alae0305.xlsx" target="_blank">06. Back-Calculated Concentration of Calibration Standard (*)</a></li>
-                <li><a href="alae0306.xlsx" target="_blank">07. Calculated % Nominal Concentration of Calibration Standards (*)</a></li>
-                <li><a href="alae0307.xlsx" target="_blank">08. Between-Run Accuracy and Precision of Quality Control Samples (*)</a></li>
-                <li><a href="alae0308.xlsx" target="_blank">09. Between-Run Accuracy and Precision of Dilution Quality Control Samples (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r5', true);">05. Summary of Calibration Curve Parameters (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r6', true);">06. Back-Calculated Concentration of Calibration Standard (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r7', true);">07. Calculated % Nominal Concentration of Calibration Standards (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r8', true);">08. Between-Run Accuracy and Precision of Quality Control Samples (*)</a></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r9', true);">09. Between-Run Accuracy and Precision of Dilution Quality Control Samples (*)</a></li>
             </ul>
         </div>
     </div>
@@ -51,6 +51,10 @@
 	{
 	    url = url + "&an=" + $("#analyte").val();
 	}
+        else if(!isAnalyte)
+        {
+            isRedirect = true;
+        }
         else
         {
             alert("Debe seleccionar un Analito");
