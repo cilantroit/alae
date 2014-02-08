@@ -7,14 +7,17 @@
 		<div id="login">
 		    <h1>Reinicializar contraseña  </h1>
 		    <?php
-		    echo "<div>" . $message . "<div>";
+		    echo "<ul id='errorContainer'>" . $message . "</ul>";
 		    ?>
 		    <form method="POST"  id="resetpass" action="<?php echo $this->url('user', array('action' => 'resetpass')); ?>">
 			<table>
 			    <tbody><tr><td>Nombre de usuario:</td>
 				    <td><input type="text" id="username" name="username"></td></tr>
 				<!-- para efectos de demostración, cambiar por SUBMIT  el botón a continuación-->
-				<tr><td>[ <a href="index.html">Inicio de sesión</a> ]</td>
+
+				<tr><td>[ <a href="<?php
+					echo $this->url('index', array('action' => 'login'));
+					?>"><?php echo 'Inicio de sesión'; ?>]</td>
 				    <td><a href="#"><input type="submit" value="Enviar" id="sentmailrpass"></a></td></tr>
 				<tr><td colspan="2">
 					<p class="peq" style="line-height:1.3em;">Recibirá por correo electrónico una dirección especial para cambiar su contraseña,<br>
@@ -26,12 +29,29 @@
 		</div>
 	    </div>
 	</div>
-	<div id="pie">
-	    <p><a href="./help/alaeIndex.pdf" target="blank"><img src="./img/help.png" title="ayuda sobre esta pantalla"></a>
-		Ayuda sobre el Sistema</p>
-	    <p><a href="./sf/alae001sf.pdf" target="blank"><img src="./img/info.png" title="Especificaciones funcionales"></a>
-		ALAE Software. Copyright © Anapharm, 2013.</p>
-	</div>
+
     </div>
+    <script>
+	$("#resetpass").validate({
+	    rules: {
+		username: {
+		    required: true
+
+		},
+	    },
+	    messages: {
+		username: {
+		    required: "El campo <strong>Nombre de usuario</strong> es obligatorio"
+
+		},
+	    },
+	    errorLabelContainer: "#errorContainer",
+	    wrapper: "li",
+	    errorPlacement: function(error, element) {
+
+	    }});
+
+    </script>
+
 
 

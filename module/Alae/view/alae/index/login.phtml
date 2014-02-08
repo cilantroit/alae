@@ -8,12 +8,12 @@
                 <h1>Inicio de sesi&oacute;n </h1>
                 <form method='POST'  id="loginusr" action="">
                     <ul id="errorContainer" <?php if (!$inactive && !$incorrect) : ?>style="display: none;" <?php endif; ?>>
-                        <?php if ($inactive) : ?>
-                        <li><label class='error auto'>Usuario <strong>NO REGISTRADO</strong> o Usuario <strong>INACTIVO</strong></label></li>
-                        <?php endif; ?>
-                        <?php if ($incorrect) : ?>
-                        <li><label class='error auto'><strong>Nombre de usuario</strong> o <strong>Contraseña</strong> incorrecta</label></li>
-                        <?php endif; ?>
+			<?php if ($inactive) : ?>
+    			<li><label class='error auto'>Usuario <strong>NO REGISTRADO</strong> o Usuario <strong>INACTIVO</strong></label></li>
+			<?php endif; ?>
+			<?php if ($incorrect) : ?>
+    			<li><label class='error auto'><strong>Nombre de usuario</strong> o <strong>Contraseña</strong> incorrecta</label></li>
+			<?php endif; ?>
                     </ul>
                     <table>
                         <tr><td><label for="username">Nombre de usuario:</td>
@@ -25,9 +25,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><a href="<?php
-                                echo $this->url('user', array('action' => 'newaccount'));
-                                ?>"><?php echo 'Solicitar cuenta'; ?></a></td>
+                            <td>[<a href="<?php
+				echo $this->url('user', array('action' => 'newaccount'));
+				?>"><?php echo 'Solicitar cuenta'; ?></a>]</td>
                             <td >&nbsp;</td>
                         </tr><tr>
 
@@ -42,3 +42,34 @@
         </div>
     </div>
 </div>
+<script>
+
+    $("#loginusr").validate({
+	rules: {
+	    username: {
+		required: true
+
+	    },
+	    password: {
+		required: true
+
+
+	    }
+	},
+	messages: {
+	    username: {
+		required: "El campo <strong>Nombre de usuario</strong> es obligatorio"
+
+	    },
+	    password: {
+		required: "El campo <strong>Constraseña</strong> es obligatorio"
+	    }
+
+	},
+	errorLabelContainer: "#errorContainer",
+	wrapper: "li",
+	errorPlacement: function(error, element) {
+
+	}});
+
+</script>
