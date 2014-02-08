@@ -417,7 +417,7 @@ class StudyController extends BaseController
                 {
                     $User = $this->_getSession();
                     $Study->setApprove(true);
-                    $Study->setFkUser($User);
+                    $Study->setFkUserApprove($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
                     $this->transaction(
@@ -452,7 +452,7 @@ class StudyController extends BaseController
                 {
                     $User = $this->_getSession();
                     $Study->setCloseFlag(true);
-                    $Study->setFkUser($User);
+                    $Study->setFkUserClose($User);
                     $this->getEntityManager()->persist($Study);
                     $this->getEntityManager()->flush();
                     $this->transaction(
@@ -568,7 +568,7 @@ class StudyController extends BaseController
                 {
                     $User = $this->_getSession();
                     $AnaStudy->setStatus(true);
-                    $AnaStudy->setFkUser($User);
+                    $AnaStudy->setFkUserApprove($User);
                     $this->getEntityManager()->persist($AnaStudy);
                     $this->getEntityManager()->flush();
                     $this->transaction(

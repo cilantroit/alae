@@ -64,6 +64,8 @@ CREATE TABLE IF NOT EXISTS alae_study(
         approve  		boolean			NOT NULL DEFAULT 0,
         duplicate		boolean			NOT NULL DEFAULT 0,
 	fk_user			bigint(20)		unsigned NOT NULL,
+        fk_user_approve         bigint(20)		unsigned,
+        fk_user_close           bigint(20)		unsigned,
         fk_dilution_tree 	bigint(20)		NOT NULL DEFAULT 1,
 	PRIMARY KEY (pk_study),
 	FOREIGN KEY (fk_user) REFERENCES alae_user (pk_user) ON DELETE CASCADE ON UPDATE CASCADE
@@ -95,6 +97,7 @@ CREATE TABLE IF NOT EXISTS alae_analyte_study(
 	fk_analyte_is		bigint(20)	unsigned NOT NULL,
 	fk_unit			int		NOT NULL,
         fk_user                 bigint(20)	unsigned NOT NULL,
+        fk_user_approve         bigint(20)      unsigned,
 	PRIMARY KEY (pk_analyte_study),
    	FOREIGN KEY (fk_study)      REFERENCES alae_study   (pk_study),
    	FOREIGN KEY (fk_analyte)    REFERENCES alae_analyte (pk_analyte),

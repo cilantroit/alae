@@ -102,6 +102,26 @@ class Study
      */
     protected $fkUser;
 
+    /**
+     * @var \Alae\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_user_approve", referencedColumnName="pk_user")
+     * })
+     */
+    protected $fkUserApprove;
+
+    /**
+     * @var \Alae\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="Alae\Entity\User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_user_close", referencedColumnName="pk_user")
+     * })
+     */
+    protected $fkUserClose;
+
     public function __construct()
     {
         $this->updatedAt = new \DateTime('now');
@@ -225,6 +245,26 @@ class Study
     public function setFkUser(\Alae\Entity\User $fkUser)
     {
         $this->fkUser = $fkUser;
+    }
+
+    public function getFkUserApprove()
+    {
+        return $this->fkUserApprove;
+    }
+
+    public function setFkUserApprove(\Alae\Entity\User $fkUser)
+    {
+        $this->fkUserApprove = $fkUser;
+    }
+
+    public function getFkUserClose()
+    {
+        return $this->fkUserClose;
+    }
+
+    public function setFkUserClose(\Alae\Entity\User $fkUser)
+    {
+        $this->fkUserClose = $fkUser;
     }
 
 }

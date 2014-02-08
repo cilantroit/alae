@@ -80,25 +80,32 @@ class ReportController extends BaseController
     public function r1Action()
     {
 	$request = $this->getRequest();
-	$viewModel = new ViewModel();
-	$data = array();
-	echo $request->getQuery('id');
-	$study = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
-	//$study = $this->getRepository("\\Alae\\Entity\\Study")->find($this->getEvent()->getRouteMatch()->getParam('id'));
-//	$data = array();
-	//$study = $this->getRepository()->find($this->getEvent()->getRouteMatch()->getParam('id'));
-	$counterAnalyte = $this->counterAnalyte($study->getPkStudy());
-	$data[] = array(
-	    "code" => $study->getCode(),
-	    "analyte" => $counterAnalyte,
-	    "dilution" => $study->getFkDilutionTree()
-	);
-	$viewModel->setVariable('study', $data);
+	if ($request->isGet())
+        {
+            $study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
+            $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
+            $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $study->getPkStudy()));
+            $cs_values = array();
+            $qc_values = array();
+            foreach ($analytes as $anaStudy)
+            {
+                $cs_values[] = explode(",", $anaStudy->getCsValues());
+                $qc_values[] = explode(",", $anaStudy->getQcValues());
+            }
 
+            $properties = array(
+                "study" => $study,
+                "counterAnalyte" => $counterAnalyte,
+                "analytes" => $analytes,
+                "cs_values" => $cs_values,
+                "qc_values" => $qc_values,
+                "filename" => "informacion_general_de_un_estudio". date("Ymd-Hi")
+            );
 
-
-
-	return $viewModel;
+            $viewModel = new ViewModel($properties);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
     }
 
     protected function counterAnalyte($pkStudy)

@@ -64,10 +64,10 @@ class Study extends \Alae\Entity\Study implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'approve', 'duplicate', 'fkDilutionTree', 'fkUser');
+            return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'approve', 'duplicate', 'fkDilutionTree', 'fkUser', 'fkUserApprove', 'fkUserClose');
         }
 
-        return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'approve', 'duplicate', 'fkDilutionTree', 'fkUser');
+        return array('__isInitialized__', 'pkStudy', 'code', 'createdAt', 'updatedAt', 'description', 'observation', 'closeFlag', 'status', 'approve', 'duplicate', 'fkDilutionTree', 'fkUser', 'fkUserApprove', 'fkUserClose');
     }
 
     /**
@@ -439,6 +439,50 @@ class Study extends \Alae\Entity\Study implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFkUser', array($fkUser));
 
         return parent::setFkUser($fkUser);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFkUserApprove()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFkUserApprove', array());
+
+        return parent::getFkUserApprove();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFkUserApprove(\Alae\Entity\User $fkUser)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFkUserApprove', array($fkUser));
+
+        return parent::setFkUserApprove($fkUser);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFkUserClose()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFkUserClose', array());
+
+        return parent::getFkUserClose();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFkUserClose(\Alae\Entity\User $fkUser)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFkUserClose', array($fkUser));
+
+        return parent::setFkUserClose($fkUser);
     }
 
 }

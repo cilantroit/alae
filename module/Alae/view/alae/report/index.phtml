@@ -24,7 +24,7 @@
             </p>
             <h4>Seleccione el informe deseado:</h4>
             <ul class="pdf"><br/>
-                <li><span onclick="reports('<?php echo $this->basePath() ?>/report/r1', false);">01. Información General de un Estudio</span></li>
+                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r1', false);">01. Información General de un Estudio</a></li>
                 <li><a href="alae0302.xlsx" target="_blank">02. Resumen de Lotes de un Estudio</a></li>
                 <li><a href="alae0303.xlsx" target="_blank">03. Listado de Muestras a Repetir (*)</a></li>
             </ul>
@@ -42,13 +42,8 @@
     </blockquote>
 </div>
 <script>
-
-
-
-
     function reports(url, isAnalyte)
     {
-	alert("hola");
 	url = url + "?id=" + $("#study").val();
 	if (isAnalyte)
 	{
@@ -62,28 +57,17 @@
 	var optionSelected = $("option:selected", this);
 	var id = this.value;
 	$.ajax
-		({
-		    type: "GET",
-		    dataType: "json",
-		    url: basePath + "/report/ajax",
-		    data: {id: id},
-		    success: function(data)
-		    {
-			$('#analyte').html(data.data);
-			$('#ajax').show();
-			$('#analyte').show();
-		    }
-		});
+        ({
+            type: "GET",
+            dataType: "json",
+            url: basePath + "/report/ajax",
+            data: {id: id},
+            success: function(data)
+            {
+                $('#analyte').html(data.data);
+                $('#ajax').show();
+                $('#analyte').show();
+            }
+        });
     });
-
-
-
-
-
-
-
-
-
-
-
 </script>
