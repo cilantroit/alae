@@ -1,6 +1,6 @@
 <?php
-//header('Content-Disposition: attachment; filename="prueba.xls";');
-//header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment; filename="prueba.xls";');
+header('Content-Type: application/vnd.ms-excel');
 ?>
 <!DOCTYPE html>
 <html>
@@ -13,13 +13,13 @@
 	    <h3>RESUMEN DE LOTES DE UN ESTUDIO </h3>
 	    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding: 4px;font-size:11px;">
 		<tr>
-		    <td width="238" align="left" height="20" bgcolor="#000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+		    <td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
 			Código del estudio:
 		    </td>
 		    <td width="205" height="20" style="border: black 1px solid;padding: 4px;">
 
 		    </td>
-		    <td width="273" height="20" bgcolor="#000" style="border: black 1px solid;color:#F1DADA;padding: 4px">
+		    <td width="273" height="20" bgcolor="#000000" style="border: black 1px solid;color:#F1DADA;padding: 4px">
 			Analito
 
 		    </td>
@@ -34,14 +34,24 @@
 
 		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;font-size:11px;">
 		    <tr>
-			<td width="238" align="left" height="20" bgcolor="#000" style="border: black 1px solid;color:#97C1DA;padding:4px;font-size:11px;">
+			<td colspan="3">
+			</td>
+
+		    </tr>
+		    <tr>
+			<td colspan="3">
+			</td>
+
+		    </tr>
+		    <tr>
+			<td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding:4px;font-size:11px;">
 			    Identificación de la muestra
 			</td>
-			<td width="238" align="left" height="20" bgcolor="#000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+			<td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
 			    Evaluación
 			    ( Aceptado / Rechazado )
 			</td>
-			<td width="238" align="left" height="20" bgcolor="#000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+			<td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
 			    Motivo
 			    ( En caso de ser Rechazado )
 			</td>
