@@ -1,0 +1,192 @@
+<?php
+//header('Content-Disposition: attachment; filename="prueba.xls";');
+//header('Content-Type: application/vnd.ms-excel');
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>
+	<div class="table-container">
+	    <h3>ALAE_BATCH RESULTS TABLE</h3>
+	    <table width="890" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;">
+		<tr>
+		    <td width="238" align="left" height="20"  style="text-aling:justify;">
+			Código del estudio:
+		    </td>
+		    <td width="205" height="20" style="">
+
+		    </td>
+		    <td width="273" height="20">
+			Calibration Curve Parameters (Y= mX+b)
+
+		    </td>
+		    <td width="174" align="center" height="20">
+
+		    </td>
+
+		</tr>
+		<tr>
+		    <td width="238" align="left" height="20"  align="center">
+			Analito:
+		    </td>
+		    <td width="205" height="20" style="">
+
+		    </td>
+		    <td width="273" align="center" height="20"  align="center">
+			m=
+		    </td>
+		    <td width="174" align="center" height="20">
+
+		    </td>
+
+		</tr>
+		<tr>
+		    <td width="238" align="left" height="20"  align="center">
+			Nombre del archivo exportado:
+		    </td>
+		    <td width="205" height="20" style="">
+
+		    </td>
+		    <td width="273" align="center" height="20"  align="center">
+			x=
+
+		    </td>
+		    <td width="174" align="center" height="20">
+
+		    </td>
+
+		</tr>
+		<tr>
+		    <td width="238" align="left" height="20"  align="center">
+			Fecha de importación:
+		    </td>
+		    <td width="205" height="20" style="">
+
+		    </td>
+		    <td width="273" align="center" height="20"  align="center">
+			r=
+		    </td>
+		    <td width="174" align="center" height="20">
+
+		    </td>
+
+		</tr>
+		<tr>
+		    <td colspan="4">
+
+		    </td>
+		</tr>
+		<tr>
+		    <td width="238" align="left" height="20"  align="center">
+			Resultado de la Evaluación:
+		    </td>
+		    <td width="205" height="20" style="">
+
+		    </td>
+		    <td width="273" align="center" height="20"  align="center">
+			Motivo de Rechazo:
+
+		    </td>
+		    <td width="174" align="center" height="20">
+
+		    </td>
+
+		</tr>
+		<tr>
+		    <td width="238" align="left" height="20"  align="center">
+			Usuario:
+
+		    </td>
+		    <td colspan="3" height="20" style="">
+
+		    </td>
+		</tr>
+		<tr>
+		    <td width="238" align="left" height="20"  align="center">
+			Fecha de la Evaluación:
+
+		    </td>
+		    <td colspan="3" height="20" style="">
+
+		    </td>
+
+
+		</tr>
+	    </table>
+	    <div class="cler"></div>
+	    <div class="table-row">
+
+		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center;">
+		    <tr>
+
+			<td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">Sample Name</td>
+			<td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">Analyte peak name</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Sample Type</td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> File name </td>
+			<td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">Analyte peak</td>
+			<td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">IS peak name</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Area ratio</td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> Analyte concentration</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Dilution factor</td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">Correction factor</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Corrected concentration</td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> Accuracy</td>
+
+		    </tr>
+		    <tr>
+
+			<td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> </td>
+			<td width="50" align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"  style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> </td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"></td>
+		    </tr>
+		    <tr>
+			<td colspan="12" align="right">Fecha y hora de impresión</td>
+
+		    </tr>
+		</table>
+		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff,margin-top:10px;text-aling:center;">
+		    <tr>
+
+
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Use record</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Sample name</td>
+
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Acquisition date</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Analyte integration type</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">IS integration type</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Record modified </td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Rejection Reason</td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Message</td>
+
+
+		    </tr>
+		    <tr>
+
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> </td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style=" border: black 1px solid;font-size:11px;padding:4px"></td>
+			<td width="50" align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"></td>
+		    </tr>
+		    <tr>
+			<td colspan="8" align="right">Fecha y hora de impresión</td>
+
+		    </tr>
+		</table>
+		</body>
+		</html>

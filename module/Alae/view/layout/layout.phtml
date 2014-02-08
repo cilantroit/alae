@@ -14,6 +14,7 @@
 		->prependStylesheet($this->basePath() . '/css/style.css')
 		->prependStylesheet($this->basePath() . '/css/alae.css')
 		->prependStylesheet($this->basePath() . '/css/datatable.css')
+		->prependStylesheet($this->basePath() . '/css/reports.css')
 	?>
 	<!-- Scripts -->
 	<?php
@@ -22,8 +23,9 @@
 		->prependFile($this->basePath() . '/js/additional-methods.min.js')
 		->prependFile($this->basePath() . '/js/jquery.validate.min.js')
 		->prependFile($this->basePath() . '/js/jquery.js')
-                ->prependFile($this->basePath() . '/js/yui.min.js')
-        ->prependFile($this->basePath() . '/public/css/style.css');?>
+		->prependFile($this->basePath() . '/js/yui.min.js')
+		->prependFile($this->basePath() . '/public/css/style.css');
+	?>
 	<script>
 	    var basePath = '<?php echo $this->basePath() ?>';
         </script>
@@ -37,10 +39,10 @@
     </head>
     <body>
         <div id="container">
-            <?php echo $this->content; ?>
+<?php echo $this->content; ?>
 	    <div id="pie">
                 <p>
-                    <?php echo Alae\Service\Helper::getUserSession(); ?>
+<?php echo Alae\Service\Helper::getUserSession(); ?>
                 </p>
                 <p>
                     ALAE Software. Copyright © Anapharm, 2014.
