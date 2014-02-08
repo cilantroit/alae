@@ -121,12 +121,63 @@ class ReportController extends BaseController
 
     public function r2Action()
     {
-	return $viewModel;
+        $request = $this->getRequest();
+        if ($request->isGet())
+        {
+            $elements = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkStudy" => $request->getQuery('id')));
+
+            $properties = array(
+                "batch"    => $elements,
+                "filename" => "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi")
+            );
+
+            $viewModel = new ViewModel($properties);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
     }
 
     public function r3Action()
     {
-	return $viewModel;
+        $request = $this->getRequest();
+        if ($request->isGet())
+        {
+            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+
+            $list = array();
+            foreach ($elements as $SampleBatch)
+            {
+                $error = "";
+                if (!is_null($SampleBatch->getParameters()))
+                {
+                    $message    = array();
+                    $parameters = explode(",", $SampleBatch->getParameters());
+                    foreach ($parameters as $parameter)
+                    {
+                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+                        $message[] = $Parameter->getMessageError();
+                    }
+                    $error = implode(", ", $message);
+                }
+
+                $list[] = array(
+                    "sample_name" => $SampleBatch->getSampleName(),
+                    "status"      => $SampleBatch->getValidFlag() ? "Aceptado" : "Rechazado",
+                    "error"       => $error
+                );
+            }
+
+            $properties = array(
+                "batch"    => $batch[0],
+                "list"     => $list,
+                "filename" => "resumen_de_lotes_de_un_estudio" . date("Ymd-Hi")
+            );
+
+            $viewModel = new ViewModel($properties);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
     }
 
     public function r4Action()

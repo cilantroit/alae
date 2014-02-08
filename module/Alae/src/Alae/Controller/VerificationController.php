@@ -47,7 +47,7 @@ class VerificationController extends BaseController
                     FROM Alae\Entity\SampleBatch s
                     WHERE s.parameters IS NOT NULL");
                 $error = $query->getSingleScalarResult();
-                
+
                 $status = ($error > 0) ? false : true;
                 $this->updateBatch($Batch, $status);
             }
@@ -75,7 +75,7 @@ class VerificationController extends BaseController
             'id'         => $AnaStudy[0]->getPkAnalyteStudy()
         ));
     }
-    
+
     protected function updateBatch(\Alae\Entity\Batch $Batch, $valid = true)
     {
         $Batch->setValidFlag($valid);
