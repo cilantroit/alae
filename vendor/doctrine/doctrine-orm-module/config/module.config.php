@@ -48,7 +48,8 @@ return array(
 	    'orm_default' => array(
 		'string_functions' => array(
 		    'REGEXP' => 'DoctrineExtensions\Query\Mysql\Regexp',
-		    'CONCAT_WS' => 'DoctrineExtensions\Query\Mysql\ConcatWs'
+		    'CONCAT_WS' => 'DoctrineExtensions\Query\Mysql\ConcatWs',
+                    'IF' => 'DoctrineExtensions\Query\Mysql\IfElse'
 		),
 		// metadata cache instance to use. The retrieved service name will
 		// be `doctrine.cache.$thisSetting`

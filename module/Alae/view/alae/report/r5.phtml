@@ -59,7 +59,7 @@ header('Content-Type: application/vnd.ms-excel');
             <?php $count = 0; foreach($batch as $Batch) : ?>
             <tr>
                 <td align="center"  height="20px" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
-                    <?php
+                    '<?php
                     list($name, $aux) = explode("_", $Batch->getFileName());
                     echo $name;
                     ?>
