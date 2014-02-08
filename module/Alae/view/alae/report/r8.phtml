@@ -1,7 +1,6 @@
 <?php
-header('Content-Disposition: attachment; filename="prueba.xls";');
+header('Content-Disposition: attachment; filename="'. $filename .'.xls";');
 header('Content-Type: application/vnd.ms-excel');
-//
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,15 +10,13 @@ header('Content-Type: application/vnd.ms-excel');
     </head>
     <body>
 	<div class="table-container">
-
 	    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:10px 0 0 0;">
 		<tr>
 		    <td width="238" align="left" height="20">
-
 			Study No:
 		    </td>
 		    <td width="205" height="20" style="">
-
+                        <?php echo $analyte->getFkStudy()->getCode(); ?>
 		    </td>
 		</tr>
 		<tr>
@@ -28,186 +25,159 @@ header('Content-Type: application/vnd.ms-excel');
 		    </td>
 		</tr>
 		<tr>
-
 		    <td width="238" colspan="2" align="left" height="20"  style="padding:10px 0 0 0;">
 			<strong>Between-Run Accuracy and Precision of Quality Control Samples </strong>
 		    </td>
 		</tr>
 		<tr>
 		    <td width="238" align="left" height="20"  style="padding: 10px 0 0 0">
-
 			Analyte:
 		    </td>
 		    <td width="205" height="20" style="">
-
+                        <?php echo $analyte->getFkAnalyte()->getName(); ?>
 		    </td>
-
 		</tr>
 		<tr>
 		    <td width="238" align="left" height="20"  style="padding: 10px 00 0">
-
 			Biological Matrix
 		    </td>
 		    <td width="205" height="20" style="">
 
 		    </td>
-
 		</tr>
-
+                <tr>
+		    <td width="238" align="left" height="20"  style="padding: 10px 00 0">
+			Concentration Units:
+		    </td>
+		    <td width="205" height="20" style="">
+                        <?php echo $analyte->getFkUnit()->getName(); ?>
+		    </td>
+		</tr>
 	    </table>
-
 	    <div class="cler"></div>
 	    <div class="table-row">
-
 		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
 		    <tr>
 			<td  colspan="2" align="center"></td>
 		    </tr>
 		    <tr>
-			<td  align="center" colspan="4"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Batch Results
-				Table No.</strong> </td>
-			<td  align="center"  colspan="4" style=" border: black 1px solid;padding:2px">QC1</td>
-			<td  align="center"  colspan="4" style=" border: black 1px solid;padding:2px">QC2</td>
-			<td  align="center"   colspan="4" style=" border: black 1px solid;padding:2px">QC3</td>
-			<td  align="center" colspan="4"  style=" border: black 1px solid;padding:2px">QC4</td>
-
+			<td  align="center" colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Batch Results Table No.</strong></td>
+                        <?php for($i = 1; $i <= $analyte->getQcNumber(); $i++) : ?>
+                        <td  align="center"  colspan="4" style=" border: black 1px solid;padding:2px">QC<?php echo $i; ?></td>
+                        <?php endfor; ?>
+		    </tr>
+		    <tr><
+			<td  align="center"  colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
+			<?php foreach ($qc_values as $key => $value) : ?>
+                        <td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
+                            <?php echo number_format($value, 2, ',', ''); ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
 		    <tr>
-			<td  align="center"  colspan="4" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
-			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">1.82 ng/Ml</td>
-			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">45.41 ng/mL</td>
-			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">105.95 ng/mL</td>
-			<td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">xxx.xx ng/mL</td>
+			<td  align="center"  bgcolor="#B7CCE3" colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
+			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
 		    </tr>
+                    <?php foreach($list as $list) : ?>
 		    <tr>
-			<td  align="center"  bgcolor="#B7CCE3" colspan="4" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
-			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nomina</td>
+                        <td  align="center"  bgcolor="#B7CCE3" colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>'<?php echo $list['name']; ?></strong>
+                        </td>
+                        <?php foreach ($list['par'] as $key => $value) : ?>
+                        <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[0]; ?>
+                        </td>
+                        <td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[1]; ?>
+                        </td>
+                        <td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[2]; ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
-		    <tr>
-			<td  align="center"  bgcolor="#B7CCE3" colspan="4" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong></strong> </td>
-			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
-
-			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
-
-			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
-
-			<td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px"></td>
+                    <tr>
+                        <td  align="center"  bgcolor="#B7CCE3" colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong></strong>
+                        </td>
+			<?php foreach ($list['impar'] as $key => $value) : ?>
+                        <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[0]; ?>
+                        </td>
+                        <td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[1]; ?>
+                        </td>
+                        <td  align="center"   bgcolor="#FAD3B3" style=" border: black 1px solid;padding:2px">
+                            <?php echo $value[2]; ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
+                    <?php endforeach; ?>
 		    <tr>
 			<td colspan="20">
-
+                            &nbsp;
 			</td>
 		    </tr>
 		    <tr>
-
-			<td  align="center"   colspan="4"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>N</strong> </td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#DAE4F0"  colspan="2"  style=" border: black 1px solid;padding:2px"></td>
+			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>N</strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                            <?php echo $calculation['count']; ?>
+                        </td>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                            <?php echo $calculation['count']; ?>
+                        </td>
+                        <?php endforeach; ?>
 		    </tr>
+		    <tr>
+                        <td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>Mean</strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                            <?php echo $calculation['prom']; ?>
+                        </td>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                            <?php echo $calculation['accu']; ?>
+                        </td>
+                        <?php endforeach; ?>
+		    </tr>
+		    <tr>
+			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>SD (±) </strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                            =DESVEST(<?php echo $calculation['values']; ?>)
+                        </td>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
 
+                        </td>
+                        <?php endforeach; ?>
+		    </tr>
+		    <tr>
+			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                            <strong>CV (%)</strong>
+                        </td>
+			<?php foreach ($calculations as $calculation) : ?>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                            =DESVEST(<?php echo $calculation['values']; ?>)/PROMEDIO(<?php echo $calculation['values']; ?>)
+                        </td>
+                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
 
+                        </td>
+                        <?php endforeach; ?>
+		    </tr>
 		</table>
 		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="margin-top:10px;text-aling:center;">
-		    <tr>
-			<td  align="center"  colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Batch Results Table No.</strong> </td>
-			<td  align="center" colspan="18" style=" border: black 1px solid;padding:2px">Back-Calculated Concentrations (5)</td>
-		    </tr>
-		    <tr>
-			<td  align="center" bgcolor="#B7CCE3" colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong></strong> </td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"   bgcolor="#FAD3B3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"  style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px;font-size:11px"></td>
-			<td  align="center"   style=" border: black 1px solid;padding:2px"></td>
-
-		    </tr>
-
-		    <tr>
-			<td colspan="20" align="left" style="border: black 1px solid;padding:2px"></td>
-
-		    </tr>
-		    <tr>
-			<td  align="center"   colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>N</strong> </td>
-			<td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"   colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-		    </tr>
-		    <tr>
-			<td  align="center"   colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Mean</strong> </td>
-			<td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"   colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-		    </tr>
-		    <tr>
-			<td    align="center" colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>SD (±) </strong> </td>
-			<td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"   colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-		    </tr>
-		    <tr>
-			<td    align="center" colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>CV (%)</strong> </td>
-			<td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2"   colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"   bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-			<td  align="center"    bgcolor="#D9EDF2"  colspan="2" style=" border: black 1px solid;padding:2px;"></td>
-		    </tr>
 		    <tr>
 			<td colspan="20" align="left" style="padding: 10px 0 2px 0;">Acceptance criteria: </td>
 		    </tr>
@@ -224,11 +194,8 @@ header('Content-Type: application/vnd.ms-excel');
 			<td colspan="20" align="left" style="padding: 10px;">CV (%) ≤ 15%  </td>
 		    </tr>
 		    <tr>
-			<td colspan="20" align="left" style="padding: 10px;">(2) RCS: Rejected Calibration Standard  </td>
+			<td colspan="20" align="left" style="padding: 10px;">(2) RCS: Rejected Calibration Standard</td>
 		    </tr>
-
-
-
 		</table>
 	    </div>
 	</div>
