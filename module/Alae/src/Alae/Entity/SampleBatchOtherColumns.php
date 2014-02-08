@@ -619,7 +619,7 @@ class SampleBatchOtherColumns
 
     public function getAcquisitionDate()
     {
-        return $this->acquisitionDate;
+        return $this->acquisitionDate->format('d.m.Y H:i:s');
     }
 
     public function setAcquisitionDate($acquisitionDate)
