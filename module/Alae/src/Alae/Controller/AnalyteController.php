@@ -145,7 +145,7 @@ class AnalyteController extends BaseController
         foreach ($elements as $analyte)
         {
             $data[] = array(
-                "id"        => $analyte->getPkAnalyte(),
+                "id"        => str_pad($analyte->getPkAnalyte(), 4, '0', STR_PAD_LEFT),
                 "name"      => $analyte->getName(),
                 "shortname" => $analyte->getShortening(),
                 "edit"      => $analyte->getPkAnalyte()

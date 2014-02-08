@@ -237,6 +237,9 @@ h5{
 }
 #study-form p label{
     margin: 10px;
+    width: 100px;
+    display: inline-block;
+    vertical-align: top;
 }
 #study-form textarea{
     width: 70%;

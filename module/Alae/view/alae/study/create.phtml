@@ -25,11 +25,11 @@
             </ul>
             <p>
                 <label>Descripción:</label>
-                <textarea name="description" rows="2" cols="50"></textarea>
+                <textarea name="description" rows="2" required cols="50"></textarea>
             </p>
             <p>
                 <label>Observaciones:</label>
-                <textarea name="observation" rows="2" cols="50"></textarea>
+                <textarea name="observation" rows="2" required cols="50"></textarea>
             </p>
             <ul>
                 <?php if ($user->isAdministrador() || $user->isDirectorEstudio()) : ?>
@@ -55,7 +55,7 @@
         messages: {
             code: {
                 required: "El campo <strong>Código</strong> es requerido",
-                regex: "Por favor, ingreso un <strong>Código</strong> válido. Ejm: ANE2013-1234"
+                regex: "Por favor, introduzca un <strong>Código</strong> válido. Ejm: ANE2013-1234"
             }
         },
         errorLabelContainer: "#errorBox",

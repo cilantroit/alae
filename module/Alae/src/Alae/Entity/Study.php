@@ -129,7 +129,7 @@ class Study
 
     public function getCreatedAt()
     {
-        return $this->createdAt->format('Y-m-d H:i:s');
+        return $this->createdAt->format('d.m.Y H:i:s');
     }
 
     public function setCreatedAt(\DateTime $createdAt)
@@ -139,7 +139,7 @@ class Study
 
     public function getUpdatedAt()
     {
-        return $this->updatedAt->format('Y-m-d H:i:s');
+        return $this->updatedAt->format('d.m.Y H:i:s');
     }
 
     public function setUpdatedAt(\DateTime $updatedAt)

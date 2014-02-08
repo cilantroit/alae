@@ -489,7 +489,7 @@ class StudyController extends BaseController
                     $newStudy = new \Alae\Entity\Study();
                     $newStudy->setDescription($Study->getDescription());
                     $newStudy->setObservation($Study->getObservation());
-                    $newStudy->setCode($Study->getCode(). count($studies));
+                    $newStudy->setCode($Study->getCode(). "R" .count($studies));
                     $newStudy->setCloseFlag(false);
                     $newStudy->setStatus(true);
                     $newStudy->setApprove(false);
@@ -508,8 +508,6 @@ class StudyController extends BaseController
                         $newAnaStudy->setFkStudy($newStudy);
                         $newAnaStudy->setCsNumber($AnaStudy->getCsNumber());
                         $newAnaStudy->setQcNumber($AnaStudy->getQcNumber());
-                        $newAnaStudy->setCsValues($AnaStudy->getCsValues());
-                        $newAnaStudy->setQcValues($AnaStudy->getQcValues());
                         $newAnaStudy->setFkUnit($AnaStudy->getFkUnit());
                         $newAnaStudy->setInternalStandard($AnaStudy->getInternalStandard());
                         $newAnaStudy->setStatus(false);

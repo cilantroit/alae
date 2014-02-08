@@ -3,7 +3,8 @@ YUI().use('datatable', function(Y) {
     table = new Y.DataTable({
 	columns: columns,
 	data: data,
-	scrollable: "y"
+	scrollable: "y",
+        height: 400
     }).render("#datatable");
 
     $('.yui3-datatable-message').html(filtersHtml);
