@@ -80,32 +80,32 @@ class ReportController extends BaseController
     public function r1Action()
     {
 	$request = $this->getRequest();
-	if ($request->isGet())
-        {
-            $study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
-            $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
-            $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $study->getPkStudy()));
-            $cs_values = array();
-            $qc_values = array();
-            foreach ($analytes as $anaStudy)
-            {
-                $cs_values[] = explode(",", $anaStudy->getCsValues());
-                $qc_values[] = explode(",", $anaStudy->getQcValues());
-            }
-
-            $properties = array(
-                "study" => $study,
-                "counterAnalyte" => $counterAnalyte,
-                "analytes" => $analytes,
-                "cs_values" => $cs_values,
-                "qc_values" => $qc_values,
-                "filename" => "informacion_general_de_un_estudio". date("Ymd-Hi")
-            );
-
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
-        }
+//	if ($request->isGet())
+//        {
+//            $study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
+//            $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
+//            $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $study->getPkStudy()));
+//            $cs_values = array();
+//            $qc_values = array();
+//            foreach ($analytes as $anaStudy)
+//            {
+//                $cs_values[] = explode(",", $anaStudy->getCsValues());
+//                $qc_values[] = explode(",", $anaStudy->getQcValues());
+//            }
+//
+//            $properties = array(
+//                "study" => $study,
+//                "counterAnalyte" => $counterAnalyte,
+//                "analytes" => $analytes,
+//                "cs_values" => $cs_values,
+//                "qc_values" => $qc_values,
+//                "filename" => "informacion_general_de_un_estudio". date("Ymd-Hi")
+//            );
+//
+//            $viewModel = new ViewModel($properties);
+//            $viewModel->setTerminal(true);
+//            return $viewModel;
+//        }
     }
 
     protected function counterAnalyte($pkStudy)
@@ -121,156 +121,164 @@ class ReportController extends BaseController
 
     public function r2Action()
     {
-        $request = $this->getRequest();
-        if ($request->isGet())
-        {
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+    	/*
+	$request = $this->getRequest();
+	if ($request->isGet())
+	{
+	    $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+	    $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
 
-            foreach ($elements as $SampleBatch)
-            {
-                $error = "";
-                if (!is_null($SampleBatch->getParameters()))
-                {
-                    $message    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
-                    {
-                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $message[] = $Parameter->getMessageError();
-                    }
-                    $error = implode(", ", array_unique($message));
-                }
-            }
+	    foreach ($elements as $SampleBatch)
+	    {
+		$error = "";
+		if (!is_null($SampleBatch->getParameters()))
+		{
+		    $message = array();
+		    $parameters = explode(",", $SampleBatch->getParameters());
+		    foreach ($parameters as $parameter)
+		    {
+			$Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+			$message[] = $Parameter->getMessageError();
+		    }
+		    $error = implode(", ", array_unique($message));
+		}
+	    }
 
-            $list = array();
-            foreach ($elements as $SampleBatch)
-            {
-                $other = $this->getRepository("\\Alae\\Entity\\SampleBatchOtherColumns")->findBy(array("fkSampleBatch" => $SampleBatch->getPkSampleBatch()));
+	    $list = array();
+	    foreach ($elements as $SampleBatch)
+	    {
+		$other = $this->getRepository("\\Alae\\Entity\\SampleBatchOtherColumns")->findBy(array("fkSampleBatch" => $SampleBatch->getPkSampleBatch()));
 
-                $message = $reason  = "";
-                if (!is_null($SampleBatch->getParameters()))
-                {
-                    $messages   = $reasons    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
-                    {
-                        $Parameter  = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $messages[] = $Parameter->getMessageError();
-                        $reasons[]  = $Parameter->getCodeError();
-                    }
-                    $message = implode(", ", array_unique($messages));
-                    $reason  = implode(", ", array_unique($reasons));
-                }
-                $list[] = array(
-                    "sample_name"              => $SampleBatch->getSampleName(),
-                    "acquisition_date"         => $other[0]->getAcquisitionDate(),
-                    "analyte_integration_type" => $other[0]->getAnalyteIntegrationType(),
-                    "is_integration_type"      => $other[0]->getIsIntegrationType(),
-                    "record_modify"            => $other[0]->getRecordModified(),
-                    "rejection_reason"         => $reason,
-                    "message"                  => $message
-                );
-            }
+		$message = $reason = "";
+		if (!is_null($SampleBatch->getParameters()))
+		{
+		    $messages = $reasons = array();
+		    $parameters = explode(",", $SampleBatch->getParameters());
+		    foreach ($parameters as $parameter)
+		    {
+			$Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+			$messages[] = $Parameter->getMessageError();
+			$reasons[] = $Parameter->getCodeError();
+		    }
+		    $message = implode(", ", array_unique($messages));
+		    $reason = implode(", ", array_unique($reasons));
+		}
+		$list[] = array(
+		    "sample_name" => $SampleBatch->getSampleName(),
+		    "acquisition_date" => $other[0]->getAcquisitionDate(),
+		    "analyte_integration_type" => $other[0]->getAnalyteIntegrationType(),
+		    "is_integration_type" => $other[0]->getIsIntegrationType(),
+		    "record_modify" => $other[0]->getRecordModified(),
+		    "rejection_reason" => $reason,
+		    "message" => $message
+		);
+	    }
 
-            $properties = array(
-                "batch"    => $batch[0],
-                "elements" => $elements,
-                "error"    => $error,
-                "list"     => $list,
-                "filename" => "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi")
-            );
+	    $properties = array(
+		"batch" => $batch[0],
+		"elements" => $elements,
+		"error" => $error,
+		"list" => $list,
+		"filename" => "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi")
+	    );
 
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
-        }
+	    $viewModel = new ViewModel($properties);
+	    $viewModel->setTerminal(true);
+	    return $viewModel;
+	}
+		 * 
+		 * 
+		 */
     }
 
     public function r3Action()
     {
-        $request = $this->getRequest();
-        if ($request->isGet())
-        {
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+    	/*
+	$request = $this->getRequest();
+	if ($request->isGet())
+	{
+	    $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+	    $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
 
-            $list = array();
-            foreach ($elements as $SampleBatch)
-            {
-                $error = "";
-                if (!is_null($SampleBatch->getParameters()))
-                {
-                    $message    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
-                    {
-                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $message[] = $Parameter->getMessageError();
-                    }
-                    $error = implode(", ", $message);
-                }
+	    $list = array();
+	    foreach ($elements as $SampleBatch)
+	    {
+		$error = "";
+		if (!is_null($SampleBatch->getParameters()))
+		{
+		    $message = array();
+		    $parameters = explode(",", $SampleBatch->getParameters());
+		    foreach ($parameters as $parameter)
+		    {
+			$Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+			$message[] = $Parameter->getMessageError();
+		    }
+		    $error = implode(", ", $message);
+		}
 
-                $list[] = array(
-                    "sample_name" => $SampleBatch->getSampleName(),
-                    "status"      => $SampleBatch->getValidFlag() ? "Aceptado" : "Rechazado",
-                    "error"       => $error
-                );
-            }
+		$list[] = array(
+		    "sample_name" => $SampleBatch->getSampleName(),
+		    "status" => $SampleBatch->getValidFlag() ? "Aceptado" : "Rechazado",
+		    "error" => $error
+		);
+	    }
 
-            $properties = array(
-                "batch"    => $batch[0],
-                "list"     => $list,
-                "filename" => "resumen_de_lotes_de_un_estudio" . date("Ymd-Hi")
-            );
+	    $properties = array(
+		"batch" => $batch[0],
+		"list" => $list,
+		"filename" => "resumen_de_lotes_de_un_estudio" . date("Ymd-Hi")
+	    );
 
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
-        }
+	    $viewModel = new ViewModel($properties);
+	    $viewModel->setTerminal(true);
+	    return $viewModel;
+	}
+		 * 
+		 */
+		 return $viewModel;
     }
 
     public function r4Action()
     {
 	$request = $this->getRequest();
-        if ($request->isGet())
-        {
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+	if ($request->isGet())
+	{
+	    $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+	    $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
 
-            $list = array();
-            foreach ($elements as $SampleBatch)
-            {
-                if (!is_null($SampleBatch->getParameters()))
-                {
-                    $error = "";
-                    $message    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
-                    {
-                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $message[] = $Parameter->getMessageError();
-                    }
-                    $error = implode(", ", $message);
+	    $list = array();
+	    foreach ($elements as $SampleBatch)
+	    {
+		if (!is_null($SampleBatch->getParameters()))
+		{
+		    $error = "";
+		    $message = array();
+		    $parameters = explode(",", $SampleBatch->getParameters());
+		    foreach ($parameters as $parameter)
+		    {
+			$Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+			$message[] = $Parameter->getMessageError();
+		    }
+		    $error = implode(", ", $message);
 
-                    $list[] = array(
-                        "sample_name" => $SampleBatch->getSampleName(),
-                        "status"      => $SampleBatch->getFileName(),
-                        "error"       => $error
-                    );
-                }
-            }
+		    $list[] = array(
+			"sample_name" => $SampleBatch->getSampleName(),
+			"status" => $SampleBatch->getFileName(),
+			"error" => $error
+		    );
+		}
+	    }
 
-            $properties = array(
-                "batch"    => $batch[0],
-                "list"     => $list,
-                "filename" => "listado_de_muestras_a_repetir" . date("Ymd-Hi")
-            );
+	    $properties = array(
+		"batch" => $batch[0],
+		"list" => $list,
+		"filename" => "listado_de_muestras_a_repetir" . date("Ymd-Hi")
+	    );
 
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
-        }
+	    $viewModel = new ViewModel($properties);
+	    $viewModel->setTerminal(true);
+	    return $viewModel;
+	}
     }
 
     public function r5Action()

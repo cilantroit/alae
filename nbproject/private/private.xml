@@ -3,13 +3,26 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r1.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r4.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/UserController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r2.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/user/admin.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/index.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r6.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/ReportController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r1_no_funciona_pdf.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/layout/layout.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/Study.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r8.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/config/module.config.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r5.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r1.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r9.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r6-xelmaol.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/public/excel.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/index.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r3.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r7.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/public/css/reports.css</file>
         </group>
     </open-files>
 </project-private>

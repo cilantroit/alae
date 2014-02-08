@@ -1,75 +1,95 @@
 <?php
-header('Content-Disposition: attachment; filename="'. $filename .'.xls";');
-header('Content-Type: application/vnd.ms-excel');
+//
+//$filename = 'hola';
+//header('Content-Disposition: attachment; filename="' . $filename . '.xls";');
+//header('Content-Type: application/vnd.ms-excel');
 ?>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
-	<div class="table-container">
-	    <h3>RESUMEN DE LOTES DE UN ESTUDIO </h3>
-	    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding: 4px;font-size:11px;">
-		<tr>
-		    <td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
-			Código del estudio:
-		    </td>
-		    <td width="205" height="20" style="border: black 1px solid;padding: 4px;">
-                    <?php echo $batch->getFkStudy()->getCode(); ?>
-		    </td>
-		    <td width="273" height="20" bgcolor="#000000" style="border: black 1px solid;color:#F1DADA;padding: 4px">
-			Analito
-		    </td>
-		    <td width="174" align="center" height="20" style="border: black 1px solid;">
-                        <?php echo $batch->getFkAnalyte()->getName(); ?>
-		    </td>
-		</tr>
-                <tr>
-                    <td colspan="4">
-                        <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;font-size:11px;">
-                            <tr>
-                                <td colspan="3"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="3"></td>
-                            </tr>
-                            <tr>
-                                <td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding:4px;font-size:11px;">
-                                    Identificación de la muestra
-                                </td>
-                                <td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
-                                    Evaluación ( Aceptado / Rechazado )
-                                </td>
-                                <td width="238" align="left" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
-                                    Motivo ( En caso de ser Rechazado )
-                                </td>
-                            </tr>
-                            <?php foreach ($list as $key => $value) : ?>
-                            <tr>
-                                <td width="238" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-                                    <?php echo $value['sample_name']; ?>
-                                </td>
-                                <td width="238" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-                                    <?php echo $value['status']; ?>
-                                </td>
-                                <td width="238" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
-                                    <?php echo $value['error']; ?>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <tr>
-                                <td align="right" height="20" colspan="2">
-                                    Fecha de la Evaluación:
-                                </td>
-                                <td  align="left" height="20">
-                                    <?php echo $batch->getValidationDate(); ?>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-	    </div>
-    </body>
-</html>
+
+
+
+
+<!--<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">-->
+<div class="table-container">
+    <table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:50px;">
+	<tr>
+	    <td>
+		<h3>RESUMEN DE LOTES DE UN ESTUDIO </h3>
+	    </td>
+	</tr>
+	<tr>
+	    <td  width="100px" align="left" height="30px" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;">
+		Código del estudio:
+	    </td>
+	    <td width="100px" height="30px" style="border: black 1px solid;">
+		!!!!!!echo $batch->getFkStudy()->getCode(); ??????
+	    </td>
+	    <td width="100px"> &nbsp;</td>
+	    <td width="100px"> &nbsp;</td>
+	    <td  width="100px" height="30px" bgcolor="#000000" style="border: black 1px solid;color:#F1DADA;">
+		Analito
+	    </td>
+	    <td  width="100px" align="center" height="30px" style="border: black 1px solid;">
+		!!!!!!echo $batch->getFkAnalyte()->getName(); ??????
+	    </td>
+	</tr>
+
+	<tr>
+	    <td colspan="6"> &nbsp;</td>
+	</tr>
+	<tr>
+	    <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding:4px;font-size:11px;">
+		Identificación de la muestra
+	    </td>
+	    <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+		Evaluación ( Aceptado / Rechazado )
+	    </td>
+	    <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+		Motivo ( En caso de ser Rechazado )
+	    </td>
+	</tr>
+	!!!!!!foreach ($list as $key => $value) : ??????
+	<tr>
+	    <td width="200px" colspan="2"  align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
+		!!!!!!echo $value['sample_name']; ??????
+	    </td>
+	    <td width="200px" colspan="2" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
+		!!!!!!echo $value['status']; ??????
+	    </td>
+	    <td  width="200px" colspan="2" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
+		!!!!!!echo $value['error']; ??????
+	    </td>
+	</tr>
+	!!!!!!endforeach; ??????
+	<tr>
+	    <td align="left" width="300px" height="20" colspan="3">
+		Fecha de la Evaluación:
+	    </td>
+	    <td  align="left" width="300px" height="20"  colspan="3">
+		!!!!!!echo $batch->getValidationDate(); ??????
+	    </td>
+	</tr>
+    </table>
+
+</div>
+<!--</page>-->
+
+
+<?php
+$content = ob_get_clean();
+// convert to PDF
+require_once dirname(__FILE__) . "/html2pdf/html2pdf.class.php";
+$filename = sprintf('%s.pdf', rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $_REQUEST['name'])));
+try
+{
+    $html2pdf = new HTML2PDF('P', array(432, 240), 'en', true, 'UTF-8', array(0, 0, 0, 0));
+    $html2pdf->setDefaultFont('Arial');
+    $html2pdf->writeHTML($content);
+    $html2pdf->Output($filename . ".pdf", 'D');
+}
+catch (HTML2PDF_exception $e)
+{
+    echo $e;
+}
+exit;
+?>
+
