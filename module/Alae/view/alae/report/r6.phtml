@@ -93,7 +93,7 @@ header('Content-Type: application/vnd.ms-excel');
                         </td>
                         <?php foreach ($list['par'] as $key => $value) : ?>
                         <td  align="center"   bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
-                            <?php echo $value[0]; ?>
+                            <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
                         </td>
                         <td  align="center"   bgcolor="#FAD3B3" style=" border: black 1px solid;padding:2px;font-size:11px">
                             <?php echo $value[1]; ?>
@@ -106,7 +106,7 @@ header('Content-Type: application/vnd.ms-excel');
                         </td>
                         <?php foreach ($list['impar'] as $key => $value) : ?>
                         <td  align="center"   bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
-                            <?php echo $value[0]; ?>
+                            <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
                         </td>
                         <td  align="center"   bgcolor="#FAD3B3" style=" border: black 1px solid;padding:2px;font-size:11px">
                             <?php echo $value[1]; ?>

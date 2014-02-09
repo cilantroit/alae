@@ -354,16 +354,16 @@ class ReportController extends BaseController
                         if (!$temp["validFlag"])
                         {
                             $errors = array();
-                            foreach ($temp["parameters"] as $parameter)
+                            foreach (explode(",",$temp["parameters"]) as $parameter)
                             {
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
                             $error = implode(",", $errors);
                         }
-                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "RCS";
-                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), $error);
-                        $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
+                        $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
+                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $error);
+                        $Concentration[$temp["sampleName"]][]                           = $value;
                         $counter++;
                     }
                 }
@@ -375,9 +375,9 @@ class ReportController extends BaseController
             }
 
             $query    = $this->getEntityManager()->createQuery("
-                SELECT COUNT(s.pkSampleBatch) as counter, SUM(s.calculatedConcentration) as suma, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, SUM(s.calculatedConcentration) as suma, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
                 FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE 'CS%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                WHERE s.sampleName LIKE 'CS%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                 GROUP BY sampleName
                 ORDER By s.sampleName");
             $elements = $query->getResult();
@@ -436,16 +436,16 @@ class ReportController extends BaseController
                         if (!$temp["validFlag"])
                         {
                             $errors = array();
-                            foreach ($temp["parameters"] as $parameter)
+                            foreach (explode(",",$temp["parameters"]) as $parameter)
                             {
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
                             $error = implode(",", $errors);
                         }
-                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "RCS";
-                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), $error);
-                        $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
+                        $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
+                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $error);
+                        $Concentration[$temp["sampleName"]][]                           = $value;
                         $counter++;
                     }
                 }
@@ -458,9 +458,9 @@ class ReportController extends BaseController
             }
 
             $query    = $this->getEntityManager()->createQuery("
-                SELECT COUNT(s.pkSampleBatch) as counter, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
                 FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE 'CS%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                WHERE s.sampleName LIKE 'CS%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                 GROUP BY sampleName
                 ORDER By s.sampleName");
             $elements = $query->getResult();
@@ -517,16 +517,16 @@ class ReportController extends BaseController
                         if (!$temp["validFlag"])
                         {
                             $errors = array();
-                            foreach ($temp["parameters"] as $parameter)
+                            foreach (explode(",",$temp["parameters"]) as $parameter)
                             {
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
                             $error = implode(",", $errors);
                         }
-                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "NVR";
-                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), number_format($temp["accuracy"], 2, ',', ''), $error);
-                        $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
+                        $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
+                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, ',', ''), $error);
+                        $Concentration[$temp["sampleName"]][]                           = $value;
                         $counter++;
                     }
                 }
@@ -539,9 +539,9 @@ class ReportController extends BaseController
             }
 
             $query    = $this->getEntityManager()->createQuery("
-                SELECT COUNT(s.pkSampleBatch) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
                 FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE 'QC%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                WHERE s.sampleName LIKE 'QC%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                 GROUP BY sampleName
                 ORDER By s.sampleName");
             $elements = $query->getResult();
@@ -600,16 +600,16 @@ class ReportController extends BaseController
                         if (!$temp["validFlag"])
                         {
                             $errors = array();
-                            foreach ($temp["parameters"] as $parameter)
+                            foreach (explode(",",$temp["parameters"]) as $parameter)
                             {
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
                             $error = implode(",", $errors);
                         }
-                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "NVR";
-                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), number_format($temp["accuracy"], 2, ',', ''), number_format($temp["accuracy"], 2, ',', ''));
-                        $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
+                        $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
+                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, ',', ''), $error);
+                        $Concentration[$temp["sampleName"]][]                           = $value;
                         $counter++;
                     }
 
@@ -624,9 +624,9 @@ class ReportController extends BaseController
             if (count($pkBatch) > 0)
             {
                 $query    = $this->getEntityManager()->createQuery("
-                    SELECT COUNT(s.pkSampleBatch) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                    SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'LQC%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    WHERE s.sampleName LIKE 'LQC%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
                 $elements = $query->getResult();
