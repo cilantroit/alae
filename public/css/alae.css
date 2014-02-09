@@ -1,5 +1,8 @@
 
-
+body {
+    font: 95.1%/1.1 Verdana,Arial,Helvetica,sans-serif;
+    margin: 0;
+}
 img.vinculo {border:1px solid #EEE; width:155px; height:100px;}
 a {text-decoration: none; }
 a:link,
@@ -7,11 +10,25 @@ a:visited {color:#00008B;}
 a:hover {color:#DC143C;}
 span {color:#ffffff;font-family: Trebuchet MS;font-size: 9pt;}
 input{ margin: 0; padding: 0; }
+login input[type=text], #login input[type=password] {
+    width: 85%;
+    height: 2em;
+    border: 1px solid #008B8B;
+}
+#login{border: 1px solid #008B8B;margin:0;}
+#login h1{
 
-#login{border: 1px solid #008B8B;}
-#login h1{background-color:#008B8B; color:#fff; font-size: 1.2em; margin:0; line-height:2em; text-align:center;}
+    /*    background-color:#008B8B; color:#fff; font-size: 1.2em; margin:0; line-height:2em; text-align:center;*/
+    background-color: #008B8B;
+    color: #fff;
+    font-size: 1.2em;
+    margin: 0;
+    line-height: 2em;
+    text-align: center;
+
+}
 #login table{width: 100%;}
-#login td{width: 40%; padding-left:2em; line-height:3em;}
+#login td{width: 40%; padding-left:2em; line-height:3em;line-height: 40px;}
 #login input[type=text],#login input[type=email], #login input[type=password]{width: 85%; height:2em;border:1px solid #008B8B;}
 #login input[type=button], #login input[type=submit]{width: 40%; height:2.5em;}
 
@@ -25,9 +42,9 @@ input{ margin: 0; padding: 0; }
 #cerrar img{border: 3px ridge #eee; padding:3px;}
 #cuerpo{
     width: 100%;
-    min-height: 600px;
-    margin:0 auto;
-    padding: 0 5px 1px 15px;
+    min-height: 400px;
+    margin: 0 auto;
+
 }
 
 
@@ -140,20 +157,20 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 .centro{text-align:center;}
 .izq{text-align:left;}
 .der{text-align:right;}
-.peq{font-size: 0.8em; }
+.peq{font-size: 0.8em;padding: 0;margin: 0;font-size: 11px;}
 /*#contenedor label.error { display: none !important; }*/
 
 #contenedor ul li { display: inline-block; margin: 5px; }
 
 /************Nuevo***************/
 body {
-    margin:20px;
+
     font:100.1%/1.1 Verdana, Arial, Helvetica, sans-serif;
     background-color:#eee;
-    min-height: 700px;
-    position: relative;
+    min-height: 600px;
+
     min-width: 1000px;
-    padding-top: 60px;
+
 }
 h1 {
     font: Tahoma, Arial;
@@ -179,15 +196,20 @@ h5{
 }
 #pie{
     border-top: 1px solid #ccc;
-    margin-top: 10px;
-    position: absolute;
+    margin-top: 30px;
     bottom: 0;
     width: 98%;
+    margin-top: 36px;
+    position: absolute;
 }
 #container {
     margin: 20px;
     width: 98%;
+    margin: 0 auto;
+    width: 99%;
+    height: 99%;
 }
+
 #pie p{
     font-size: 0.8em;
     margin: 5px;
@@ -262,7 +284,16 @@ padding: 0;
     margin: 20px 0;
 }
 #errorContainer li{
-    padding-left: 1em; 
+    padding-left: 1em;
     text-indent: -.7em;
     color: red;
+    font-size: 12px;
+}
+#central> a>img{
+
+    height: 220px;
+    margin: 0 180px;
+}
+#login form{
+    padding: 20px 10px 20px 10px;
 }

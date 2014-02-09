@@ -6,32 +6,32 @@ function inicio() {
 
 
 
-    $("#loginusr").validate({
-	rules: {
-	    username: {
-		required: true
-			//customvalidation: true
-	    },
-	    password: {
-		required: true
-			//customemailvalidatorexist: true
+//    $("#loginusr").validate({
+//	rules: {
+//	    username: {
+//		required: true
+//			//customvalidation: true
+//	    },
+//	    password: {
+//		required: true
+//			//customemailvalidatorexist: true
+//
+//	    }
+//	},
+//	messages: {
+//	    username: {
+//		required: "Este campo es de uso oblogatorio"
+//			//customvalidation: "hola",
+//	    },
+//	    password: {
+//		required: "Este campo es de uso oblogatorio"
+//	    }
+//
+//	}
+//    });
 
-	    }
-	},
-	messages: {
-	    username: {
-		required: "Este campo es de uso oblogatorio"
-			//customvalidation: "hola",
-	    },
-	    password: {
-		required: "Este campo es de uso oblogatorio"
-	    }
-
-	}
-    });
 
 
-    
 
 
     $("#newpasswordusr").validate({
