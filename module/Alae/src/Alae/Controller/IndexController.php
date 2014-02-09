@@ -46,6 +46,12 @@ class IndexController extends BaseController
 
     public function loginAction()
     {
+        if ($this->isLogged())
+        {
+            header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url")."/index/menu");
+            exit;
+        }
+
 	$request = $this->getRequest();
 
         $error = array(

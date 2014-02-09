@@ -13,6 +13,7 @@
             <p>
                 <label>C&oacute;digo del Estudio:</label>
                 <select id="study">
+                    <option value="-1">Seleccione</option>
 		    <?php foreach ($studies as $study) : ?>
     		    <option value="<?php echo $study->getPkStudy(); ?>"><?php echo $study->getCode(); ?></option>
 		    <?php endforeach; ?>
@@ -46,24 +47,32 @@
     function reports(url, isAnalyte)
     {
         var isRedirect = true;
-	url = url + "?id=" + $("#study").val();
-	if (isAnalyte && $("#analyte").val() !== null)
-	{
-	    url = url + "&an=" + $("#analyte").val();
-	}
-        else if(!isAnalyte)
+
+        if($("#study").val() !== "-1")
         {
-            isRedirect = true;
+            url = url + "?id=" + $("#study").val();
+            if (isAnalyte && $("#analyte").val() !== null)
+            {
+                url = url + "&an=" + $("#analyte").val();
+            }
+            else if(!isAnalyte)
+            {
+                isRedirect = true;
+            }
+            else
+            {
+                alert("Debe seleccionar un Analito");
+                isRedirect = false;
+            }
+
+            if(isRedirect)
+            {
+                window.location = url;
+            }
         }
         else
         {
-            alert("Debe seleccionar un Analito");
-            isRedirect = false;
-        }
-
-        if(isRedirect)
-        {
-            window.location = url;
+            alert("Debe seleccionar un Estudio");
         }
     }
 

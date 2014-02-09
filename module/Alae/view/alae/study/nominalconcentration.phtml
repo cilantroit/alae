@@ -16,6 +16,8 @@
                 <li>
                     <button class="btn" type="button" onclick="changeStatus('/study/unlock', <?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-reject"></span>desbloquear</button>
                 </li>
+                <?php endif; ?>
+                <?php if ($AnaStudy->getStatus()) : ?>
                 <li>
                     <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $AnaStudy->getFkUserApprove()->getUsername(), $AnaStudy->getFkUserApprove()->getFkProfile()->getname(), $AnaStudy->getUpdatedAt()); ?></p>
                 </li>

@@ -27,8 +27,7 @@
 #datatable table tbody tr .form-datatable-edit,
 #datatable table tbody tr .yui3-datatable-col-edit{
     border: 0px none;
-    display: none;
-    min-width: 50px;
+    max-width: 50px;
 }
 
 #datatable table tbody tr .yui3-datatable-col-edit a{
@@ -95,6 +94,12 @@
     height: 16px;
     width: 16px;
     background:url(../img/batch.png) no-repeat top left;
+    float: left;
+}
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-lupa{
+    height: 16px;
+    width: 16px;
+    background:url(../img/prev.png) no-repeat top left;
     float: left;
 }
 #datatable table tbody tr td input[type=text]{
@@ -236,7 +241,7 @@ input[class=error]{
 
 
 
-#user-admin .administrador tbody tr .yui3-datatable-col-edit,
+/*#user-admin .administrador tbody tr .yui3-datatable-col-edit,
 #user-admin .administrador tbody tr .form-datatable-edit,
 #batch-list .administrador tbody tr .form-datatable-edit,
 #parameter-index .administrador tbody tr .yui3-datatable-col-edit,
@@ -263,9 +268,56 @@ input[class=error]{
 #study-index .ugc tbody tr .yui3-datatable-col-edit .form-datatable-delete,
 #study-index .ugc tbody tr .form-datatable-edit .form-datatable-new{
     display: none;
+}*/
+
+.yui3-datatable-col-rule,
+.yui3-datatable-col-min_value,
+.yui3-datatable-col-max_value,
+.yui3-datatable-col-code_error,
+.yui3-datatable-col-status,
+.yui3-datatable-col-password,
+.yui3-datatable-col-profile,
+.yui3-datatable-col-username,
+.yui3-datatable-col-cs_number,
+.yui3-datatable-col-qc_number,
+.yui3-datatable-col-unit,
+.yui3-datatable-col-is,
+.yui3-datatable-col-use,
+.yui3-datatable-col-justification,
+.yui3-datatable-col-accepted_flag,
+.yui3-datatable-col-modify,
+.yui3-datatable-col-result,
+.yui3-datatable-col-validation_date,
+.yui3-datatable-col-valid_flag,
+.yui3-datatable-col-create_at
+.yui3-datatable-col-filename,
+.yui3-datatable-col-batch,
+.yui3-datatable-col-id{
+    text-align: center;
 }
 
+.yui3-datatable-col-profile .form-datatable-profile{
+    width: 100%; 
+}
+.yui3-datatable-col-edit{
+    width: 4em;
+}
+.yui3-datatable-col-username{
+    width: 10em;
+}
+.yui3-datatable-col-email{
+    width: 40em;
+}
+.yui3-datatable-col-name{
+    width: 50em;
+}
 .yui3-datatable-col-id{
-    width: 6em;
-    text-align: center;
+    width: 8em;
+}
+.yui3-datatable-col-created_at{
+    width: 190px;
+}
+
+#datatable.close table tbody tr td.form-datatable-edit{
+    display: none;
 }

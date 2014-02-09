@@ -47,9 +47,8 @@ input{ margin: 0; padding: 0; }
 
 .sel {font-weight:bold;}
 #lft input[type=text], input[type=date], select{
-    height:1.8em;
+    height: 30px;
     border:1px solid #008B8B;
-    width:98%;
     background-color: #fff;
     font-family: Verdana;
     font-size: 0.9em;
@@ -200,7 +199,7 @@ h5{
     display: block;
 }
 #study-form{
-    padding: 0 0 30px 20px;
+/*    padding: 0 0 30px 20px;*/
 }
 #study-form input[type=text], textarea{
     border:1px solid #008B8B;
@@ -233,16 +232,17 @@ h5{
 }
 #study-form p {
     margin: 10px 0 10px 0;
-    padding: 0;
+padding: 0;
 }
 #study-form p label{
-    margin: 10px;
-    width: 100px;
+    margin: 0 10px;
+    width: 140px;
     display: inline-block;
     vertical-align: top;
+    text-align: right;
 }
 #study-form textarea{
-    width: 70%;
+    width: 80%;
 }
 .approve_notification{
     color: #008B8B;

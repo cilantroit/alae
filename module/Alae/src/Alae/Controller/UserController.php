@@ -130,7 +130,7 @@ class UserController extends BaseController
 	    );
 	}
 
-	$datatable = new Datatable($data, Datatable::DATATABLE_ADMIN);
+	$datatable = new Datatable($data, Datatable::DATATABLE_ADMIN, $this->_getSession()->getFkProfile()->getName());
 	$viewModel = new ViewModel($datatable->getDatatable());
 	$viewModel->setVariable('user', $this->_getSession());
 	return $viewModel;

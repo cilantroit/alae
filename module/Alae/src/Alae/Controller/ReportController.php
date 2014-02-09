@@ -46,7 +46,7 @@ class ReportController extends BaseController
             );
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_AUDIT_TRAIL);
+        $datatable = new Datatable($data, Datatable::DATATABLE_AUDIT_TRAIL, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('user', $this->_getSession());
         return $viewModel;

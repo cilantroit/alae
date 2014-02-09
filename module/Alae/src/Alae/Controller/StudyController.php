@@ -36,6 +36,26 @@ class StudyController extends BaseController
 
         foreach ($elements as $study)
         {
+            $User = $this->_getSession();
+
+            switch ($this->_getSession()->getFkProfile()->getName())
+            {
+                case "Administrador":
+                    $buttons = ($study->getCloseFlag()) ?
+                        '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>' :
+                        '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-change"></span></a><span class="form-datatable-delete" onclick="removeElement(this, ' . $study->getPkStudy() . ');"></span>';
+                    break;
+                case "Director Estudio":
+                    $buttons = ($study->getCloseFlag()) ?
+                        '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>' :
+                        '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-change"></span></a>';
+                    break;
+                case "Laboratorio":
+                case "UGC":
+                    $buttons = '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>';
+                    break;
+            }
+
             $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
             $data[]         = array(
                 "code"        => $study->getCode(),
@@ -44,13 +64,13 @@ class StudyController extends BaseController
                 "analyte"     => $counterAnalyte,
                 "observation" => $study->getObservation(),
                 "closed"      => $study->getCloseFlag() ? "S" : "N",
-                "edit"        => $study->getPkStudy()
+                "edit"        => $buttons
             );
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_STUDY);
+        $datatable = new Datatable($data, Datatable::DATATABLE_STUDY, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
-        $viewModel->setVariable('user', $this->_getSession());
+        $viewModel->setVariable('user', $User);
         return $viewModel;
     }
 
@@ -78,7 +98,7 @@ class StudyController extends BaseController
                     $Study = new \Alae\Entity\Study();
                     $Study->setCode($request->getPost('code'));
                     $Study->setDescription($request->getPost('description'));
-                    $Study->setCreatedAt(new \DateTime('now'));
+                    $Study->setCreatedAt($request->getPost('create_at'));
                     $Study->setObservation($request->getPost('observation'));
                     $Study->setFkDilutionTree($request->getPost('dilution_tree'));
                     $Study->setStatus(true);
@@ -175,6 +195,7 @@ class StudyController extends BaseController
                         $Study->getDescription(),
                         $Study->getObservation()
                     );
+                    $Study->setCreatedAt($request->getPost('create_at'));
                     $Study->setDescription($request->getPost('description'));
                     $Study->setObservation($request->getPost('observation'));
                     $Study->setFkDilutionTree($request->getPost('dilution_tree'));
@@ -318,6 +339,23 @@ class StudyController extends BaseController
 
         foreach ($elements as $anaStudy)
         {
+            $buttons = "";
+
+            if ($anaStudy->getFkStudy()->getApprove())
+            {
+                $buttons .= '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/nominalconcentration/' . $anaStudy->getPkAnalyteStudy() . '"><span class="form-datatable-nominal"></span></a>';
+            }
+            elseif($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio() && !$anaStudy->getFkStudy()->getCloseFlag())
+            {
+                $buttons .= '<span class="form-datatable-change" onclick="changeElement(this, ' . $anaStudy->getPkAnalyteStudy() . ');"></span>';
+                $buttons .= $this->_getSession()->isAdministrador() ? '<span class="form-datatable-delete" onclick="removeElement(this, ' . $anaStudy->getPkAnalyteStudy() . ');"></span>' : '';
+            }
+
+            if($anaStudy->getFkStudy()->getApprove() && $anaStudy->getStatus())
+            {
+                $buttons .= '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/batch/list/' . $anaStudy->getPkAnalyteStudy() . '"><span class="form-datatable-batch"></span></a>';
+            }
+
             $data[] = array(
                 "analyte"    => $anaStudy->getFkAnalyte()->getShortening(),
                 "analyte_is" => $anaStudy->getFkAnalyteIs()->getShortening(),
@@ -326,13 +364,13 @@ class StudyController extends BaseController
                 "unit"       => $anaStudy->getFkUnit()->getName(),
                 "is"         => $anaStudy->getInternalStandard(),
                 "use"        => $anaStudy->getIsUsed(),
-                "edit"       => $anaStudy->getPkAnalyteStudy()
+                "edit"       => $buttons
             );
         }
 
         $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findAll();
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();
-        $datatable = new Datatable($data, Datatable::DATATABLE_ANASTUDY);
+        $datatable = new Datatable($data, Datatable::DATATABLE_ANASTUDY, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('study', $Study);
         $viewModel->setVariable('error', (isset($error) ? $error : ""));

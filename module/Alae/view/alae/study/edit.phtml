@@ -13,29 +13,20 @@
         <h3>Datos Generales del Estudio</h3>
         <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
         <form id="study-form" action="" method="POST">
-            <ul>
-                <li>
-                    <p>Código: </p>
-                    <input type="text" name="code" disabled="" value="<?php echo $study->getCode(); ?>">
-                </li>
-                <li>
-                    <p>Fecha creación: <?php echo $study->getCreatedAt(); ?></p>
-                </li>
-                <li>
-                    <p>Arbol de Dilución: </p>
-                    <select <?php echo $disabled; ?> name="dilution_tree">
-                        <option>1</option>
-                    </select>
-                </li>
-                <li>
-                    <p>Cerrado: <?php echo $study->getCloseFlag() ? "S" : "N"; ?></p>
-                </li>
+            <p>
+                <label>Código:</label>
+                <input type="text" name="code" disabled="" value="<?php echo $study->getCode(); ?>">
+                <label>Fecha creación:</label>
+                <input class="centro" type="date" name="create_at" value="<?php echo $study->getCreatedAt(); ?>">
+                <label>Arbol de Dilución:</label>
+                <select <?php echo $disabled; ?> name="dilution_tree">
+                    <option>1</option>
+                </select>
+                <label>Cerrado: <?php echo $study->getCloseFlag() ? "S" : "N"; ?></label>
                 <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
-                <li>
-                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>, 1)"><span class="btn-lock"></span> cerrar estudio</button>
-                </li>
+                <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>, 1)"><span class="btn-lock"></span> cerrar estudio</button>
                 <?php endif; ?>
-            </ul>
+            </p>
             <p>
                 <label>Descripción:</label>
                 <textarea <?php echo $disabled; ?> name="description" rows="2" cols="50"><?php echo $study->getDescription(); ?></textarea>
@@ -139,9 +130,9 @@
             }
         </script>
         <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC()) : ?>
-        <form id="datatable-form" class="<?php echo !$study->getCloseFlag() ? "datatable-form-edit" : ""; ?>" action="" method="POST">
+        <form id="datatable-form" class="" action="" method="POST">
             <h5>ANALITOS DEL ESTUDIO</h5>
-            <div id="datatable" class="<?php echo str_replace(" ", "_", strtolower($user->getFkProfile()->getName())) ?>"></div>
+            <div id="datatable" class="<?php echo ($study->getCloseFlag() || $study->getApprove()) ? "close" : ""; ?>"></div>
             <input type="hidden" name="form" value="2"/>
             <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
         </form>

@@ -11,25 +11,23 @@
     <div id="top" style="font-size:0.85em;">
         <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
         <form id="study-form" action="" method="POST">
-            <ul>
-                <li>
-                    <p>Código: </p>
-                    <input type="text" name="code" value="">
-                </li>
-                <li>
-                    <p>Arbol de Dilución: </p>
-                    <select name="dilution_tree">
-                        <option>1</option>
-                    </select>
-                </li>
-            </ul>
+            <p>
+                <label>Código:</label>
+                <input type="text" name="code" value="">
+                <label>Fecha creación:</label>
+                <input class="centro" type="date" name="create_at" value="">
+                <label>Arbol de Dilución:</label>
+                <select name="dilution_tree">
+                    <option>1</option>
+                </select>
+            </p>
             <p>
                 <label>Descripción:</label>
-                <textarea name="description" rows="2" required cols="50"></textarea>
+                <textarea name="description" rows="2" cols="50"></textarea>
             </p>
             <p>
                 <label>Observaciones:</label>
-                <textarea name="observation" rows="2" required cols="50"></textarea>
+                <textarea name="observation" rows="2" cols="50"></textarea>
             </p>
             <ul>
                 <?php if ($user->isAdministrador() || $user->isDirectorEstudio()) : ?>
@@ -50,12 +48,30 @@
             code: {
                 required: true,
                 regex: true
+            },
+            create_at: {
+                required: true
+            },
+            description: {
+                required: true
+            },
+            observation: {
+                required: true
             }
         },
         messages: {
             code: {
-                required: "El campo <strong>Código</strong> es requerido",
+                required: "<strong>Código</strong> es requerido",
                 regex: "Por favor, introduzca un <strong>Código</strong> válido. Ejm: ANE2013-1234"
+            },
+            create_at: {
+                required: "<strong>Fecha creación</strong> es requerido"
+            },
+            description: {
+                required: "<strong>Descripción</strong> es requerido"
+            },
+            observation: {
+                required: "<strong>Observaciones</strong> es requerido"
             }
         },
         errorLabelContainer: "#errorBox",

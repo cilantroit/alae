@@ -149,12 +149,12 @@ class Study
 
     public function getCreatedAt()
     {
-        return $this->createdAt->format('d.m.Y H:i:s');
+        return $this->createdAt->format('Y-m-d');
     }
 
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt($createdAt)
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new \DateTime($createdAt);//$createdAt;
     }
 
     public function getUpdatedAt()

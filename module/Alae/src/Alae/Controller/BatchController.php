@@ -43,7 +43,7 @@ class BatchController extends BaseController
             }
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_UNFILLED);
+        $datatable = new Datatable($data, Datatable::DATATABLE_UNFILLED, $this->_getSession()->getFkProfile()->getName());
         return new ViewModel($datatable->getDatatable());
     }
 
@@ -131,6 +131,12 @@ class BatchController extends BaseController
         $elements = $this->getRepository()->findBy(array("fkAnalyte" => $AnaStudy->getFkAnalyte(), "fkStudy" => $AnaStudy->getFkStudy()));
         foreach ($elements as $batch)
         {
+            $buttons = "";
+            if ($this->_getSession()->isAdministrador())
+            {
+                $buttons = is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-validate"></span>aceptar</button>');
+            }
+
             $data[] = array(
                 "batch"           => $batch->getSerial(),
                 "filename"        => $batch->getFileName(),
@@ -138,13 +144,13 @@ class BatchController extends BaseController
                 "valid_flag"      => is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : "",
                 "validation_date" => $batch->getValidationDate(),
                 "result"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO"),
-                "modify"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-validate"></span>aceptar</button>'),
+                "modify"          => $buttons,
                 "accepted_flag"   => is_null($batch->getAcceptedFlag()) ? "" : ($batch->getAcceptedFlag() ? "S" : "N"),
                 "justification"   => is_null($batch->getJustification()) ? "" : $batch->getJustification()
             );
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_BATCH);
+        $datatable = new Datatable($data, Datatable::DATATABLE_BATCH, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('AnaStudy', $AnaStudy);
         $viewModel->setVariable('user', $this->_getSession());

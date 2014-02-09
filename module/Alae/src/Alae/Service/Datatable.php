@@ -26,13 +26,15 @@ class Datatable
     protected $_datatable;
     protected $_base_url;
     protected $_notFilterable;
+    protected $_profile;
 
-    public function __construct($data, $datatable)
+    public function __construct($data, $datatable, $profile)
     {
-	$this->_data = $data;
-	$this->_datatable = $datatable;
-	$this->_base_url = \Alae\Service\Helper::getVarsConfig("base_url");
-        $this->_notFilterable = array ("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at");
+        $this->_profile       = $profile;
+        $this->_data          = $data;
+        $this->_datatable     = $datatable;
+        $this->_base_url      = \Alae\Service\Helper::getVarsConfig("base_url");
+        $this->_notFilterable = array("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at");
     }
 
     protected function getData()
@@ -51,7 +53,7 @@ class Datatable
 		array("key" => "id", "label" => "Id", "sortable" => true),
 		array("key" => "name", "label" => "Nombre Analito", "sortable" => true, "allowHTML" => true),
 		array("key" => "shortname", "label" => "Abreviatura", "sortable" => true, "allowHTML" => true),
-		array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
+		array("key" => "edit", "allowHTML" => true)
 	    )),
 	    "editable" => json_encode(array("name", "shortname")),
 	    "header" => json_encode($header),
@@ -73,7 +75,7 @@ class Datatable
 		array("key" => "analyte", "label" => "Nº Analitos", "sortable" => true, "allowHTML" => true),
 		array("key" => "observation", "label" => "Observaciones", "sortable" => true, "allowHTML" => true),
 		array("key" => "closed", "label" => "Cerrado (S/N)", "sortable" => true, "allowHTML" => true),
-		array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/edit/{value}"><span class="form-datatable-change"></span></a><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
+		array("key" => "edit", "allowHTML" => true)
 	    )),
 	    "editable" => 0,
 	    "header" => json_encode($header),
@@ -97,7 +99,7 @@ class Datatable
 		array("key" => "message_error", "label" => "Mensaje de error", "sortable" => true, "allowHTML" => true),
 		array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-change" onclick="changeElement(this, {value});"></span>')
 	    )),
-	    "editable" => json_encode(array("rule", "verification", "min_value", "max_value", "code_error", "message_error")),
+	    "editable" => json_encode(array("verification", "min_value", "max_value", "code_error", "message_error")),
 	    "header" => json_encode($header),
 	    "filters" => $this->getFilters($header)
 	);
@@ -116,7 +118,7 @@ class Datatable
 		array("key" => "message_error", "label" => "Mensaje de error", "sortable" => true, "allowHTML" => true),
 		array("key" => "edit", "allowHTML" => true, "formatter" => '<span class="form-datatable-change" onclick="changeElement(this, {value});"></span>')
 	    )),
-	    "editable" => json_encode(array("rule", "code_error", "message_error")),
+	    "editable" => json_encode(array("code_error", "message_error")),
 	    "header" => json_encode($header),
 	    "filters" => $this->getFilters($header)
 	);
@@ -177,7 +179,7 @@ class Datatable
                 array("key" => "unit", "label" => "Unidades", "sortable" => false),
                 array("key" => "is", "label" => "% var IS", "sortable" => true, "allowHTML" => true),
                 array("key" => "use", "label" => "usar", "sortable" => false, "allowHTML" => true, "formatter" => '{value}'),
-                array("key" => "edit", "allowHTML" => true, "formatter" => '<a href="' . $this->_base_url . '/study/nominalconcentration/{value}"><span class="form-datatable-nominal"></span></a><a href="' . $this->_base_url . '/batch/list/{value}"><span class="form-datatable-batch"></span></a><span class="form-datatable-change" onclick="changeElement(this, {value});"></span><span class="form-datatable-delete" onclick="removeElement(this, {value});"></span>')
+                array("key" => "edit", "allowHTML" => true)
             )),
             "editable" => json_encode(array("analyte_is", "cs_number", "qc_number", "unit", "is", "use")),
             "header"   => json_encode($header),
@@ -290,35 +292,23 @@ class Datatable
 	if ($filters == "")
 	    $filters = $this->getAutoFilter($headers);
 
-	switch ($this->_datatable)
-	{
-	    case Datatable::DATATABLE_ANALYTE:
-		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><a href="' . $this->_base_url . '/analyte/pdf"><span class="form-download-pdf"></span></a><input value="" type="submit"/>';
+        switch ($this->_profile)
+        {
+            case "Administrador":
+                $elements = $this->isAdministrador();
                 break;
-	    case Datatable::DATATABLE_STUDY:
-		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><span class="form-download-excel" onclick="excel(2);"></span>';
-		break;
-	    case Datatable::DATATABLE_PARAMETER:
-		$elements = '<span class="form-download-excel" onclick="excel(3);"></span><input value="" type="submit"/>';
-		break;
-	    case Datatable::DATATABLE_REASON:
-		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(4);"></span><input value="" type="submit"/>';
-		break;
-	    case Datatable::DATATABLE_UNFILLED:
-		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
-		break;
-	    case Datatable::DATATABLE_ADMIN:
-		$elements = '<span class="form-download-excel" onclick="excel(6);"></span>';
-		break;
-            case Datatable::DATATABLE_ANASTUDY:
-                $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+            case "Director Estudio":
+                $elements = $this->isDirectorEstudio();
                 break;
-            case Datatable::DATATABLE_BATCH:
-                $elements = '<input value="" type="submit"/>';
+            case "UGC":
+                $elements = $this->isUGC();
                 break;
-            case Datatable::DATATABLE_AUDIT_TRAIL:
-		$elements = '<span class="form-download-excel" onclick="excel(6);"></span>';
-		break;
+            case "Laboratorio":
+                $elements = $this->isLaboratorio();
+                break;
+            case "Sustancias":
+                $elements = $this->isSustancias();
+                break;
         }
 
 	return sprintf('<tr>%1$s<td class="form-datatable-edit">%2$s</td></tr>', $filters, $elements);
@@ -378,6 +368,114 @@ class Datatable
         }
 
 	return $response;
+    }
+
+    protected function isAdministrador()
+    {
+        switch ($this->_datatable)
+	{
+	    case Datatable::DATATABLE_ANALYTE:
+		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><input value="" type="submit"/>';
+                break;
+	    case Datatable::DATATABLE_STUDY:
+		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><span class="form-download-excel" onclick="excel(2);"></span>';
+		break;
+	    case Datatable::DATATABLE_PARAMETER:
+		$elements = '<span class="form-download-excel" onclick="excel(3);"></span><input value="" type="submit"/>';
+		break;
+	    case Datatable::DATATABLE_REASON:
+		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(4);"></span><input value="" type="submit"/>';
+		break;
+	    case Datatable::DATATABLE_UNFILLED:
+		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
+		break;
+	    case Datatable::DATATABLE_ADMIN:
+		$elements = '<span class="form-download-excel" onclick="excel(6);"></span>';
+		break;
+            case Datatable::DATATABLE_ANASTUDY:
+                $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+                break;
+            case Datatable::DATATABLE_BATCH:
+                $elements = '<input value="" type="submit"/>';
+                break;
+            case Datatable::DATATABLE_AUDIT_TRAIL:
+		$elements = '<span class="form-download-excel" onclick="excel(7);"></span>';
+		break;
+        }
+
+        return $elements;
+    }
+
+    protected function isDirectorEstudio()
+    {
+        switch ($this->_datatable)
+	{
+	    case Datatable::DATATABLE_STUDY:
+		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><span class="form-download-excel" onclick="excel(2);"></span>';
+		break;
+            case Datatable::DATATABLE_ANASTUDY:
+                $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+                break;
+            case Datatable::DATATABLE_UNFILLED:
+		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
+		break;
+            default :
+                $elements = "";
+                break;
+        }
+
+        return $elements;
+    }
+
+    protected function isUGC()
+    {
+        switch ($this->_datatable)
+	{
+	    case Datatable::DATATABLE_STUDY:
+		$elements = '<span class="form-download-excel" onclick="excel(2);"></span>';
+		break;
+            case Datatable::DATATABLE_UNFILLED:
+		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
+		break;
+            default :
+                $elements = "";
+                break;
+        }
+
+        return $elements;
+    }
+
+    protected function isLaboratorio()
+    {
+        switch ($this->_datatable)
+	{
+	    case Datatable::DATATABLE_STUDY:
+		$elements = '<span class="form-download-excel" onclick="excel(2);"></span>';
+		break;
+            case Datatable::DATATABLE_UNFILLED:
+		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
+		break;
+            default :
+                $elements = "";
+                break;
+        }
+
+        return $elements;
+    }
+
+    protected function isSustancias()
+    {
+        switch ($this->_datatable)
+	{
+            case Datatable::DATATABLE_ANALYTE:
+		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><input value="" type="submit"/>';
+                break;
+            default :
+                $elements = "";
+                break;
+        }
+
+        return $elements;
     }
 
 }

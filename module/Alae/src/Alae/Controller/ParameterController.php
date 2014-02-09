@@ -33,14 +33,14 @@ class ParameterController extends BaseController
         {
             $User = $this->_getSession();
 
-            $updateRules        = $request->getPost('update-rule');
+            //$updateRules        = $request->getPost('update-rule');
             $updateVerification = $request->getPost('update-verification');
             $updateMin          = $request->getPost('update-min_value');
             $updateMax          = $request->getPost('update-max_value');
             $updateCode         = $request->getPost('update-code_error');
             $updateMessage      = $request->getPost('update-message_error');
 
-            foreach ($updateRules as $key => $value)
+            foreach ($updateVerification as $key => $value)
             {
                 $Parameter = $this->getRepository()->find($key);
 
@@ -48,17 +48,14 @@ class ParameterController extends BaseController
                 {
                     try
                     {
-                        $older = array(
-                            "User"             => $Parameter->getFkUser()->getUsername(),
-                            "Regla"            => $Parameter->getRule(),
-                            "Descripcion"      => $Parameter->getVerification(),
-                            "Min"              => $Parameter->getMinValue(),
-                            "Max"              => $Parameter->getMaxValue(),
-                            "Motivo"           => $Parameter->getCodeError(),
-                            "Mensaje de error" => $Parameter->getMessageError()
+                        $older = sprintf('Valores antiguos -> Descripción: %1$, Min: %2$s, Max: %3$s, Motivo: %4$s, Mensaje de error: %5$s',
+                            $Parameter->getVerification(),
+                            $Parameter->getMinValue(),
+                            $Parameter->getMaxValue(),
+                            $Parameter->getCodeError(),
+                            $Parameter->getMessageError()
                         );
 
-                        $Parameter->setRule($value);
                         $Parameter->setVerification($updateVerification[$key]);
                         $Parameter->setMinValue($updateMin[$key]);
                         $Parameter->setMaxValue($updateMax[$key]);
@@ -67,52 +64,28 @@ class ParameterController extends BaseController
                         $Parameter->setFkUser($User);
                         $this->getEntityManager()->persist($Parameter);
                         $this->getEntityManager()->flush();
-
-                        $audit = array(
-                            "Antiguos valores" => $older,
-                            "Nuevos valores"   => array(
-                                "User"             => $User->getUsername(),
-                                "Regla"            => $Parameter->getRule(),
-                                "Descripcion"      => $Parameter->getVerification(),
-                                "Min"              => $Parameter->getMinValue(),
-                                "Max"              => $Parameter->getMaxValue(),
-                                "Motivo"           => $Parameter->getCodeError(),
-                                "Mensaje de error" => $Parameter->getMessageError()
-                            )
+                        $this->transaction(
+                            "Edición de Parámetros del sistema",
+                            sprintf('%1$s<br>Valores nuevos -> Descripción: %2$, Min: %3$s, Max: %4$s, Motivo: %5$s, Mensaje de error: %6$s',
+                                $older,
+                                $updateVerification[$key],
+                                $updateMin[$key],
+                                $updateMax[$key],
+                                $updateCode[$key],
+                                $updateMessage[$key]
+                            ),
+                            false
                         );
-
-                        $this->transaction(__METHOD__, sprintf("Actualización de datos del parámetro de verificación %s", $Parameter->getRule()), json_encode($audit));
                     }
                     catch (Exception $e)
                     {
-                        $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(
-                                        array(
-                                            "Id"               => $Parameter->getPkParameter(),
-                                            "User"             => $User->getUsername(),
-                                            "Regla"            => $value,
-                                            "Descripcion"      => $updateVerification[$key],
-                                            "Min"              => $updateMin[$key],
-                                            "Max"              => $updateMax[$key],
-                                            "Motivo"           => $updateCode[$key],
-                                            "Mensaje de error" => $updateMessage[$key]
-                        )));
-                        /*
-                         * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
-                         */
-                        $error   = array(
-                            "description" => $message,
-                            "message"     => $e,
-                            "section"     => __METHOD__
-                        );
-
-                        $this->transactionError($error);
+                        exit;
                     }
                 }
             }
         }
 
         $data     = array();
-        //ALTER TABLE ADD COLUMN type DEFAULT 1.
         $elements = $this->getRepository()->findBy(array("typeParam" => true));
 
         foreach ($elements as $parameter)
@@ -129,7 +102,7 @@ class ParameterController extends BaseController
             );
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_PARAMETER);
+        $datatable = new Datatable($data, Datatable::DATATABLE_PARAMETER, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('user', $this->_getSession());
         return $viewModel;
@@ -164,40 +137,26 @@ class ParameterController extends BaseController
                         $Parameter->setTypeParam(false);
                         $this->getEntityManager()->persist($Parameter);
                         $this->getEntityManager()->flush();
-
-                        $this->transaction(__METHOD__, "Ingreso de código de error no automatizable", json_encode(array(
-                            "User"             => $User->getUsername(),
-                            "Regla"            => $Parameter->getRule(),
-                            "Motivo"           => $Parameter->getCodeError(),
-                            "Mensaje de error" => $Parameter->getMessageError()
-                        )));
+                        $this->transaction(
+                            "Creación de Códigos de error no automatizables",
+                            sprintf('Regla: %1$s, Motivo: %2$s, Mensaje de error: %3$s',
+                                $value,
+                                $createCode[$key],
+                                $createMessage[$key]
+                            ),
+                            false
+                        );
                     }
                     catch (Exception $e)
                     {
-                        $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(
-                                        array(
-                                            "User"             => $User->getUsername(),
-                                            "Regla"            => $value,
-                                            "Motivo"           => $createCode[$key],
-                                            "Mensaje de error" => $createMessage[$key]
-                        )));
-                        /*
-                         * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
-                         */
-                        $error   = array(
-                            "description" => $message,
-                            "message"     => $e,
-                            "section"     => __METHOD__
-                        );
-
-                        $this->transactionError($error);
+                        exit;
                     }
                 }
             }
 
-            if (!empty($updateRules))
+            if (!empty($updateCode))
             {
-                foreach ($updateRules as $key => $value)
+                foreach ($updateCode as $key => $value)
                 {
                     $Parameter = $this->getRepository()->find($key);
 
@@ -205,52 +164,28 @@ class ParameterController extends BaseController
                     {
                         try
                         {
-                            $older = array(
-                                "User"             => $Parameter->getFkUser()->getUsername(),
-                                "Regla"            => $Parameter->getRule(),
-                                "Motivo"           => $Parameter->getCodeError(),
-                                "Mensaje de error" => $Parameter->getMessageError()
+                            $older = sprintf('Valores antiguos -> Motivo: %1$s, Mensaje de error: %2$s',
+                                $Parameter->getCodeError(),
+                                $Parameter->getMessageError()
                             );
-
-                            $Parameter->setRule($value);
                             $Parameter->setCodeError($updateCode[$key]);
                             $Parameter->setMessageError($updateMessage[$key]);
                             $Parameter->setFkUser($User);
                             $this->getEntityManager()->persist($Parameter);
                             $this->getEntityManager()->flush();
-
-                            $audit = array(
-                                "Antiguos valores" => $older,
-                                "Nuevos valores"   => array(
-                                    "User"             => $User->getUsername(),
-                                    "Regla"            => $Parameter->getRule(),
-                                    "Motivo"           => $Parameter->getCodeError(),
-                                    "Mensaje de error" => $Parameter->getMessageError()
-                                )
+                            $this->transaction(
+                                "Edición de Códigos de error no automatizables",
+                                sprintf('%1$s<br>Motivo: %2$s, Mensaje de error: %3$s',
+                                    $older,
+                                    $updateCode[$key],
+                                    $updateMessage[$key]
+                                ),
+                                false
                             );
-
-                            $this->transaction(__METHOD__, sprintf("Actualización de datos del parámetro de verificación %s", $Parameter->getRule()), json_encode($audit));
                         }
                         catch (Exception $e)
                         {
-                            $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(
-                                            array(
-                                                "Id"               => $Parameter->getPkParameter(),
-                                                "User"             => $User->getUsername(),
-                                                "Regla"            => $value,
-                                                "Motivo"           => $updateCode[$key],
-                                                "Mensaje de error" => $updateMessage[$key]
-                            )));
-                            /*
-                             * Este array debo crearlo en la seccion de errores OJOJOJO!!!!!
-                             */
-                            $error   = array(
-                                "description" => $message,
-                                "message"     => $e,
-                                "section"     => __METHOD__
-                            );
-
-                            $this->transactionError($error);
+                            exit;
                         }
                     }
                 }
@@ -271,7 +206,7 @@ class ParameterController extends BaseController
             );
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_REASON);
+        $datatable = new Datatable($data, Datatable::DATATABLE_REASON, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('user', $this->_getSession());
         return $viewModel;

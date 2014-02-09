@@ -144,15 +144,26 @@ class AnalyteController extends BaseController
 
         foreach ($elements as $analyte)
         {
+            $buttons = "";
+            if($this->_getSession()->isSustancias() || $this->_getSession()->isAdministrador())
+            {
+                $buttons .= '<span class="form-datatable-change" onclick="changeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
+            }
+
+            if($this->_getSession()->isAdministrador())
+            {
+                $buttons .= '<span class="form-datatable-delete" onclick="removeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
+            }
+
             $data[] = array(
                 "id"        => str_pad($analyte->getPkAnalyte(), 4, '0', STR_PAD_LEFT),
                 "name"      => $analyte->getName(),
                 "shortname" => $analyte->getShortening(),
-                "edit"      => $analyte->getPkAnalyte()
+                "edit"      => $buttons
             );
         }
 
-        $datatable = new Datatable($data, Datatable::DATATABLE_ANALYTE);
+        $datatable = new Datatable($data, Datatable::DATATABLE_ANALYTE, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('user', $this->_getSession());
         $viewModel->setVariable('error', $error);
