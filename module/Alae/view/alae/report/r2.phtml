@@ -154,6 +154,7 @@ header('Content-Type: application/vnd.ms-excel');
         <?php endforeach; ?>
         <tr>
             <td colspan="11" align="right">Fecha y hora de impresión</td>
+            <td colspan="11" align="right"><?php echo date("d.m.Y H:i:s"); ?></td>
         </tr>
     </table>
     <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
@@ -192,7 +193,7 @@ header('Content-Type: application/vnd.ms-excel');
         </tr>
         <?php endforeach; ?>
         <tr>
-            <td colspan="7" align="right">Fecha y hora de impresión</td>
+            <td colspan="7" align="right">Fecha y hora de impresión: <?php echo date("d.m.Y H:i:s"); ?></td>
         </tr>
     </table>
     </div>

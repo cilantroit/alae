@@ -124,66 +124,78 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
 
-            foreach ($elements as $SampleBatch)
+            if (count($batch) > 0)
             {
-                $error = "";
-                if (!is_null($SampleBatch->getParameters()))
+                foreach ($batch as $Batch)
                 {
-                    $message    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
+                    $query    = $this->getEntityManager()->createQuery("
+                        SELECT s
+                        FROM Alae\Entity\SampleBatch s
+                        WHERE s.fkBatch = " . $Batch->getPkBatch() . "
+                        ORDER By s.sampleName");
+                    $elements = $query->getResult();
+
+                    foreach ($elements as $SampleBatch)
                     {
-                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $message[] = $Parameter->getMessageError();
+                        $error = "";
+                        if (!is_null($SampleBatch->getParameters()))
+                        {
+                            $message    = array();
+                            $parameters = explode(",", $SampleBatch->getParameters());
+                            foreach ($parameters as $parameter)
+                            {
+                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+                                $message[] = $Parameter->getMessageError();
+                            }
+                            $error = implode(", ", array_unique($message));
+                        }
                     }
-                    $error = implode(", ", array_unique($message));
+
+                    $list = array();
+                    foreach ($elements as $SampleBatch)
+                    {
+                        $other = $this->getRepository("\\Alae\\Entity\\SampleBatchOtherColumns")->findBy(array("fkSampleBatch" => $SampleBatch->getPkSampleBatch()));
+
+                        $message = $reason  = "";
+                        if (!is_null($SampleBatch->getParameters()))
+                        {
+                            $messages   = $reasons    = array();
+                            $parameters = explode(",", $SampleBatch->getParameters());
+                            foreach ($parameters as $parameter)
+                            {
+                                $Parameter  = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+                                $messages[] = $Parameter->getMessageError();
+                                $reasons[]  = $Parameter->getCodeError();
+                            }
+                            $message = implode(", ", array_unique($messages));
+                            $reason  = implode(", ", array_unique($reasons));
+                        }
+                        $list[] = array(
+                            "sample_name"              => $SampleBatch->getSampleName(),
+                            "acquisition_date"         => $other[0]->getAcquisitionDate(),
+                            "analyte_integration_type" => $other[0]->getAnalyteIntegrationType(),
+                            "is_integration_type"      => $other[0]->getIsIntegrationType(),
+                            "record_modify"            => $other[0]->getRecordModified(),
+                            "rejection_reason"         => $reason,
+                            "message"                  => $message
+                        );
+                    }
+
+                    $properties = array(
+                        "batch"    => $Batch,
+                        "elements" => $elements,
+                        "error"    => $error,
+                        "list"     => $list,
+                        "filename" => "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi")
+                    );
+
+                    $viewModel = new ViewModel($properties);
+                    $viewModel->setTerminal(true);
+                    return $viewModel;
                 }
             }
-
-            $list = array();
-            foreach ($elements as $SampleBatch)
-            {
-                $other = $this->getRepository("\\Alae\\Entity\\SampleBatchOtherColumns")->findBy(array("fkSampleBatch" => $SampleBatch->getPkSampleBatch()));
-
-                $message = $reason  = "";
-                if (!is_null($SampleBatch->getParameters()))
-                {
-                    $messages   = $reasons    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
-                    {
-                        $Parameter  = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $messages[] = $Parameter->getMessageError();
-                        $reasons[]  = $Parameter->getCodeError();
-                    }
-                    $message = implode(", ", array_unique($messages));
-                    $reason  = implode(", ", array_unique($reasons));
-                }
-                $list[] = array(
-                    "sample_name"              => $SampleBatch->getSampleName(),
-                    "acquisition_date"         => $other[0]->getAcquisitionDate(),
-                    "analyte_integration_type" => $other[0]->getAnalyteIntegrationType(),
-                    "is_integration_type"      => $other[0]->getIsIntegrationType(),
-                    "record_modify"            => $other[0]->getRecordModified(),
-                    "rejection_reason"         => $reason,
-                    "message"                  => $message
-                );
-            }
-
-            $properties = array(
-                "batch"    => $batch[0],
-                "elements" => $elements,
-                "error"    => $error,
-                "list"     => $list,
-                "filename" => "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi")
-            );
-
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
         }
     }
 
@@ -192,41 +204,52 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
 
-            $list = array();
-            foreach ($elements as $SampleBatch)
+            if (count($batch) > 0)
             {
-                $error = "";
-                if (!is_null($SampleBatch->getParameters()))
+                foreach ($batch as $Batch)
                 {
-                    $message    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
+                    $query    = $this->getEntityManager()->createQuery("
+                        SELECT s
+                        FROM Alae\Entity\SampleBatch s
+                        WHERE s.fkBatch = " . $Batch->getPkBatch() . "
+                        ORDER By s.sampleName");
+                    $elements = $query->getResult();
+                    //$elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+
+                    $list = array();
+                    foreach ($elements as $SampleBatch)
                     {
-                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $message[] = $Parameter->getMessageError();
+                        $error = "";
+                        if (!is_null($SampleBatch->getParameters()))
+                        {
+                            $message    = array();
+                            $parameters = explode(",", $SampleBatch->getParameters());
+                            foreach ($parameters as $parameter)
+                            {
+                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+                                $message[] = $Parameter->getMessageError();
+                            }
+                            $error = implode(", ", $message);
+                        }
+                        $list[] = array(
+                            "sample_name" => $SampleBatch->getSampleName(),
+                            "status"      => $SampleBatch->getValidFlag() ? "Aceptado" : "Rechazado",
+                            "error"       => $error
+                        );
                     }
-                    $error = implode(", ", $message);
+
+                    $properties = array(
+                        "batch"    => $Batch,
+                        "list"     => $list,
+                        "filename" => "resumen_de_lotes_de_un_estudio" . date("Ymd-Hi")
+                    );
+                    $viewModel  = new ViewModel($properties);
+                    $viewModel->setTerminal(true);
+                    return $viewModel;
                 }
-
-                $list[] = array(
-                    "sample_name" => $SampleBatch->getSampleName(),
-                    "status"      => $SampleBatch->getValidFlag() ? "Aceptado" : "Rechazado",
-                    "error"       => $error
-                );
             }
-
-            $properties = array(
-                "batch"    => $batch[0],
-                "list"     => $list,
-                "filename" => "resumen_de_lotes_de_un_estudio" . date("Ymd-Hi")
-            );
-
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
         }
     }
 
@@ -235,47 +258,70 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
 
-            $list = array();
-            foreach ($elements as $SampleBatch)
+            if (count($batch) > 0)
             {
-                if (!is_null($SampleBatch->getParameters()))
+                foreach ($batch as $Batch)
                 {
-                    $error      = "";
-                    $message    = array();
-                    $parameters = explode(",", $SampleBatch->getParameters());
-                    foreach ($parameters as $parameter)
-                    {
-                        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                        $message[] = $Parameter->getMessageError();
-                    }
-                    $error = implode(", ", $message);
+                    $query    = $this->getEntityManager()->createQuery("
+                        SELECT s
+                        FROM Alae\Entity\SampleBatch s
+                        WHERE s.fkBatch = " . $Batch->getPkBatch() . "
+                        ORDER By s.sampleName");
+                    $elements = $query->getResult();
+                    //$elements = $this->getRepository("\\Alae\\Entity\\SampleBatch")->findBy(array("fkBatch" => $batch[0]->getPkBatch()));
 
-                    $list[] = array(
-                        "sample_name" => $SampleBatch->getSampleName(),
-                        "status"      => $SampleBatch->getFileName(),
-                        "error"       => $error
+                    $list = array();
+                    foreach ($elements as $SampleBatch)
+                    {
+                        if (!is_null($SampleBatch->getParameters()))
+                        {
+                            $message    = array();
+                            $parameters = explode(",", $SampleBatch->getParameters());
+                            foreach ($parameters as $parameter)
+                            {
+                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+                                $message[] = $Parameter->getMessageError();
+                            }
+                            $error  = (count($message) > 0) ? implode(", ", $message) : "";
+                            $list[] = array(
+                                "sample_name" => $SampleBatch->getSampleName(),
+                                "status"      => $SampleBatch->getFileName(),
+                                "error"       => $error
+                            );
+                        }
+                    }
+                    $properties = array(
+                        "batch"    => $Batch,
+                        "list"     => $list,
+                        "filename" => "listado_de_muestras_a_repetir" . date("Ymd-Hi")
                     );
+                    $viewModel  = new ViewModel($properties);
+                    $viewModel->setTerminal(true);
+                    return $viewModel;
                 }
             }
-
-            $properties = array(
-                "batch"    => $batch[0],
-                "list"     => $list,
-                "filename" => "listado_de_muestras_a_repetir" . date("Ymd-Hi")
-            );
-
-            $viewModel = new ViewModel($properties);
-            $viewModel->setTerminal(true);
-            return $viewModel;
         }
     }
 
     public function r5Action()
     {
-        return $viewModel;
+        $request = $this->getRequest();
+        if ($request->isGet())
+        {
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+
+            if (count($batch) > 0)
+            {
+                $viewModel = new ViewModel(array(
+                    "batch"    => $batch,
+                    "filename" => "summary_of_calibration_curve_parameters" . date("Ymd-Hi")
+                ));
+                $viewModel->setTerminal(true);
+                return $viewModel;
+            }
+        }
     }
 
     public function r6Action()
@@ -324,8 +370,7 @@ class ReportController extends BaseController
                 list($name, $aux) = explode("_", $Batch->getFileName());
                 $calculatedConcentration['name'] = $name;
 
-                $list[] = $calculatedConcentration;
-
+                $list[]    = $calculatedConcentration;
                 $pkBatch[] = $Batch->getPkBatch();
             }
 
@@ -424,8 +469,8 @@ class ReportController extends BaseController
             foreach ($elements as $element)
             {
                 $calculations[] = array(
-                    "count"  => $element['counter'],
-                    "prom"   => number_format($element['promedio'], 2, ',', '')
+                    "count" => $element['counter'],
+                    "prom"  => number_format($element['promedio'], 2, ',', '')
                 );
             }
             $properties = array(
@@ -480,7 +525,7 @@ class ReportController extends BaseController
                             $error = implode(",", $errors);
                         }
                         $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "NVR";
-                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), number_format($temp["accuracy"], 2, ',', '') ,$error);
+                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), number_format($temp["accuracy"], 2, ',', ''), $error);
                         $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
                         $counter++;
                     }
@@ -570,8 +615,8 @@ class ReportController extends BaseController
 
                     list($name, $aux) = explode("_", $Batch->getFileName());
                     $calculatedConcentration['name'] = $name;
-                    $list[] = $calculatedConcentration;
-                    $pkBatch[] = $Batch->getPkBatch();
+                    $list[]                          = $calculatedConcentration;
+                    $pkBatch[]                       = $Batch->getPkBatch();
                 }
             }
 

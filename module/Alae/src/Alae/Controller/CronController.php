@@ -18,11 +18,9 @@ class CronController extends BaseController
     protected $_Study   = null;
     protected $_Analyte = null;
     protected $_error   = false;
+    protected $_other   = array();
     protected $_analyteConcentrationUnits;
     protected $_calculatedConcentrationUnits;
-    protected $_m;
-    protected $_b;
-    protected $_r;
 
     public function init()
     {
@@ -163,30 +161,26 @@ class CronController extends BaseController
         $content = fread($fp, filesize($filename));
         fclose($fp);
 
-
-        //var_dump($content);
-
-
         $lines = explode("\n", $content);
         $continue = false;
         $data = $headers = $other = array();
 
         foreach ($lines as $line)
         {
-            //var_dump(explode("\t", $line));
             if ($continue)
             {
                 $data[] = explode("\t", $line);
             }
-//            else
-//            {
-//                $data[] = explode("\t", $line);
-//            }
 
             if (strstr($line, "Sample Name"))
             {
                 $headers = $this->cleanHeaders(explode("\t", $line));
                 $continue = true;
+            }
+
+            if(!$continue)
+            {
+                $this->_other[] = $line;
             }
         }
 
@@ -229,17 +223,60 @@ class CronController extends BaseController
     private function updateBatch($Batch, $Analyte, $Study)
     {
         $query = $this->getEntityManager()->createQuery("
-                    SELECT COUNT(s.pkSampleBatch)
-                    FROM Alae\Entity\SampleBatch s
-                    WHERE s.parameters IS NOT NULL");
+            SELECT COUNT(s.pkSampleBatch)
+            FROM Alae\Entity\SampleBatch s
+            WHERE s.parameters IS NOT NULL");
         $error = $query->getSingleScalarResult();
         $status = ($error > 0) ? false : true;
+
+        $header = $this->getHeaderInfo($Analyte);
+
+        if (count($header) > 0)
+        {
+            $Batch->setIntercept($header['intercept']);
+            $Batch->setCorrelationCoefficient($header['correlationCoefficient']);
+            $Batch->setSlope($header['slope']);
+        }
+
         $Batch->setValidFlag($status);
         $Batch->setValidationDate(new \DateTime('now'));
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
         $this->getEntityManager()->flush();
+    }
+
+    private function getHeaderInfo($Analyte)
+    {
+        $header = array();
+        $continue = false;
+        foreach($this->_other as $line)
+        {
+            if (strstr($line, $Analyte->getShortening()))
+            {
+                $continue = true;
+            }
+            if($continue)
+            {
+                if(strstr($line, "Intercept"))
+                {
+                    $aux = explode("\t", $line);
+                    $header['intercept'] = $aux[1];
+                }
+                if(strstr($line, "Slope"))
+                {
+                    $aux = explode("\t", $line);
+                    $header['slope'] = $aux[1];
+                }
+                if(strstr($line, "Correlation coefficient"))
+                {
+                    $aux = explode("\t", $line);
+                    $header['correlationCoefficient'] = $aux[1];
+                }
+            }
+        }
+
+        return $header;
     }
 
     private function batchVerify($Batch, $Analyte, $fileName)
