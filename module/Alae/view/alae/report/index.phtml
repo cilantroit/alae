@@ -51,6 +51,10 @@
 	{
 	    url = url + "&an=" + $("#analyte").val();
 	}
+        else if(!isAnalyte)
+        {
+            isRedirect = true;
+        }
         else
         {
             alert("Debe seleccionar un Analito");

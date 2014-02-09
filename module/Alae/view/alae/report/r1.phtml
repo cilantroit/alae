@@ -197,7 +197,7 @@ header('Content-Type: application/vnd.ms-excel');
                         Elaboración:
                     </td>
                     <td align="center" bgcolor="#fff" style="text-aling:center;" >
-                        (<?php echo $study->getFkUserApprove()->getUsername(); ?>)
+                        (<?php echo $study->getFkUser()->getUsername(); ?>)
                     </td>
                 </tr>
                 <tr>
@@ -205,7 +205,7 @@ header('Content-Type: application/vnd.ms-excel');
                         Aprobación:
                     </td>
                     <td align="center" bgcolor="#fff" style="text-aling:center;" >
-                        (<?php echo $study->getFkUser()->getUsername(); ?>)
+                        (<?php echo !is_null($study->getFkUserApprove()) ? $study->getFkUserApprove()->getUsername() : "Sin aprobación"; ?>)
                     </td>
                 </tr>
                 <tr>
