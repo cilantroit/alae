@@ -20,6 +20,9 @@ class CronController extends BaseController
     protected $_error   = false;
     protected $_analyteConcentrationUnits;
     protected $_calculatedConcentrationUnits;
+    protected $_m;
+    protected $_b;
+    protected $_r;
 
     public function init()
     {
@@ -109,7 +112,7 @@ class CronController extends BaseController
                 }
 
                 $this->insertBatch($file, $this->_Study, $this->_Analyte);
-                unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
+                //unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
             }
         }
     }
@@ -117,19 +120,19 @@ class CronController extends BaseController
     private function insertBatch($fileName, $Study, $Analyte)
     {
         $data  = $this->getData(Helper::getVarsConfig("batch_directory") . "/" . $fileName, $Study, $Analyte);
-        $Batch = $this->saveBatch($fileName);
-        $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
-
-        if (!is_null($Analyte) && !is_null($Study))
-        {
-            $this->batchVerify($Batch, $Analyte, $fileName);
-            $this->updateBatch($Batch, $Analyte, $Study);
-        }
-        else
-        {
-            $this->execute(\Alae\Service\Verification::update("s.fkBatch = " . $Batch->getPkBatch(), "V1"));
-            $this->execute(\Alae\Service\Verification::updateBatch("b.pkBatch = " . $Batch->getPkBatch(), "V1"));
-        }
+//        $Batch = $this->saveBatch($fileName);
+//        $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
+//
+//        if (!is_null($Analyte) && !is_null($Study))
+//        {
+//            $this->batchVerify($Batch, $Analyte, $fileName);
+//            $this->updateBatch($Batch, $Analyte, $Study);
+//        }
+//        else
+//        {
+//            $this->execute(\Alae\Service\Verification::update("s.fkBatch = " . $Batch->getPkBatch(), "V1"));
+//            $this->execute(\Alae\Service\Verification::updateBatch("b.pkBatch = " . $Batch->getPkBatch(), "V1"));
+//        }
     }
 
     private function cleanHeaders($headers)
@@ -160,12 +163,17 @@ class CronController extends BaseController
         $content = fread($fp, filesize($filename));
         fclose($fp);
 
+
+        //var_dump($content);
+
+
         $lines = explode("\n", $content);
         $continue = false;
-        $data = $headers = array();
+        $data = $headers = $other = array();
 
         foreach ($lines as $line)
         {
+            var_dump(explode("\t", $line));
             if ($continue)
             {
                 $data[] = explode("\t", $line);

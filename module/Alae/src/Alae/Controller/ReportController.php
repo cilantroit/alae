@@ -479,7 +479,7 @@ class ReportController extends BaseController
                             }
                             $error = implode(",", $errors);
                         }
-                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "RCS";
+                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "NVR";
                         $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), number_format($temp["accuracy"], 2, ',', '') ,$error);
                         $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
                         $counter++;
@@ -527,6 +527,86 @@ class ReportController extends BaseController
 
     public function r9Action()
     {
-        return $viewModel;
+        $request = $this->getRequest();
+        if ($request->isGet())
+        {
+            $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+
+            $list    = array();
+            $pkBatch = array();
+            foreach ($batch as $Batch)
+            {
+                $query    = $this->getEntityManager()->createQuery("
+                    SELECT s.calculatedConcentration, s.dilutionFactor, SUBSTRING(s.sampleName, 1, 3) as sampleName, s.accuracy
+                    FROM Alae\Entity\SampleBatch s
+                    WHERE s.sampleName LIKE 'LQC%' AND s.fkBatch = " . $Batch->getPkBatch() . "
+                    ORDER By s.sampleName");
+                $elements = $query->getResult();
+
+                $Concentration           = array();
+                $calculatedConcentration = array();
+                if (count($elements) > 0)
+                {
+                    $counter = 0;
+                    foreach ($elements as $temp)
+                    {
+                        $error = "";
+                        if (!$temp["validFlag"])
+                        {
+                            $errors = array();
+                            foreach ($temp["parameters"] as $parameter)
+                            {
+                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
+                                $errors[]  = $Parameter->getCodeError();
+                            }
+                            $error = implode(",", $errors);
+                        }
+                        $value                                                          = $temp["validFlag"] ? $temp["calculatedConcentration"] : "NVR";
+                        $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array(number_format($value, 2, ',', ''), number_format($temp["accuracy"], 2, ',', ''), number_format($temp["accuracy"], 2, ',', ''));
+                        $Concentration[$temp["sampleName"]][]                           = number_format($value, 2, ',', '');
+                        $counter++;
+                    }
+
+                    list($name, $aux) = explode("_", $Batch->getFileName());
+                    $calculatedConcentration['name'] = $name;
+                    $list[] = $calculatedConcentration;
+                    $pkBatch[] = $Batch->getPkBatch();
+                }
+            }
+
+            $calculations = array();
+            if (count($pkBatch) > 0)
+            {
+                $query    = $this->getEntityManager()->createQuery("
+                    SELECT COUNT(s.pkSampleBatch) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                    FROM Alae\Entity\SampleBatch s
+                    WHERE s.sampleName LIKE 'LQC%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    GROUP BY sampleName
+                    ORDER By s.sampleName");
+                $elements = $query->getResult();
+
+                foreach ($elements as $element)
+                {
+                    $calculations[] = array(
+                        "count"  => $element['counter'],
+                        "prom"   => number_format($element['promedio'], 2, ',', ''),
+                        "accu"   => number_format($element['accuracy'], 2, ',', ''),
+                        "values" => implode(";", $Concentration[$element['sampleName']])
+                    );
+                }
+            }
+
+            $properties = array(
+                "analyte"      => $analytes[0],
+                "list"         => $list,
+                "calculations" => $calculations,
+                "filename"     => "calculated_nominal_concentration_of_calibration_standards" . date("Ymd-Hi")
+            );
+
+            $viewModel = new ViewModel($properties);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
     }
 }
