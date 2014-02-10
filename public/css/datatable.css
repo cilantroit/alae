@@ -135,12 +135,6 @@
 #datatable .form-datatable-add-block .form-datatable-add{ display:block; }
 #datatable .form-datatable-add,
 #datatable .form-datatable-add-block .form-datatable-remove,
-/*#yui3-datatable-filter-use,
-#yui3-datatable-filter-valid_flag,
-#yui3-datatable-filter-modify,
-#yui3-datatable-filter-accepted_flag,
-#yui3-datatable-filter-password,
-#yui3-datatable-filter-profile,*/
 #analyte,
 #analyte_is,
 #unit
@@ -239,36 +233,28 @@ input[class=error]{
     color: red;
 }
 
+#create-study,
+#nominalconcentration-form,
+#unfilled,
+#reports,
+#parameter-index, 
+#user-admin,
+#batch-list,
+#edit-study,
+#study-index,
+#create-analyte{
+    margin-top: 80px;
+}
 
-
-/*#user-admin .administrador tbody tr .yui3-datatable-col-edit,
-#user-admin .administrador tbody tr .form-datatable-edit,
-#batch-list .administrador tbody tr .form-datatable-edit,
-#parameter-index .administrador tbody tr .yui3-datatable-col-edit,
-#parameter-index .administrador tbody tr .form-datatable-edit,
-#study-index .administrador tbody tr .yui3-datatable-col-edit,
-#study-index .administrador tbody tr .form-datatable-edit,
-#study-index .ugc tbody tr .yui3-datatable-col-edit,
-#study-index .ugc tbody tr .form-datatable-edit,
-#study-index .director_estudio tbody tr .yui3-datatable-col-edit,
-#study-index .director_estudio tbody tr .form-datatable-edit,
-#study-index .ugc tbody tr .yui3-datatable-col-edit .form-datatable-nominal,
-#study-index .ugc tbody tr .yui3-datatable-col-edit .form-datatable-batch,
-#create-analyte .administrador tbody tr .yui3-datatable-col-edit,
-#create-analyte .administrador tbody tr .form-datatable-edit,
-#create-analyte .sustancias tbody tr .yui3-datatable-col-edit,
-#create-analyte .sustancias tbody tr .form-datatable-edit,
-#edit-study .datatable-form-edit .administrador tbody tr .yui3-datatable-col-edit,
-#edit-study .datatable-form-edit .administrador tbody tr .form-datatable-edit,
-#edit-study .datatable-form-edit .director_estudio tbody tr .yui3-datatable-col-edit,
-#edit-study .datatable-form-edit .director_estudio tbody tr .form-datatable-editt{
-    display: block;
-}   
-
-#study-index .ugc tbody tr .yui3-datatable-col-edit .form-datatable-delete,
-#study-index .ugc tbody tr .form-datatable-edit .form-datatable-new{
-    display: none;
-}*/
+#datatable{
+    width: 98%;
+    height: 85%;
+    outline: solid 1px #008B8B;
+    margin: 0 auto;
+    margin-top: 1em;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
 
 .yui3-datatable-col-rule,
 .yui3-datatable-col-min_value,

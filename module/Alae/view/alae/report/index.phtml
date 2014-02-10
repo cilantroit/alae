@@ -6,37 +6,39 @@
         [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
     </div>
     <div id="cuerpo">
-        <div id="encab">
-            <h2>informes estad&iacute;sticos</h2>
-        </div>
         <div id="centrado" style="font-size:1em;">
-            <p>
-                <label>C&oacute;digo del Estudio:</label>
-                <select id="study">
-                    <option value="-1">Seleccione</option>
-		    <?php foreach ($studies as $study) : ?>
-    		    <option value="<?php echo $study->getPkStudy(); ?>"><?php echo $study->getCode(); ?></option>
-		    <?php endforeach; ?>
-                </select>
-            </p>
-            <p id="ajax" style="display: none">
-                <label>Analito (*): </label>
-                <select id="analyte"></select>
-            </p>
-            <h4>Seleccione el informe deseado:</h4>
-            <ul class="pdf"><br/>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r1c', false);">01. Información General de un Estudio</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r2c', true);">02. Tabla ALAE de cada lote analítico(*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r3c', true);">03. Resumen de Lotes de un Estudio  (*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r4c', true);">04. Listado de Muestras a Repetir (*)</a></li>
-            </ul>
-            <ul class="xls">
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r5', true);">05. Summary of Calibration Curve Parameters (*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r6', true);">06. Back-Calculated Concentration of Calibration Standard (*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r7', true);">07. Calculated % Nominal Concentration of Calibration Standards (*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r8', true);">08. Between-Run Accuracy and Precision of Quality Control Samples (*)</a></li>
-                <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r9', true);">09. Between-Run Accuracy and Precision of Dilution Quality Control Samples (*)</a></li>
-            </ul>
+            <div id="reports">
+                <div id="encab">
+                    <h2>informes estad&iacute;sticos</h2>
+                </div>
+                <p>
+                    <label>C&oacute;digo del Estudio:</label>
+                    <select id="study">
+                        <option value="-1">Seleccione</option>
+                        <?php foreach ($studies as $study) : ?>
+                        <option value="<?php echo $study->getPkStudy(); ?>"><?php echo $study->getCode(); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </p>
+                <p id="ajax" style="display: none">
+                    <label>Analito (*): </label>
+                    <select id="analyte"></select>
+                </p>
+                <h4>Seleccione el informe deseado:</h4>
+                <ul class="pdf"><br/>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r1c', false);">01. Información General de un Estudio</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r2c', true);">02. Tabla ALAE de cada lote analítico(*)</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r3c', true);">03. Resumen de Lotes de un Estudio  (*)</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r4c', true);">04. Listado de Muestras a Repetir (*)</a></li>
+                </ul>
+                <ul class="xls">
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r5', true);">05. Summary of Calibration Curve Parameters (*)</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r6', true);">06. Back-Calculated Concentration of Calibration Standard (*)</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r7', true);">07. Calculated % Nominal Concentration of Calibration Standards (*)</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r8', true);">08. Between-Run Accuracy and Precision of Quality Control Samples (*)</a></li>
+                    <li><a onclick="reports('<?php echo $this->basePath() ?>/report/r9', true);">09. Between-Run Accuracy and Precision of Dilution Quality Control Samples (*)</a></li>
+                </ul>
+            </div>
         </div>
     </div>
     <blockquote class="peq">

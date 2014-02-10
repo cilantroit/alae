@@ -6,10 +6,10 @@
     [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
 </div>
 <div id="cuerpo">
-    <div id="encab">
-        <h2>ficha del estudio</h2>
-    </div>
     <div id="edit-study" style="font-size:0.85em;">
+        <div id="encab">
+            <h2>ficha del estudio</h2>
+        </div>
         <h3>Datos Generales del Estudio</h3>
         <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
         <form id="study-form" action="" method="POST">
