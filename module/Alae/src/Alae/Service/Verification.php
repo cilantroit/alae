@@ -21,12 +21,12 @@ class Verification
             WHERE p.rule = '" . $fkParameter . "'
         )";
     }
-    
+
     public static function update($where, $fkParameter, $set = array())
     {
         $query = "
             UPDATE Alae\Entity\SampleBatch s
-            SET s.parameters = " . self::getPkParameter($fkParameter) . ((count($set) > 0) ? ',' . implode(',', $set) : '') . "
+            SET s.parameters = CONCAT_WS(',',s.parameters, " . self::getPkParameter($fkParameter) . ") " . ((count($set) > 0) ? ',' . implode(',', $set) : '') . "
             WHERE $where";
 
         return $query;

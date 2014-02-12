@@ -195,12 +195,12 @@ class VerificationController extends BaseController
             (s.sampleName LIKE 'CS%' AND s.sampleType <> 'Standard') OR
             (s.sampleName LIKE '%QC%' AND s.sampleType <> 'Quality Control') OR
             (REGEXP(s.sampleName, :regexp1) = 1 AND s.sampleType <> 'Solvent') OR
-            (REGEXP(s.sampleName, :regexp2) = 0 AND s.sampleType = 'Unknown')
+            (REGEXP(s.sampleName, :regexp2) = 1 AND s.sampleType <> 'Unknown')
         ) AND s.fkBatch = " . $Batch->getPkBatch();
         $sql   = Verification::update($where, "V4");
         $query = $this->getEntityManager()->createQuery($sql);
         $query->setParameter('regexp1', '^REC|FM$');
-        $query->setParameter('regexp2', '^BLK|ZS|CS|QC|REC|FM$');
+        $query->setParameter('regexp2', '^[0-9]+(-)[0-9]+\.[0-9]+$');//09-1.32
         $query->execute();
     }
 
@@ -301,6 +301,7 @@ class VerificationController extends BaseController
      */
     protected function V7(\Alae\Entity\Batch $Batch)
     {
+        $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V7"));
         $query    = $this->getEntityManager()->createQuery("
             SELECT s.sampleName,  COUNT(s.pkSampleBatch) as counter
             FROM Alae\Entity\SampleBatch s

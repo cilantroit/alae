@@ -227,7 +227,7 @@ class CronController extends BaseController
             FROM Alae\Entity\SampleBatch s
             WHERE s.parameters IS NOT NULL");
         $error = $query->getSingleScalarResult();
-        $status = ($error > 0) ? false : true;
+        //$status = ($error > 0) ? false : true;
 
         $header = $this->getHeaderInfo($Analyte);
 
@@ -238,8 +238,12 @@ class CronController extends BaseController
             $Batch->setSlope($header['slope']);
         }
 
-        $Batch->setValidFlag($status);
-        $Batch->setValidationDate(new \DateTime('now'));
+        if ($error > 0)
+        {
+            $Batch->setValidFlag(false);
+            $Batch->setValidationDate(new \DateTime('now'));
+        }
+
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
@@ -283,8 +287,8 @@ class CronController extends BaseController
     {
         $string = substr($fileName, 0, -4);
         list($pkBatch, $aux) = explode("-", $string);
-        $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V1", array("s.validFlag = 0")));
-        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 1, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2", array("s.validFlag = 0")));
+        $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2", array("s.validFlag = 0")));
+        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 1, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V3", array("s.validFlag = 0")));
     }
 
     private function saveSampleBatch($headers, $data, $Batch)
