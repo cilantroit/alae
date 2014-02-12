@@ -105,7 +105,7 @@ class UserController extends BaseController
     protected function getProfileOptions($pkProfile)
     {
 	$elements = $this->getRepository('\\Alae\\Entity\\Profile')->findAll();
-	$options = '<option value="0">Seleccione</option>';
+	$options = '';
 	foreach ($elements as $profile)
 	{
 	    $selected = ($profile->getPkProfile() == $pkProfile) ? "selected" : "";

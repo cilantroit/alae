@@ -1,151 +1,13 @@
-<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">
-    <div>
-        <h3>INFORMACIÓN GENERAL DE UN ESTUDIO</h3>
-        <table border="0" cellspacing="0" cellpadding="0"  style="padding:50px; width:100%;background-color:#fff;margin-top:10px;text-aling:center">
-            <tr>
-		<td  colspan="2" align="center" height="20" bgcolor="#252525" style="width:10%;color:#fff;text-aling:justify;">
-		    <strong>Código del Estudio</strong>
-		</td>
-		<td   align="center" height="20" bgcolor="#FFFF99" style="border: black 1px solid;">
-		    !!!!!! echo $study->getCode(); ¡¡¡¡¡¡
-		</td>
-		<td width="20" ></td>
-		<td  colspan="2" align="center" height="20" bgcolor="#252525" style="width:10%;color:#fff; border: black 1px solid;">
-		    <strong>Nº de Analitos</strong>
-		</td>
-		<td   align="center"  height="20" bgcolor="#FFFF99" style="width:10%;border: black 1px solid;">
-		    !!!!!! echo $counterAnalyte; ¡¡¡¡¡¡
-		</td>
-		<td width="20" ></td>
-		<td   align="center" height="20" bgcolor="#000000" style="width:10%;color:#fff; border: black 1px solid;">
-		    <strong>Arbol de Diluciónn Nº</strong>
-		</td>
-		<td  align="center" height="20" bgcolor="#FFFF99" style="width:10%;border: black 1px solid;">
-		    !!!!!! echo $study->getFkDilutionTree(); ¡¡¡¡¡¡
-		</td>
-	    </tr>
-	    <tr>
-		<td   aling="left" height=20 colspan="8"  bgcolor="#ffffff" style="color:#000000;font-size:11px;padding:10px">
-
-		    &nbsp;
-		</td>
-		</tr>
-
-
-
-
-	    <tr>
-		<td  align="center"  style="color:#ffffff;"></td>
-		<td  align="center"  bgcolor="#000000" colspan="2"  style="color:#ffffff;font-size:11px;padding:5px;"><strong>Analitoxx</strong></td>
-		<td  align="center"></td>
-		<td  align="center" colspan="4" bgcolor="#000000"  colspan="2"  style="color:#ffffff;font-size:11px;padding:5px;"><strong>Patrón Interno</strong></td>
-	    </tr>
-	    <tr>
-		<td  align="center"  style="color:#ffffff;"></td>
-		<td  align="center"  bgcolor="#D8D8D8"   style="color:#000000;font-size:11px;padding:5px;border: black 1px solid;"><strong>Nombre</strong></td>
-		<td  align="center"  bgcolor="#D8D8D8"   style="color:#000000;font-size:11px;padding:5px;border: black 1px solid;"><strong>Abreviatura</strong></td>
-		<td  align="center"></td>
-		<td  align="center"  bgcolor="#D8D8D8"   style="color:#000000;font-size:11px;padding:5px;border: black 1px solid;"><strong>Nombre</strong></td>
-		<td  align="center"  bgcolor="#D8D8D8"   style="color:#000000;font-size:11px;padding:5px;border: black 1px solid;"><strong>Abreviatura</strong></td>
-		<td  align="center"  bgcolor="#D8D8D8"   style="color:#000000;font-size:11px;padding:5px;border: black 1px solid;"><strong>% Variabiidad IS </strong></td>
-		<td  align="center"  bgcolor="#D8D8D8"   style="color:#000000;font-size:11px;padding:5px;border: black 1px solid;"><strong>usar</strong></td>
-	    </tr>
-	    <tr>
-		<td  align="center"  width ="100" bgcolor="#F1DADA" style="color:#000000;padding:5px;border: black 1px solid;font-size:11px;">1</td>
-		<td  align="center" width ="100"  bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#FFFF99" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-	    </tr>
-	    <tr>
-		<td   aling="left" height=20 colspan="8"  bgcolor="#ffffff" style="color:#000000;font-size:11px;padding:10px">
-		    <strong>Concentración Nominal de los Estándares de Calibración</strong>
-		</td>
-	    </tr>
-	    <tr>
-		<td  align="center" width ="100" bgcolor="#000000" colspan="3" style="color:#ffffff;border: black 1px solid;font-size:11px;">Identificación de la muestra</td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">Conc. ANA1</td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">Conc. ANA2 </td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">Conc. ANA3 </td>
-	    </tr>
-	    <tr>
-		<td  align="center" width ="100" bgcolor="#000000" colspan="3" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">(unidades) </td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">(unidades)  </td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">(unidades) </td>
-	    </tr>
-	    <tr>
-		<td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">1</td>
-		<td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;"> </td>
-		<td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">  </td>
-		<td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">  </td>
-	    </tr>
-	    <tr>
-		<td  align="left"  height=20 colspan="8"  bgcolor="#ffffff" style="color:#000000;font-size:11px;padding:10px">
-		    <strong>Concentración Nominal de los Controles de Calidad</strong>
-		</td>
-	    </tr>
-	    <tr>
-		<td  align="center" width ="100" bgcolor="#000000" colspan="3" style="color:#ffffff;border: black 1px solid;font-size:11px;">Identificación de la muestra</td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">Conc. ANA1</td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">Conc. ANA2 </td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">Conc. ANA3 </td>
-	    </tr>
-	    <tr>
-		<td  align="center" width ="100" bgcolor="#000000" colspan="3" style="color:#ffffff;border: black 1px solid;font-size:11px;"></td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">(unidades) </td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">(unidades)  </td>
-		<td  align="center" width ="100" bgcolor="#000000" style="color:#ffffff;border: black 1px solid;font-size:11px;">(unidades) </td>
-	    </tr>
-	    <tr>
-		<td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">1</td>
-		<td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;"> </td>
-		<td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">  </td>
-		<td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">  </td>
-	    </tr>
-	    <tr>
-		<td   aling="left" height=20 colspan="8"  bgcolor="#ffffff" style="color:#000000;font-size:11px;padding:10px">
-		    <strong>Concentración Nominal de los Controles de Calidad</strong>
-		</td>
-	    </tr>
-	    <tr>
-		<td   height=20  height="20" bgcolor="#000000" style="color:#ffffff;font-size:11px;padding:10px">
-		    <strong>Elaboración</strong>
-		</td>
-		</tr>
-		<tr>
-			<td>
-			&nbsp;
-			</td>
-		</tr>
-	    <tr>
-		<td   height="20" bgcolor="#000000" style="color:#ffffff;font-size:11px;padding:10px">
-		    Aprobación:
-		</td>
-	    </tr>
-		 <tr>
-		<td   height=20   style="color:#000000;font-size:11px;padding:10px">
-		    <strong> &nbsp;</strong>
-		</td>
-	    </tr>
-
-
-
-	</table>
-    </div>
-</page>
-
-
 <?php
-
-
+  ob_start();
+?>
+<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">
+    <?php echo $page; ?>
+</page>
+<?php
 $content = ob_get_clean();
 // convert to PDF
 require_once dirname(__FILE__) . "/html2pdf/html2pdf.class.php";
-//$filename = sprintf('%s.pdf', rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $_REQUEST['name'])));
 try
 {
     $html2pdf = new HTML2PDF('P', array(432, 240), 'en', true, 'UTF-8', array(0, 0, 0, 0));
@@ -158,15 +20,4 @@ catch (HTML2PDF_exception $e)
     echo $e;
 }
 exit;
-
 ?>
-
-
-
-
-
-
-
-
-
-

@@ -149,8 +149,24 @@ th{font-family: Calibri; font-size:1.1em;color:#008B8B; border: 1px solid #008B8
 #centrado label {display: inline-block; width:20%;}
 /* #centrado select{height:2em;border:1px solid #008B8B; width:40%; background-color: #FFFFCC; font-family: Verdana; } */
 #centrado p, #centrado li  {line-height:1.6em;}
-#centrado ul {text-indent:0px;text-align: left;list-style-image:url('../img/xls.png'); outline: solid 1px #008B8B; font-size: 0.9em;  }
-#centrado li {margin: 0 10px 0 10px;}
+#centrado .xls{
+    text-indent:0px;
+    text-align: left;
+    list-style-image:url('../img/xls.png'); 
+    outline: solid 1px #008B8B; 
+    font-size: 0.9em;  
+}
+#centrado ul li {
+    margin: 0 10px 0 10px;
+}
+
+#centrado .pdf{
+    text-indent:0px;
+    text-align: left;
+    list-style-image:url('../img/pdf.png'); 
+    outline: solid 1px #008B8B; 
+    font-size: 0.9em;  
+}
 
 
 
@@ -291,4 +307,8 @@ padding: 0;
 }
 #login form{
     padding: 20px 10px 20px 10px;
+}
+form input[class=error]{
+    border: 1px solid red !important;
+    color: red !important;
 }

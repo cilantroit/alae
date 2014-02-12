@@ -210,10 +210,6 @@
 #datatable .btn{
     height: 30px;
 }
-input[class=error]{
-    border: 1px solid red !important;
-    color: red !important;
-}
 #errorBox label{
     color: red;
 }

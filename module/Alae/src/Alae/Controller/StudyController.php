@@ -33,11 +33,10 @@ class StudyController extends BaseController
     {
         $data     = array();
         $elements = $this->getRepository()->findBy(array("status" => true));
+        $User     = $this->_getSession();
 
         foreach ($elements as $study)
         {
-            $User = $this->_getSession();
-
             switch ($this->_getSession()->getFkProfile()->getName())
             {
                 case "Administrador":
