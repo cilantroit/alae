@@ -244,7 +244,7 @@ class ReportController extends BaseController
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
                         "error"    => $error,
-                        "message"  => ($error != "" ? "Rechazado" : "Aceptado")
+                        "message"  => is_null($Batch->getValidFlag()) ? "" : ($Batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO")//($error != "" ? "Rechazado" : "Aceptado")
                     );
                 }
 

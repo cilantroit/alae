@@ -153,7 +153,7 @@ class VerificationController extends BaseController
             );
         }
 
-        $datatable = new \Alae\Service\Datatable($data, \Alae\Service\Datatable::DATATABLE_SAMPLE_BATCH);
+        $datatable = new \Alae\Service\Datatable($data, \Alae\Service\Datatable::DATATABLE_SAMPLE_BATCH, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
         $viewModel->setVariable('pkBatch', $Batch->getPkBatch());
         return $viewModel;
@@ -590,6 +590,10 @@ class VerificationController extends BaseController
 
         if ($value < $parameters[0]->getMinValue())
         {
+            $where = "s.sampleName LIKE 'CS%' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V15", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
             $this->rejectBatch($Batch, $parameters[0]);
         }
     }
@@ -601,7 +605,7 @@ class VerificationController extends BaseController
     protected function V16(\Alae\Entity\Batch $Batch)
     {
         $query    = $this->getEntityManager()->createQuery("
-            SELECT SUBSTRING(s.sampleName, 3, 1) as sample_name
+            SELECT s.pkSampleBatch, SUBSTRING(s.sampleName, 3, 1) as sample_name
             FROM Alae\Entity\SampleBatch s
             WHERE s.sampleName like 'CS%' AND s.validFlag = 0 AND s.fkBatch = " . $Batch->getPkBatch() . "
             ORDER BY s.sampleName ASC");
@@ -613,6 +617,7 @@ class VerificationController extends BaseController
         {
             if ($ant == ($temp["sample_name"] - 1) && $ant > 0)
             {
+                $pkSampleBatch = $temp['pkSampleBatch'];
                 $isValid = false;
                 break;
             }
@@ -623,6 +628,10 @@ class VerificationController extends BaseController
         $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V16"));
         if (!$isValid)
         {
+            $where = "s.pkSampleBatch  = " . $pkSampleBatch . " AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V16", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
             $this->rejectBatch($Batch, $parameters[0]);
         }
     }
@@ -653,7 +662,11 @@ class VerificationController extends BaseController
 
         if ($value < $parameters[0]->getMinValue())
         {
-            $this->rejectBatch($Batch, $parameters[0]);
+            $where = "s.sampleName LIKE 'QC%' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V18", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+            //$this->rejectBatch($Batch, $parameters[0]);
         }
     }
 
@@ -682,7 +695,11 @@ class VerificationController extends BaseController
 
         if ($value < $parameters[0]->getMinValue())
         {
-            $this->rejectBatch($Batch, $parameters[0]);
+            $where = "s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V19", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+            //$this->rejectBatch($Batch, $parameters[0]);
         }
     }
 
@@ -709,7 +726,11 @@ class VerificationController extends BaseController
         $parameters         = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V20.1"));
         if ($value < $parameters[0]->getMinValue())
         {
-            $this->rejectBatch($Batch, $parameters[0]);
+            $where = "s.sampleName LIKE 'BLK%' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V20.1", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+            //$this->rejectBatch($Batch, $parameters[0]);
         }
 
         $query    = $this->getEntityManager()->createQuery("
@@ -728,7 +749,11 @@ class VerificationController extends BaseController
         $parameters        = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V20.2"));
         if ($value < $parameters[0]->getMinValue())
         {
-            $this->rejectBatch($Batch, $parameters[0]);
+            $where = "s.sampleName LIKE 'ZS%' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V20.2", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+            //$this->rejectBatch($Batch, $parameters[0]);
         }
     }
 
