@@ -242,7 +242,7 @@ class UserController extends BaseController
             try
             {
                 $Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
-                $User->setFkProfile($Profile);
+                $User->setFkProfile($Profile[0]);
                 $User->setActiveFlag(\Alae\Entity\User::USER_INACTIVE_FLAG);
                 $this->getEntityManager()->persist($User);
                 $this->getEntityManager()->flush();
