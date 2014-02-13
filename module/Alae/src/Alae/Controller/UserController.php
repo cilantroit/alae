@@ -306,7 +306,14 @@ class UserController extends BaseController
 		$this->getEntityManager()->persist($User[0]);
 		$this->getEntityManager()->flush();
 		$mail = new \Alae\Service\Mailing();
-		$mail->send(array($User[0]->getEmail()), $this->render('alae/user/template_reset_pass', array('active_code' => $User[0]->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 'username' => $User[0]->getName())));
+		$mail->send(
+			array($User[0]->getEmail()), 
+			$this->render('alae/user/template_reset_pass', array(
+				'active_code' => $User[0]->getActiveCode(), 
+				'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 
+				'username' => $User[0]->getName())),
+			'Reinicializar contraseña'
+		);
 	    }
 	    else
 	    {
