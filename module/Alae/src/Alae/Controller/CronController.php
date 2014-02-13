@@ -242,19 +242,18 @@ class CronController extends BaseController
         {
             $Batch->setValidFlag(false);
             $Batch->setValidationDate(new \DateTime('now'));
-        }
 
-        $query = $this->getEntityManager()->createQuery("
+            $query       = $this->getEntityManager()->createQuery("
             SELECT s.parameters
             FROM Alae\Entity\SampleBatch s
             WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch() . "
             ORDER BY s.parameters ASC")
-            ->setMaxResults(1);
-        $pkParameter = $query->getSingleScalarResult();
+                    ->setMaxResults(1);
+            $pkParameter = $query->getSingleScalarResult();
+            $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($pkParameter);
+            $Batch->setFkParameter($Parameter);
+        }
 
-        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($pkParameter);
-
-        $Batch->setFkParameter($Parameter);
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
