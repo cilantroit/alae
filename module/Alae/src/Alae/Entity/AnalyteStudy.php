@@ -46,6 +46,20 @@ class AnalyteStudy
     /**
      * @var string
      *
+     * @ORM\Column(name="hdqc_values", type="integer", nullable=false)
+     */
+    protected $hdqcValues;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ldqc_values", type="integer", nullable=false)
+     */
+    protected $ldqcValues;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="qc_values", type="string", length=100, nullable=true)
      */
     protected $qcValues;
@@ -291,5 +305,25 @@ class AnalyteStudy
     public function setFkUserApprove(\Alae\Entity\User $fkUser)
     {
         $this->fkUserApprove = $fkUser;
+    }
+
+    public function setLdqcValues($ldqcValues)
+    {
+        $this->ldqcValues = $ldqcValues;
+    }
+
+    public function getLdqcValues()
+    {
+        return $this->ldqcValues;
+    }
+
+    public function setHdqcValues($hdqcValues)
+    {
+        $this->hdqcValues = $hdqcValues;
+    }
+
+    public function getHdqcValues()
+    {
+        return $this->hdqcValues;
     }
 }

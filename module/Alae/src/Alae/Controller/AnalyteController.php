@@ -144,13 +144,19 @@ class AnalyteController extends BaseController
 
         foreach ($elements as $analyte)
         {
+            $query = $this->getEntityManager()->createQuery("
+                SELECT COUNT(s.pkAnalyteStudy)
+                FROM Alae\Entity\AnalyteStudy s
+                WHERE s.fkAnalyte = " . $analyte->getPkAnalyte());
+            $counter = $query->getSingleScalarResult();
+
             $buttons = "";
-            if($this->_getSession()->isSustancias() || $this->_getSession()->isAdministrador())
+            if(($this->_getSession()->isSustancias() || $this->_getSession()->isAdministrador()) && $counter == 0)
             {
                 $buttons .= '<span class="form-datatable-change" onclick="changeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
             }
 
-            if($this->_getSession()->isAdministrador())
+            if($this->_getSession()->isAdministrador() && $counter == 0)
             {
                 $buttons .= '<span class="form-datatable-delete" onclick="removeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
             }

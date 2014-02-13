@@ -109,11 +109,12 @@ class StudyController extends BaseController
                     $this->getEntityManager()->flush();
                     $this->transaction(
                         "Creación de estudio",
-                        sprintf('El usuario %1$s ha creado el estudio %2$s - Código: %2$s, Descripción: %3$s, Observaciones: %4$s',
+                        sprintf('El usuario %1$s ha creado el estudio %2$s - Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
                             $User->getUsername(),
                             $Study->getCode(),
                             $Study->getDescription(),
-                            $Study->getObservation()
+                            $Study->getObservation(),
+                            $Study->getCreatedAt()
                         ),
                         false
                     );
@@ -188,11 +189,12 @@ class StudyController extends BaseController
             {
                 try
                 {
-                    $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s',
+                    $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
                         $Study->getFkUser()->getUsername(),
                         $Study->getCode(),
                         $Study->getDescription(),
-                        $Study->getObservation()
+                        $Study->getObservation(),
+                        $Study->getCreatedAt()
                     );
                     $Study->setCreatedAt($request->getPost('create_at'));
                     $Study->setDescription($request->getPost('description'));
@@ -203,12 +205,13 @@ class StudyController extends BaseController
                     $this->getEntityManager()->flush();
                     $this->transaction(
                         "Edición de estudios",
-                        sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s',
+                        sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s, Fecha de creación: %6$s',
                             $User->getUsername(),
                             $request->getPost('code'),
                             $older,
                             $request->getPost('description'),
-                            $request->getPost('observation')
+                            $request->getPost('observation'),
+                            $request->getPost('create_at')
                         ),
                         false
                     );
@@ -686,6 +689,8 @@ class StudyController extends BaseController
             $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($request->getPost('id'));
             $AnaStudy->setCsValues(implode(",", $request->getPost("cs_number")));
             $AnaStudy->setQcValues(implode(",", $request->getPost("qc_number")));
+            $AnaStudy->setHdqcValues($request->getPost("ldqc_number"));
+            $AnaStudy->setLdqcValues($request->getPost("hdqc_number"));
             $this->getEntityManager()->persist($AnaStudy);
             $this->getEntityManager()->flush();
             $this->transaction(
@@ -708,6 +713,8 @@ class StudyController extends BaseController
         $viewModel->setVariable('AnaStudy', $AnaStudy);
         $viewModel->setVariable('cs_number', explode(",", $AnaStudy->getCsValues()));
         $viewModel->setVariable('qc_number', explode(",", $AnaStudy->getQcValues()));
+        $viewModel->setVariable('ldqc_number', $AnaStudy->getLdqcValues());
+        $viewModel->setVariable('hdqc_number', $AnaStudy->getHdqcValues());
         $viewModel->setVariable('User', $this->_getSession());
         $viewModel->setVariable('disabled', (!$AnaStudy->getStatus() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) ? "" : "disabled"));
         return $viewModel;

@@ -591,7 +591,7 @@ class VerificationController extends BaseController
         if ($value < $parameters[0]->getMinValue())
         {
             $where = "s.sampleName LIKE 'CS%' AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V15", array("s.validFlag = 0"));
+            $sql   = Verification::update($where, "V15");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
             $this->rejectBatch($Batch, $parameters[0]);
@@ -629,7 +629,7 @@ class VerificationController extends BaseController
         if (!$isValid)
         {
             $where = "s.pkSampleBatch  = " . $pkSampleBatch . " AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V16", array("s.validFlag = 0"));
+            $sql   = Verification::update($where, "V16");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
             $this->rejectBatch($Batch, $parameters[0]);
@@ -663,7 +663,7 @@ class VerificationController extends BaseController
         if ($value < $parameters[0]->getMinValue())
         {
             $where = "s.sampleName LIKE 'QC%' AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V18", array("s.validFlag = 0"));
+            $sql   = Verification::update($where, "V18");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
             //$this->rejectBatch($Batch, $parameters[0]);
@@ -696,7 +696,7 @@ class VerificationController extends BaseController
         if ($value < $parameters[0]->getMinValue())
         {
             $where = "s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V19", array("s.validFlag = 0"));
+            $sql   = Verification::update($where, "V19");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
             //$this->rejectBatch($Batch, $parameters[0]);
@@ -727,7 +727,7 @@ class VerificationController extends BaseController
         if ($value < $parameters[0]->getMinValue())
         {
             $where = "s.sampleName LIKE 'BLK%' AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V20.1", array("s.validFlag = 0"));
+            $sql   = Verification::update($where, "V20.1");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
             //$this->rejectBatch($Batch, $parameters[0]);
@@ -750,7 +750,7 @@ class VerificationController extends BaseController
         if ($value < $parameters[0]->getMinValue())
         {
             $where = "s.sampleName LIKE 'ZS%' AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V20.2", array("s.validFlag = 0"));
+            $sql   = Verification::update($where, "V20.2");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
             //$this->rejectBatch($Batch, $parameters[0]);

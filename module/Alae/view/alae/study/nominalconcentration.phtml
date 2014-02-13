@@ -26,9 +26,11 @@
                 <li>
                     <input type="submit" class="btn" value="guardar" />
                 </li>
-                <li>
-                    <button class="btn" type="button" onclick="changeStatus('/study/approvenc',<?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-validate"></span>aprobar</button>
-                </li>
+                    <?php if(count($cs_number) > 0 && count($qc_number) > 0 && !is_null($ldqc_number) && !is_null($hdqc_number)) : ?>
+                    <li>
+                        <button class="btn" type="button" onclick="changeStatus('/study/approvenc',<?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-validate"></span>aprobar</button>
+                    </li>
+                    <?php endif; ?>
                 <?php endif; ?>
             </ul>
             <p>Arbol de Dilución: (1)</p>
@@ -54,6 +56,16 @@
                     </li>
                 <?php endfor; ?>
             </ul>
+            <ul>
+                <li>
+                    <label>LDQC*</label>
+                    <input type="text" value="<?php echo isset($ldqc_number) ? $ldqc_number : ""; ?>" <?php echo $disabled; ?> name="ldqc_number" class="nominalconcentration-form-number"/>
+                </li>
+                <li>
+                    <label>HDQC*</label>
+                    <input type="text" value="<?php echo isset($hdqc_number) ? $hdqc_number : ""; ?>" <?php echo $disabled; ?> name="hdqc_number" class="nominalconcentration-form-number"/>
+                </li>
+            </ul>
         </div>
         <input type="hidden" name="id" value="<?php echo $AnaStudy->getPkAnalyteStudy(); ?>" />
     </form>
@@ -63,11 +75,7 @@
         }, "");
         jQuery.validator.addClassRules('nominalconcentration-form-number', {
             required: true,
-            regex: true,
-            messages: {
-                required: "",
-                regex: ""
-            },
+            regex: true
         });
 
         $("#nominalconcentration-form").validate({

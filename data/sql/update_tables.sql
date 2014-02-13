@@ -28,3 +28,9 @@ ALTER TABLE  `alae_analyte_study`
 ADD  `fk_user_approve` BIGINT( 20 ) UNSIGNED NULL DEFAULT NULL AFTER  `fk_user`;
 ALTER TABLE alae_study
 ADD FOREIGN KEY (fk_user_approve) REFERENCES alae_user(pk_user);
+
+
+ALTER TABLE  `alae_analyte_study` 
+ADD  `hdqc_values` INT NULL;
+ALTER TABLE  `alae_analyte_study` 
+ADD  `ldqc_values` INT NULL;

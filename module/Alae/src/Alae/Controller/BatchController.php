@@ -100,6 +100,16 @@ class BatchController extends BaseController
                                 $this->getEntityManager()->persist($Batch);
                                 $this->getEntityManager()->flush();
 
+                                $this->transaction(
+                                    ($updateAcceptedFlag[$key] ? "Aprobación manual de lotes" : "Rechazo manual de lotes"),
+                                    sprintf('El usuario %1$s ha %2$s el lote %3$s',
+                                        $this->_getSession()->getUsername(),
+                                        ($updateAcceptedFlag[$key] ? "aprobado" : "rechazado"),
+                                        $Batch->getFileName()
+                                    ),
+                                    false
+                                );
+
                                 return $this->redirect()->toRoute('batch', array(
                                             'controller' => 'batch',
                                             'action'     => 'list',
@@ -108,13 +118,7 @@ class BatchController extends BaseController
                             }
                             catch (Exception $e)
                             {
-                                $message = sprintf("Error! Se ha intentado guardar la siguiente información: %s", json_encode(array("Id" => $Batch->getPkBatch(), "Justification" => $updateJustification[$key])));
-                                $error   = array(
-                                    "description" => $message,
-                                    "message"     => $e,
-                                    "section"     => __METHOD__
-                                );
-                                $this->transactionError($error);
+                                exit;
                             }
                         }
                     }

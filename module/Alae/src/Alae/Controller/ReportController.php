@@ -226,20 +226,21 @@ class ReportController extends BaseController
                     $elements = $query->getResult();
 
                     $error = "";
+                    $message    = array();
                     foreach ($elements as $SampleBatch)
                     {
                         if (!is_null($SampleBatch->getParameters()))
                         {
-                            $message    = array();
                             $parameters = explode(",", $SampleBatch->getParameters());
                             foreach ($parameters as $parameter)
                             {
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $message[] = $Parameter->getMessageError();
                             }
-                            $error = implode("<br>", $message);
                         }
                     }
+
+                    $error = implode("<br>", array_unique($message));
 
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
