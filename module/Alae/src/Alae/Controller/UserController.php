@@ -298,7 +298,7 @@ class UserController extends BaseController
 	$User = new \Alae\Entity\User();
 	if ($request->isPost())
 	{
-	    $User = $this->getRepository()->findBy(array('name' => $request->getPost('username')));
+	    $User = $this->getRepository()->findBy(array('username' => $request->getPost('username')));
 
 	    if ($User && $User[0]->getPkUser())
 	    {
@@ -311,7 +311,7 @@ class UserController extends BaseController
 			$this->render('alae/user/template_reset_pass', array(
 				'active_code' => $User[0]->getActiveCode(), 
 				'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 
-				'username' => $User[0]->getName())),
+				'username' => $User[0]->getUsername())),
 			'Reinicializar contraseña'
 		);
 	    }
