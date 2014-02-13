@@ -225,7 +225,7 @@ class CronController extends BaseController
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.parameters IS NOT NULL");
+            WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
         $error = $query->getSingleScalarResult();
         //$status = ($error > 0) ? false : true;
 
@@ -244,6 +244,17 @@ class CronController extends BaseController
             $Batch->setValidationDate(new \DateTime('now'));
         }
 
+        $query = $this->getEntityManager()->createQuery("
+            SELECT s.parameters
+            FROM Alae\Entity\SampleBatch s
+            WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch() . "
+            ORDER BY s.parameters ASC")
+            ->setMaxResults(1);
+        $pkParameter = $query->getSingleScalarResult();
+
+        $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($pkParameter);
+
+        $Batch->setFkParameter($Parameter);
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);

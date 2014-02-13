@@ -176,10 +176,25 @@ class VerificationController extends BaseController
      */
     protected function V13_24(\Alae\Entity\Batch $Batch)
     {
-        for ($i = 13; $i <= 24; $i++)
+        for ($i = 13; $i <= 20; $i++)
         {
             $function = 'V' . $i;
             $this->$function($Batch);
+        }
+
+        $query = $this->getEntityManager()->createQuery("
+            SELECT COUNT(s.pkSampleBatch)
+            FROM Alae\Entity\SampleBatch s
+            WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
+        $error = $query->getSingleScalarResult();
+
+        if ($error == 0)
+        {
+            for ($i = 21; $i <= 24; $i++)
+            {
+                $function = 'V' . $i;
+                $this->$function($Batch);
+            }
         }
     }
 
