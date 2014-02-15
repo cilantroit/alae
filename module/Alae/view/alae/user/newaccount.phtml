@@ -47,13 +47,13 @@
 		    </table>
 		</form>
                 <script>
-                //    jQuery.validator.addMethod("email", function(value, element, params) {
-                //	return this.optional(element) || /^(((([a-z][\.\-\+_]?)*)[a-z0-9])+)@anapharmeurope.com$/.test(value);
-                //    }, "El correo electrónico debe ser <strong>abcd@anapharmeurope.com</strong>");
-
                     jQuery.validator.addMethod("email", function(value, element, params) {
-                	return this.optional(element) || /^(((([a-z][\.\-\+_]?)*)[a-z0-9])+)@cilantroit.com$/.test(value);
-                    }, "El correo electrónico debe ser <strong>abcd@cilantroit.com</strong>");
+                	return this.optional(element) || /^(((([a-z][\.\-\+_]?)*)[a-z0-9])+)@anapharmeurope.com$/.test(value);
+                    }, "El correo electrónico debe ser <strong>abcd@anapharmeurope.com</strong>");
+
+                    //jQuery.validator.addMethod("email", function(value, element, params) {
+                	//return this.optional(element) || /^(((([a-z][\.\-\+_]?)*)[a-z0-9])+)@cilantroit.com$/.test(value);
+                    //}, "El correo electrónico debe ser <strong>abcd@cilantroit.com</strong>");
 
                     $("#newaccount").validate({
                         rules: {

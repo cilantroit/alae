@@ -298,15 +298,22 @@ class UserController extends BaseController
 	$User = new \Alae\Entity\User();
 	if ($request->isPost())
 	{
-	    $User = $this->getRepository()->findBy(array('name' => $request->getPost('username')));
+	    $User = $this->getRepository()->findBy(array('username' => $request->getPost('username')));
 
-	    if ($User)
+	    if ($User && $User[0]->getPkUser())
 	    {
 		$User[0]->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
 		$this->getEntityManager()->persist($User[0]);
 		$this->getEntityManager()->flush();
 		$mail = new \Alae\Service\Mailing();
-		$mail->send(array($User->getEmail()), $this->render('alae/user/template_reset_pass', array('active_code' => $User[0]->getActiveCode(), 'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 'username' => $User[0]->getName())));
+		$mail->send(
+			array($User[0]->getEmail()), 
+			$this->render('alae/user/template_reset_pass', array(
+				'active_code' => $User[0]->getActiveCode(), 
+				'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 
+				'username' => $User[0]->getUsername())),
+			'Reinicializar contraseña'
+		);
 	    }
 	    else
 	    {
