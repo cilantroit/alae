@@ -124,7 +124,7 @@ class ReportController extends BaseController
         $page    = "";
         if ($request->isGet())
         {
-            ini_set('max_execution_time', 300);
+            ini_set('max_execution_time', 600);
             $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
 
             if (count($batch) > 0)
@@ -132,65 +132,57 @@ class ReportController extends BaseController
                 foreach ($batch as $Batch)
                 {
                     $query    = $this->getEntityManager()->createQuery("
-                        SELECT s
-                        FROM Alae\Entity\SampleBatch s
-                        WHERE s.fkBatch = " . $Batch->getPkBatch() . "
+                        SELECT s, o.acquisitionDate, o.analyteIntegrationType, o.isIntegrationType, o.recordModified
+                        FROM Alae\Entity\SampleBatch s, Alae\Entity\SampleBatchOtherColumns o
+                        WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND s.parameters IS NOT NULL AND o.fkSampleBatch = s.pkSampleBatch
                         ORDER By s.sampleName");
                     $elements = $query->getResult();
 
-                    foreach ($elements as $SampleBatch)
+                    $parameters = array();
+                    foreach ($elements as $key => $value)
                     {
-                        $error = "";
-                        if (!is_null($SampleBatch->getParameters()))
-                        {
-                            $message    = array();
-                            $parameters = explode(",", $SampleBatch->getParameters());
-                            foreach ($parameters as $parameter)
-                            {
-                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                                $message[] = $Parameter->getMessageError();
-                            }
-                            $error = implode(", ", array_unique($message));
-                        }
+                        $parameters[] = $value[0]->getParameters();
+                    }
+
+                    $query    = $this->getEntityManager()->createQuery("
+                        SELECT p.pkParameter, p.messageError, p.codeError, p.rule
+                        FROM Alae\Entity\Parameter p
+                        WHERE p.pkParameter in (" .implode(",",$parameters). ")
+                        GROUP By p.pkParameter");
+                    $parameters = $query->getResult();
+
+                    $errors = array();
+                    foreach ($parameters as $parameter)
+                    {
+                        $errors[$parameter['pkParameter']] = $parameter;
                     }
 
                     $list = array();
-                    foreach ($elements as $SampleBatch)
+                    foreach ($elements as $key => $value)
                     {
-                        $other = $this->getRepository("\\Alae\\Entity\\SampleBatchOtherColumns")->findBy(array("fkSampleBatch" => $SampleBatch->getPkSampleBatch()));
-
-                        $message = $reason  = "";
-                        if (!is_null($SampleBatch->getParameters()))
+                        $parameters = explode(",", $value[0]->getParameters());
+                        $message    = $reason     = "";
+                        foreach ($parameters as $parameter)
                         {
-                            $messages   = $reasons    = array();
-                            $parameters = explode(",", $SampleBatch->getParameters());
-                            foreach ($parameters as $parameter)
-                            {
-                                $Parameter  = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                                $messages[] = $Parameter->getMessageError();
-                                $reasons[]  = $Parameter->getCodeError();
-                            }
-                            $message = implode(", ", array_unique($messages));
-                            $reason  = implode(", ", array_unique($reasons));
+                            $message .= $errors[$parameter]['messageError'] . "<br>";
+                            $reason  .= $errors[$parameter]['codeError'];
                         }
                         $list[] = array(
-                            "sample_name"              => $SampleBatch->getSampleName(),
-                            "acquisition_date"         => $other[0]->getAcquisitionDate(),
-                            "analyte_integration_type" => $other[0]->getAnalyteIntegrationType(),
-                            "is_integration_type"      => $other[0]->getIsIntegrationType(),
-                            "record_modify"            => $other[0]->getRecordModified(),
+                            "sample_name"              => $value[0]->getSampleName(),
+                            "acquisition_date"         => $value['acquisitionDate']->format("d.m.Y H:i"),
+                            "analyte_integration_type" => $value['analyteIntegrationType'],
+                            "is_integration_type"      => $value['isIntegrationType'],
+                            "record_modify"            => $value['recordModified'],
                             "rejection_reason"         => $reason,
                             "message"                  => $message
                         );
                     }
-
                     $properties = array(
                         "batch"    => $Batch,
                         "elements" => $elements,
-                        "error"    => $error,
+                        "errors"    => $errors,
                         "list"     => $list
                     );
-
                     $page .= $this->render('alae/report/r2page', $properties);
                 }
             }
