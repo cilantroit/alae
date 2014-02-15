@@ -95,15 +95,15 @@ class AnalyteController extends BaseController
 
                     if ($Analyte && $Analyte->getPkAnalyte())
                     {
-                        $findByName       = $this->getRepository()->findBy(array("name" => $value));
-                        $findByShortnames = $this->getRepository()->findBy(array("shortening" => $updateShortnames[$key]));
-                        if (count($findByName) > 0)
+                        $query = $this->getEntityManager()->createQuery("
+                            SELECT COUNT(a.pkAnalyteStudy)
+                            FROM Alae\Entity\AnalyteStudy a
+                            WHERE a.fkAnalyte = " . $Analyte->getPkAnalyte() . " OR a.fkAnalyteIs = " . $Analyte->getPkAnalyte());
+                        $AnaStudy = $query->getSingleScalarResult();
+
+                        if(count($AnaStudy) > 0)
                         {
-                            $error .= sprintf('<li>El analito %s ya está registrado. Por favor, intente de nuevo<li>', $value);
-                        }
-                        elseif (count($findByShortnames) > 0)
-                        {
-                            $error .= sprintf('<li>La abreviatura %s ya está registrada. Por favor, intente de nuevo<li>', $createShortnames[$key]);
+                            $error .= sprintf('<li>El analito %s está asociado a un estudio<li>', $value);
                         }
                         else
                         {

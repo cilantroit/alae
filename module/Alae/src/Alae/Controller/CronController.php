@@ -18,7 +18,7 @@ class CronController extends BaseController
     protected $_Study   = null;
     protected $_Analyte = null;
     protected $_error   = false;
-    protected $_other   = array();
+    protected $_other;
     protected $_analyteConcentrationUnits;
     protected $_calculatedConcentrationUnits;
 
@@ -97,6 +97,7 @@ class CronController extends BaseController
 
         foreach ($files as $file)
         {
+            $this->_other = array();
             if (!is_dir($file))
             {
                 if (preg_match("/^([a-zA-Z0-9]+-\d+\_[a-zA-Z0-9]+\.txt)$/i", $file))
@@ -264,11 +265,13 @@ class CronController extends BaseController
     {
         $header = array();
         $continue = false;
+        $count = 0;
         foreach($this->_other as $line)
         {
             if (strstr($line, $Analyte->getShortening()))
             {
                 $continue = true;
+                continue;
             }
             if($continue)
             {
@@ -276,18 +279,26 @@ class CronController extends BaseController
                 {
                     $aux = explode("\t", $line);
                     $header['intercept'] = $aux[1];
+                    $count++;
+                    continue;
                 }
                 if(strstr($line, "Slope"))
                 {
                     $aux = explode("\t", $line);
                     $header['slope'] = $aux[1];
+                    $count++;
+                    continue;
                 }
                 if(strstr($line, "Correlation coefficient"))
                 {
                     $aux = explode("\t", $line);
                     $header['correlationCoefficient'] = $aux[1];
+                    $count++;
+                    continue;
                 }
             }
+
+            if($count == 3) break;
         }
 
         return $header;

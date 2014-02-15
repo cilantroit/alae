@@ -149,6 +149,9 @@ function changeElement(element, pk)
                 $(parentId + ' .yui3-datatable-col-' + value).html(input);
             }
         });
+        
+        $(parentId + " .form-datatable-change").hide();
+        $(parentId + " .form-datatable-delete").hide();
     }
     else{
         return false;

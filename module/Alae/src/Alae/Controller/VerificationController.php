@@ -42,13 +42,13 @@ class VerificationController extends BaseController
             if ($response)
             {
                 $this->V13_24($Batch);
+
                 $query = $this->getEntityManager()->createQuery("
                     SELECT COUNT(s.pkSampleBatch)
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.parameters IS NOT NULL");
+                    WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
                 $error = $query->getSingleScalarResult();
-
-                $status = ($error > 0) ? false : true;
+                $status = ($error == 0 && is_null($Batch->getFkParameter())) ? true : false;
                 $this->updateBatch($Batch, $status);
             }
             else
@@ -86,16 +86,6 @@ class VerificationController extends BaseController
         $this->back($Batch);
     }
 
-    protected function acceptedBatch(\Alae\Entity\Batch $Batch)
-    {
-        $Batch->setValidFlag(true);
-        $Batch->setValidationDate(new \DateTime('now'));
-        $Batch->setFkUser($this->_getSession());
-        $this->getEntityManager()->persist($Batch);
-        $this->getEntityManager()->flush();
-        $this->back($Batch);
-    }
-
     protected function rejectBatch(\Alae\Entity\Batch $Batch, \Alae\Entity\Parameter $Parameter)
     {
         $Batch->setValidFlag(false);
@@ -104,7 +94,7 @@ class VerificationController extends BaseController
         $Batch->setFkUser($this->_getSession());
         $this->getEntityManager()->persist($Batch);
         $this->getEntityManager()->flush();
-        $this->back($Batch);
+        //$this->back($Batch);
     }
 
     public function errorAction()
@@ -188,7 +178,7 @@ class VerificationController extends BaseController
             WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
         $error = $query->getSingleScalarResult();
 
-        if ($error == 0)
+        if ($error == 0 && is_null($Batch->getFkParameter()))
         {
             for ($i = 21; $i <= 24; $i++)
             {
@@ -612,12 +602,8 @@ class VerificationController extends BaseController
             ORDER BY sample_name ASC");
         $elements = $query->getResult();
 
-
-
         foreach ($elements as $cs)
         {
-            var_dump($cs);
-            var_dump($cs['sample_name']);
             $query    = $this->getEntityManager()->createQuery("
                 SELECT s.pkSampleBatch, s.validFlag
                 FROM Alae\Entity\SampleBatch s
@@ -625,10 +611,6 @@ class VerificationController extends BaseController
                 ORDER BY s.sampleName ASC"
             );
             $results = $query->getResult();
-
-            var_dump($results);
-
-            //die();
 
             $isValid = true;
             $ant     = true;
@@ -662,7 +644,7 @@ class VerificationController extends BaseController
     {
         $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V17"));
 
-        if ($Batch->getCorrelationCoefficient() < $parameters[0]->getMinValue())
+        if (($Batch->getCorrelationCoefficient() * 100) < $parameters[0]->getMinValue())
         {
             $this->rejectBatch($Batch, $parameters[0]);
         }
@@ -797,7 +779,7 @@ class VerificationController extends BaseController
             ->setMaxResults(1);
         $analyteConcentration = $query->getSingleScalarResult();
 
-        $where = "s.sampleType = 'Unknown' AND s.analyteConcentration > $analyteConcentration AND s.fkBatch = " . $Batch->getPkBatch();
+        $where = "s.sampleType = 'Unknown' AND s.calculatedConcentration > $analyteConcentration AND s.fkBatch = " . $Batch->getPkBatch();
         $sql   = Verification::update($where, "V21", array("s.validFlag = 0"));
         $query = $this->getEntityManager()->createQuery($sql);
         $query->execute();

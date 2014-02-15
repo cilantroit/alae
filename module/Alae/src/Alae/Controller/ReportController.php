@@ -219,6 +219,11 @@ class ReportController extends BaseController
 
                     $error = "";
                     $message    = array();
+
+                    if(!is_null($Batch->getFkParameter()))
+                    {
+                        $message[] = $Batch->getFkParameter()->getMessageError();
+                    }
                     foreach ($elements as $SampleBatch)
                     {
                         if (!is_null($SampleBatch->getParameters()))
@@ -237,7 +242,7 @@ class ReportController extends BaseController
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
                         "error"    => $error,
-                        "message"  => is_null($Batch->getValidFlag()) ? "" : ($Batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO")//($error != "" ? "Rechazado" : "Aceptado")
+                        "message"  => is_null($Batch->getValidFlag()) ? "Falta validar" : ($Batch->getValidFlag() ? "Aceptado" : "Rechazado")//($error != "" ? "Rechazado" : "Aceptado")
                     );
                 }
 
