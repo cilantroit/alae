@@ -15,6 +15,7 @@ use Alae\Controller\BaseController,
 
 class CronController extends BaseController
 {
+
     protected $_Study   = null;
     protected $_Analyte = null;
     protected $_error   = false;
@@ -46,21 +47,21 @@ class CronController extends BaseController
 
     private function validateFile($fileName)
     {
-        $string = substr($fileName, 0, -4);
+        $string         = substr($fileName, 0, -4);
         list($pkBatch, $aux) = explode("-", $string);
         list($codeStudy, $shortening) = explode("_", $aux);
-        $this->_Study = $this->_Analyte = null;
+        $this->_Study   = $this->_Analyte = null;
 
         if ($this->isRepeatedBatch($fileName))
         {
-            $qb = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
+            $qb      = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
                     ->where('s.code like :code')
                     ->setParameter('code', '%' . $codeStudy);
             $studies = $qb->getQuery()->getResult();
 
             if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
             {
-                $qb = $this->getEntityManager()->createQueryBuilder()
+                $qb       = $this->getEntityManager()->createQueryBuilder()
                         ->select("a")
                         ->from("Alae\Entity\AnalyteStudy", "h")
                         ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $studies[0]->getPkStudy());
@@ -68,7 +69,7 @@ class CronController extends BaseController
 
                 if ($analytes)
                 {
-                    $this->_Study = $studies[0];
+                    $this->_Study   = $studies[0];
                     $this->_Analyte = $analytes[0];
                 }
                 else
@@ -85,10 +86,10 @@ class CronController extends BaseController
 
     private function setErrorTransaction($msgError, $value)
     {
-        $error = Helper::getError($msgError);
+        $error                = Helper::getError($msgError);
         $error['description'] = sprintf($error['description'], $value);
         $this->transactionError($error, true);
-        $this->_error = true;
+        $this->_error         = true;
     }
 
     public function readAction()
@@ -146,7 +147,7 @@ class CronController extends BaseController
             {
                 $this->_analyteConcentrationUnits = preg_replace(array("/Analyte Concentration\s/", "/\(/", "/\)/"), "", $header);
             }
-            if (preg_match("/Calculated Concentration/i", $header))
+            if (preg_match("/Calculated Concentration/i", $header) && !preg_match("/Calculated Concentration for DAD/i", $header))
             {
                 $this->_calculatedConcentrationUnits = preg_replace(array("/Calculated Concentration\s/", "/\(/", "/\)/"), "", $header);
             }
@@ -158,13 +159,13 @@ class CronController extends BaseController
 
     private function getData($filename)
     {
-        $fp = fopen($filename, "r");
+        $fp      = fopen($filename, "r");
         $content = fread($fp, filesize($filename));
         fclose($fp);
 
-        $lines = explode("\n", $content);
+        $lines    = explode("\n", $content);
         $continue = false;
-        $data = $headers = $other = array();
+        $data     = $headers  = $other    = array();
 
         foreach ($lines as $line)
         {
@@ -175,11 +176,11 @@ class CronController extends BaseController
 
             if (strstr($line, "Sample Name"))
             {
-                $headers = $this->cleanHeaders(explode("\t", $line));
+                $headers  = $this->cleanHeaders(explode("\t", $line));
                 $continue = true;
             }
 
-            if(!$continue)
+            if (!$continue)
             {
                 $this->_other[] = $line;
             }
@@ -187,7 +188,7 @@ class CronController extends BaseController
 
         return array(
             "headers" => $headers,
-            "data" => $data
+            "data"    => $data
         );
     }
 
@@ -223,13 +224,11 @@ class CronController extends BaseController
 
     private function updateBatch($Batch, $Analyte, $Study)
     {
-        $query = $this->getEntityManager()->createQuery("
+        $query  = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
             WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
-        $error = $query->getSingleScalarResult();
-        //$status = ($error > 0) ? false : true;
-
+        $error  = $query->getSingleScalarResult();
         $header = $this->getHeaderInfo($Analyte);
 
         if (count($header) > 0)
@@ -251,10 +250,12 @@ class CronController extends BaseController
             ORDER BY s.parameters ASC")
                     ->setMaxResults(1);
             $pkParameter = $query->getSingleScalarResult();
-            $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($pkParameter);
+            $Parameter   = $this->getRepository("\\Alae\\Entity\\Parameter")->find($pkParameter);
             $Batch->setFkParameter($Parameter);
         }
 
+        $Batch->setAnalyteConcentrationUnits($this->_analyteConcentrationUnits);
+        $Batch->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
         $Batch->setFkAnalyte($Analyte);
         $Batch->setFkStudy($Study);
         $this->getEntityManager()->persist($Batch);
@@ -263,42 +264,43 @@ class CronController extends BaseController
 
     private function getHeaderInfo($Analyte)
     {
-        $header = array();
+        $header   = array();
         $continue = false;
-        $count = 0;
-        foreach($this->_other as $line)
+        $count    = 0;
+        foreach ($this->_other as $line)
         {
             if (strstr($line, $Analyte->getShortening()))
             {
                 $continue = true;
                 continue;
             }
-            if($continue)
+            if ($continue)
             {
-                if(strstr($line, "Intercept"))
+                if (strstr($line, "Intercept"))
                 {
-                    $aux = explode("\t", $line);
+                    $aux                 = explode("\t", $line);
                     $header['intercept'] = $aux[1];
                     $count++;
                     continue;
                 }
-                if(strstr($line, "Slope"))
+                if (strstr($line, "Slope"))
                 {
-                    $aux = explode("\t", $line);
+                    $aux             = explode("\t", $line);
                     $header['slope'] = $aux[1];
                     $count++;
                     continue;
                 }
-                if(strstr($line, "Correlation coefficient"))
+                if (strstr($line, "Correlation coefficient"))
                 {
-                    $aux = explode("\t", $line);
+                    $aux                              = explode("\t", $line);
                     $header['correlationCoefficient'] = $aux[1];
                     $count++;
                     continue;
                 }
             }
 
-            if($count == 3) break;
+            if ($count == 3)
+                break;
         }
 
         return $header;
@@ -363,93 +365,91 @@ class CronController extends BaseController
     private function getSampleBatch()
     {
         return array(
-            "Sample Name" => "setSampleName",
-            "Analyte Peak Name" => "setAnalytePeakName",
-            "Sample Type" => "setSampleType",
-            "File Name" => "setFileName",
-            "Dilution Factor" => "setDilutionFactor",
-            "Analyte Peak Area" => "setAnalytePeakArea",
-            "IS Peak Name" => "setIsPeakName",
-            "IS Peak Area" => "setIsPeakArea",
-            "Analyte Concentration" => "setAnalyteConcentration",
+            "Sample Name"              => "setSampleName",
+            "Analyte Peak Name"        => "setAnalytePeakName",
+            "Sample Type"              => "setSampleType",
+            "File Name"                => "setFileName",
+            "Dilution Factor"          => "setDilutionFactor",
+            "Analyte Peak Area"        => "setAnalytePeakArea",
+            "IS Peak Name"             => "setIsPeakName",
+            "IS Peak Area"             => "setIsPeakArea",
+            "Analyte Concentration"    => "setAnalyteConcentration",
             "Calculated Concentration" => "setCalculatedConcentration",
-            "Accuracy" => "setAccuracy",
-            "Use Record" => "setUseRecord",
+            "Accuracy"                 => "setAccuracy",
+            "Use Record"               => "setUseRecord",
         );
     }
 
     private function getSampleBatchOtherColumns()
     {
         return array(
-            "Sample ID" => "setSampleId",
-            "Sample Comment" => "setSampleComment",
-            "Set Number" => "setSetNumber",
-            "Acquisition Method" => "setAcquisitionMethod",
-            "Rack Type" => "setRackType",
-            "Rack Position" => "setRackPosition",
-            "Vial Position" => "setVialPosition",
-            "Plate Type" => "setPlateType",
-            "Plate Position" => "setPlatePosition",
-            "Weight To Volume Ratio" => "setWeightToVolumeRatio",
-            "Sample Annotation" => "setSampleAnnotation",
-            "Disposition" => "setDisposition",
-            "Analyte Units" => "setAnalyteUnits",
-            "Acquisition Date" => "setAcquisitionDate", //-->debe ser Datetime
-            "Analyte Peak Area for DAD" => "setAnalytePeakAreaForDad",
-            "Analyte Peak Height" => "setAnalytePeakHeight",
-            "Analyte Peak Height for DAD" => "setAnalytePeakHeightForDad",
-            "Analyte Retention Time" => "setAnalyteRetentionTime",
-            "Analyte Expected RT" => "setAnalyteExpectedRt",
-            "Analyte RT Window" => "setAnalyteRtWindow",
-            "Analyte Centroid Location" => "setAnalyteCentroidLocation",
-            "Analyte Start Scan" => "setAnalyteStartScan",
-            "Analyte Start Time" => "setAnalyteStartTime",
-            "Analyte Stop Scan" => "setAnalyteStopScan",
-            "Analyte Stop Time" => "setAnalyteStopTime",
-            "Analyte Integration Type" => "setAnalyteIntegrationType",
-            "Analyte Signal To Noise" => "setAnalyteSignalToNoise",
-            "Analyte Peak Width" => "setAnalytePeakWidth",
-            "Standard Query Status" => "setAnalyteStandarQueryStatus",
-            "Analyte Mass Ranges" => "setAnalyteMassRanges",
-            "Analyte Wavelength Ranges" => "setAnalyteWavelengthRanges",
-            "Height Ratio" => "setHeightRatio",
-            "Analyte Annotation" => "setAnalyteAnnotation",
-            "Analyte Channel" => "setAnalyteChannel",
+            "Sample ID"                        => "setSampleId",
+            "Sample Comment"                   => "setSampleComment",
+            "Set Number"                       => "setSetNumber",
+            "Acquisition Method"               => "setAcquisitionMethod",
+            "Rack Type"                        => "setRackType",
+            "Rack Position"                    => "setRackPosition",
+            "Vial Position"                    => "setVialPosition",
+            "Plate Type"                       => "setPlateType",
+            "Plate Position"                   => "setPlatePosition",
+            "Weight To Volume Ratio"           => "setWeightToVolumeRatio",
+            "Sample Annotation"                => "setSampleAnnotation",
+            "Disposition"                      => "setDisposition",
+            "Analyte Units"                    => "setAnalyteUnits",
+            "Acquisition Date"                 => "setAcquisitionDate", //-->debe ser Datetime
+            "Analyte Peak Area for DAD"        => "setAnalytePeakAreaForDad",
+            "Analyte Peak Height"              => "setAnalytePeakHeight",
+            "Analyte Peak Height for DAD"      => "setAnalytePeakHeightForDad",
+            "Analyte Retention Time"           => "setAnalyteRetentionTime",
+            "Analyte Expected RT"              => "setAnalyteExpectedRt",
+            "Analyte RT Window"                => "setAnalyteRtWindow",
+            "Analyte Centroid Location"        => "setAnalyteCentroidLocation",
+            "Analyte Start Scan"               => "setAnalyteStartScan",
+            "Analyte Start Time"               => "setAnalyteStartTime",
+            "Analyte Stop Scan"                => "setAnalyteStopScan",
+            "Analyte Stop Time"                => "setAnalyteStopTime",
+            "Analyte Integration Type"         => "setAnalyteIntegrationType",
+            "Analyte Signal To Noise"          => "setAnalyteSignalToNoise",
+            "Analyte Peak Width"               => "setAnalytePeakWidth",
+            "Standard Query Status"            => "setAnalyteStandarQueryStatus",
+            "Analyte Mass Ranges"              => "setAnalyteMassRanges",
+            "Analyte Wavelength Ranges"        => "setAnalyteWavelengthRanges",
+            "Height Ratio"                     => "setHeightRatio",
+            "Analyte Annotation"               => "setAnalyteAnnotation",
+            "Analyte Channel"                  => "setAnalyteChannel",
             "Analyte Peak Width at 50% Height" => "setAnalytePeakWidthAt50Height",
-            "Analyte Slope of Baseline" => "setAnalyteSlopeOfBaseline",
-            "Analyte Processing Alg." => "setAnalyteProcessingAlg",
-            "Analyte Peak Asymmetry" => "setAnalytePeakAsymmetry",
-            "IS Units" => "setIsUnits",
-            "IS Peak Area for DAD" => "setIsPeakAreaForDad",
-            "IS Peak Height" => "setIsPeakHeight",
-            "IS Peak Height for DAD" => "setIsPeakHeightForDad",
-            "IS Concentration" => "setIsConcentration",
-            "IS Retention Time" => "setIsRetentionTime",
-            "IS Expected RT" => "setIsExpectedRt",
-            "IS RT Window" => "setIsRtWindows",
-            "IS Centroid Location" => "setIsCentroidLocation",
-            "IS Start Scan" => "setIsStartScan",
-            "IS Start Time" => "setIsStartTime",
-            "IS Stop Scan" => "setIsStopScan",
-            "IS Stop Time" => "setIsStopTime",
-            "IS Integration Type" => "setIsIntegrationType",
-            "IS Signal To Noise" => "setIsSignalToNoise",
-            "IS Peak Width" => "setIsPeakWidth",
-            "IS Mass Ranges" => "setIsMassRanges",
-            "IS Wavelength Ranges" => "setIsWavelengthRanges",
-            "IS Channel" => "setIsChannel",
-            "IS Peak Width at 50% Height" => "setIsPeakWidthAl50Height",
-            "IS Slope of Baseline" => "setIsSlopeOfBaseline",
-            "IS Processing Alg." => "setIsProcessingAlg",
-            "IS Peak Asymmetry" => "setIsPeakAsymemtry",
-            "Record Modified" => "setRecordModified",
-            "Area Ratio" => "setAreaRatio",
+            "Analyte Slope of Baseline"        => "setAnalyteSlopeOfBaseline",
+            "Analyte Processing Alg."          => "setAnalyteProcessingAlg",
+            "Analyte Peak Asymmetry"           => "setAnalytePeakAsymmetry",
+            "IS Units"                         => "setIsUnits",
+            "IS Peak Area for DAD"             => "setIsPeakAreaForDad",
+            "IS Peak Height"                   => "setIsPeakHeight",
+            "IS Peak Height for DAD"           => "setIsPeakHeightForDad",
+            "IS Concentration"                 => "setIsConcentration",
+            "IS Retention Time"                => "setIsRetentionTime",
+            "IS Expected RT"                   => "setIsExpectedRt",
+            "IS RT Window"                     => "setIsRtWindows",
+            "IS Centroid Location"             => "setIsCentroidLocation",
+            "IS Start Scan"                    => "setIsStartScan",
+            "IS Start Time"                    => "setIsStartTime",
+            "IS Stop Scan"                     => "setIsStopScan",
+            "IS Stop Time"                     => "setIsStopTime",
+            "IS Integration Type"              => "setIsIntegrationType",
+            "IS Signal To Noise"               => "setIsSignalToNoise",
+            "IS Peak Width"                    => "setIsPeakWidth",
+            "IS Mass Ranges"                   => "setIsMassRanges",
+            "IS Wavelength Ranges"             => "setIsWavelengthRanges",
+            "IS Channel"                       => "setIsChannel",
+            "IS Peak Width at 50% Height"      => "setIsPeakWidthAl50Height",
+            "IS Slope of Baseline"             => "setIsSlopeOfBaseline",
+            "IS Processing Alg."               => "setIsProcessingAlg",
+            "IS Peak Asymmetry"                => "setIsPeakAsymemtry",
+            "Record Modified"                  => "setRecordModified",
+            "Area Ratio"                       => "setAreaRatio",
             "Calculated Concentration for DAD" => "setCalculatedConcentrationForDad",
-            "Relative Retention Time" => "setRelativeRetentionTime",
-            "Response Factor" => "setResponseFactor",
+            "Relative Retention Time"          => "setRelativeRetentionTime",
+            "Response Factor"                  => "setResponseFactor",
         );
     }
-
 }
-
 ?>

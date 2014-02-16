@@ -11,7 +11,7 @@
                     Código del estudio:
                 </td>
                 <td width="100px" height="30px" style="border: black 1px solid;">
-                    <?php echo $batch->getFkStudy()->getCode(); ?>
+                    <?php echo $study; ?>
                 </td>
                 <td width="100px"> &nbsp;</td>
                 <td width="100px"> &nbsp;</td>
@@ -19,7 +19,7 @@
                     Analito
                 </td>
                 <td  width="100px" align="center" height="30px" style="border: black 1px solid;">
-                    <?php echo $batch->getFkAnalyte()->getName(); ?>
+                    <?php echo $analyte; ?>
                 </td>
             </tr>
             <tr>
@@ -39,13 +39,13 @@
             <?php foreach ($list as $key => $value) : ?>
             <tr>
                 <td width="200px" colspan="2"  align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-                    <?php echo $value['sample_name']; ?>
+                    <?php echo $key; ?>
                 </td>
                 <td width="200px" colspan="2" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-                    <?php echo $value['status']; ?>
+                    Rechazado
                 </td>
                 <td  width="200px" colspan="2" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
-                    <?php echo $value['error']; ?>
+                    <?php echo $value; ?>
                 </td>
             </tr>
             <?php endforeach; ?>

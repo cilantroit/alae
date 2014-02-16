@@ -71,6 +71,7 @@ abstract class BaseController extends AbstractActionController
     protected function _getSession()
     {
 	$session = new \Zend\Session\Container('user');
+        //var_dump($session);
 	return $this->getRepository("\\Alae\\Entity\\User")->find($session->id);
     }
 

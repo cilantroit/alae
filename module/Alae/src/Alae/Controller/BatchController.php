@@ -132,7 +132,13 @@ class BatchController extends BaseController
         }
 
         $data = array();
-        $elements = $this->getRepository()->findBy(array("fkAnalyte" => $AnaStudy->getFkAnalyte(), "fkStudy" => $AnaStudy->getFkStudy()));
+        $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.fkAnalyte = " . $AnaStudy->getFkAnalyte()->getPkAnalyte() . " AND b.fkStudy = " . $AnaStudy->getFkStudy()->getPkStudy() . "
+                ORDER BY b.fileName ASC");
+        $elements = $query->getResult();
+        
         foreach ($elements as $batch)
         {
             $buttons = "";

@@ -49,6 +49,14 @@
                 </p>
             </div>
 	</div>
+        <?php if (Alae\Service\Helper::getUserSession()) : ?>
+            <script>
+            window.onload = function()
+            {
+                setTimeout("window.location.href = '" + basePath + "/index/logout';",900000);
+            }
+            </script>
+        <?php endif; ?>
     </body>
 </html>
 

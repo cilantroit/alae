@@ -170,6 +170,20 @@ class Batch
     protected $isCsQcAcceptedAvg = '0';
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="analyte_concentration_units", type="string", length=250, nullable=true)
+     */
+    protected $analyteConcentrationUnits;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="calculated_concentration_units", type="string", length=250, nullable=true)
+     */
+    protected $calculatedConcentrationUnits;
+
+    /**
      * @var \Alae\Entity\Parameter
      *
      * @ORM\ManyToOne(targetEntity="Alae\Entity\Parameter")
@@ -432,6 +446,26 @@ class Batch
     public function setIsCsQcAcceptedAvg($isCsQcAcceptedAvg)
     {
         $this->isCsQcAcceptedAvg = $isCsQcAcceptedAvg;
+    }
+
+    public function getAnalyteConcentrationUnits()
+    {
+        return $this->analyteConcentrationUnits;
+    }
+
+    public function setAnalyteConcentrationUnits($analyteConcentrationUnits)
+    {
+        $this->analyteConcentrationUnits = $analyteConcentrationUnits;
+    }
+
+    public function getCalculatedConcentrationUnits()
+    {
+        return $this->calculatedConcentrationUnits;
+    }
+
+    public function setCalculatedConcentrationUnits($calculatedConcentrationUnits)
+    {
+        $this->calculatedConcentrationUnits = $calculatedConcentrationUnits;
     }
 
     public function getFkParameter()

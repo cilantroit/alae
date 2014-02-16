@@ -173,12 +173,26 @@ class VerificationController extends BaseController
         }
 
         $query = $this->getEntityManager()->createQuery("
-            SELECT COUNT(s.pkSampleBatch)
+            SELECT DISTINCT(s.parameters) as parameters
             FROM Alae\Entity\SampleBatch s
             WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
-        $error = $query->getSingleScalarResult();
+        $errors = $query->getResult();
 
-        if ($error == 0 && is_null($Batch->getFkParameter()))
+        $continue = true;
+        foreach($errors as $error)
+        {
+            if (
+                    strstr($error['parameters'], "23") || strstr($error['parameters'], "24") || strstr($error['parameters'], "25") ||
+                    strstr($error['parameters'], "26") || strstr($error['parameters'], "27") || strstr($error['parameters'], "28") ||
+                    strstr($error['parameters'], "29")
+                )
+            {
+                $continue = false;
+                break;
+            }
+        }
+
+        if ($continue && is_null($Batch->getFkParameter()))
         {
             for ($i = 21; $i <= 24; $i++)
             {
@@ -226,7 +240,13 @@ class VerificationController extends BaseController
             {
                 for ($i = 1; $i <= count($cs_values); $i++)
                 {
-                    $where = "s.sampleName LIKE 'CS" . $i . "%' AND s.analyteConcentration <> " . $cs_values[$i - 1] . " AND s.fkBatch = " . $Batch->getPkBatch();
+                    $value = \Alae\Service\Conversion::conversion(
+                        $AnaStudy->getFkUnit()->getName(),
+                        $Batch->getAnalyteConcentrationUnits(),
+                        $cs_values[$i - 1]
+                    );
+
+                    $where = "s.sampleName LIKE 'CS" . $i . "%' AND s.analyteConcentration <> " . $value . " AND s.fkBatch = " . $Batch->getPkBatch();
                     $sql   = Verification::update($where, "V5");
                     $query = $this->getEntityManager()->createQuery($sql);
                     $query->execute();
@@ -237,7 +257,13 @@ class VerificationController extends BaseController
             {
                 for ($i = 1; $i <= count($qc_values); $i++)
                 {
-                    $where = "s.sampleName LIKE 'QC" . $i . "%' AND s.analyteConcentration <> " . $qc_values[$i - 1] . " AND s.fkBatch = " . $Batch->getPkBatch();
+                    $value = \Alae\Service\Conversion::conversion(
+                        $AnaStudy->getFkUnit()->getName(),
+                        $Batch->getAnalyteConcentrationUnits(),
+                        $qc_values[$i - 1]
+                    );
+
+                    $where = "s.sampleName LIKE 'QC" . $i . "%' AND s.analyteConcentration <> " . $value . " AND s.fkBatch = " . $Batch->getPkBatch();
                     $sql   = Verification::update($where, "V5");
                     $query = $this->getEntityManager()->createQuery($sql);
                     $query->execute();
@@ -594,44 +620,46 @@ class VerificationController extends BaseController
      */
     protected function V16(\Alae\Entity\Batch $Batch)
     {
-        $query    = $this->getEntityManager()->createQuery("
-            SELECT SUBSTRING(s.sampleName, 1, 3) as sample_name
-            FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName like 'CS%' AND s.fkBatch = " . $Batch->getPkBatch() . "
-            GROUP BY sample_name
-            ORDER BY sample_name ASC");
-        $elements = $query->getResult();
+        $isValid = true;
+        $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array(
+            "fkAnalyte" => $Batch->getFkAnalyte(),
+            "fkStudy" => $Batch->getFkStudy()
+        ));
 
-        foreach ($elements as $cs)
+        for ($i = 2; $i <= $AnaStudy[0]->getCsNumber(); $i++)
         {
-            $query    = $this->getEntityManager()->createQuery("
+            $query         = $this->getEntityManager()->createQuery("
                 SELECT s.pkSampleBatch, s.validFlag
                 FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE '" . $cs['sample_name'] . "%' AND s.fkBatch = " . $Batch->getPkBatch() ."
+                WHERE (s.sampleName LIKE 'CS" . $i . "%' OR s.sampleName LIKE 'CS" . ($i - 1) . "%') AND s.fkBatch = " . $Batch->getPkBatch() . "
                 ORDER BY s.sampleName ASC"
             );
-            $results = $query->getResult();
+            $results       = $query->getResult();
 
-            $isValid = true;
-            $ant     = true;
-            foreach ($results as $temp)
+            $pkSampleBatch = array();
+            $count         = 0;
+            foreach ($results as $result)
             {
-                if ($ant == false && $temp["validFlag"] == false)
+                if ($result['validFlag'] == 0)
                 {
-                    $isValid = false;
-                    break;
+                    $pkSampleBatch[] = $result['pkSampleBatch'];
+                    $count++;
                 }
-
-                $ant = $temp["validFlag"];
             }
 
-            if (!$isValid)
+            if ($count == count($results))
             {
-                $where = "s.sampleName LIKE '" . $cs['sample_name'] . "%' AND s.fkBatch = " . $Batch->getPkBatch();
-                $sql   = Verification::update($where, "V16");
-                $query = $this->getEntityManager()->createQuery($sql);
-                $query->execute();
+                $isValid = false;
+                break;
             }
+        }
+
+        if (!$isValid)
+        {
+            $where = "s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V16");
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
         }
     }
 
@@ -791,8 +819,22 @@ class VerificationController extends BaseController
      */
     protected function V22(\Alae\Entity\Batch $Batch)
     {
-        $min   = $Batch->getIsCsQcAcceptedAvg(); //-%var (AnaStudy);
-        $max   = $Batch->getIsCsQcAcceptedAvg(); //+%var (AnaStudy);
+        $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array(
+            "fkAnalyte" => $Batch->getFkAnalyte(),
+            "fkStudy"   => $Batch->getFkStudy()
+        ));
+
+        if ($AnaStudy[0]->getIsUsed())
+        {
+            $min = $Batch->getIsCsQcAcceptedAvg() - $AnaStudy[0]->getInternalStandard();
+            $max = $Batch->getIsCsQcAcceptedAvg() + $AnaStudy[0]->getInternalStandard();
+        }
+        else
+        {
+            $min = $Batch->getIsCsQcAcceptedAvg();
+            $max = $Batch->getIsCsQcAcceptedAvg();
+        }
+
         $where = "s.sampleType = 'Unknown' AND s.isPeakArea NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
         $sql   = Verification::update($where, "V22", array("s.validFlag = 0"));
         $query = $this->getEntityManager()->createQuery($sql);
@@ -815,45 +857,71 @@ class VerificationController extends BaseController
 
     protected function V24(\Alae\Entity\Batch $Batch)
     {
+        $isVerify = false;
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
             WHERE s.sampleName LIKE 'CS1%' AND s.useRecord = 0 AND s.fkBatch = " . $Batch->getPkBatch());
-        $cs1   = $query->getSingleScalarResult();
+        $counter = $query->getSingleScalarResult();
 
-        if ($cs1 == 2)
+        if ($counter != 2)
+        {
+            $query = $this->getEntityManager()->createQuery("
+                SELECT s.analyteConcentration
+                FROM Alae\Entity\SampleBatch s
+                WHERE s.sampleName LIKE 'CS1%' AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch() . "
+                ORDER BY s.sampleName ASC")
+                ->setMaxResults(1);
+            $min = $query->getSingleScalarResult();
+        }
+        else
         {
             $query = $this->getEntityManager()->createQuery("
                 SELECT s.analyteConcentration
                 FROM Alae\Entity\SampleBatch s
                 WHERE s.sampleName LIKE 'CS2%' AND s.fkBatch = " . $Batch->getPkBatch() . "
-                ORDER BY s.sampleName DESC")
+                ORDER BY s.sampleName ASC")
                 ->setMaxResults(1);
-            $analyteConcentration = $query->getSingleScalarResult();
-
-            $where = "s.sampleType = 'Unknown' AND s.analyteConcentration < $analyteConcentration AND s.fkBatch = " . $Batch->getPkBatch();
-            $sql   = Verification::update($where, "V24");
-            $query = $this->getEntityManager()->createQuery($sql);
-            $query->execute();
+            $min = $query->getSingleScalarResult();
+            $isVerify = true;
         }
+
+        $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array(
+            "fkAnalyte" => $Batch->getFkAnalyte(),
+            "fkStudy" => $Batch->getFkStudy()
+        ));
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'CS" . $Batch->getCsTotal() . "%' AND s.useRecord = 0 AND s.fkBatch = " . $Batch->getPkBatch());
-        $csN   = $query->getSingleScalarResult();
+            WHERE s.sampleName LIKE 'CS" . $AnaStudy[0]->getCsNumber() . "%' AND s.useRecord = 0 AND s.fkBatch = " . $Batch->getPkBatch());
+        $counter   = $query->getSingleScalarResult();
 
-        if ($csN == 2)
+        if ($counter != 2)
         {
             $query = $this->getEntityManager()->createQuery("
                 SELECT s.analyteConcentration
                 FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE 'CS" . ($Batch->getCsTotal() - 1) . "%' AND s.fkBatch = " . $Batch->getPkBatch() . "
+                WHERE s.sampleName LIKE 'CS" . $AnaStudy[0]->getCsNumber() . "%' AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch() . "
                 ORDER BY s.sampleName DESC")
                 ->setMaxResults(1);
-            $analyteConcentration = $query->getSingleScalarResult();
+            $max = $query->getSingleScalarResult();
+        }
+        else
+        {
+            $query = $this->getEntityManager()->createQuery("
+                SELECT s.analyteConcentration
+                FROM Alae\Entity\SampleBatch s
+                WHERE s.sampleName LIKE 'CS" . ($AnaStudy[0]->getCsNumber() - 1) . "%' AND s.fkBatch = " . $Batch->getPkBatch() . "
+                ORDER BY s.sampleName DESC")
+                ->setMaxResults(1);
+            $max = $query->getSingleScalarResult();
+            $isVerify = true;
+        }
 
-            $where = "s.sampleType = 'Unknown' AND s.analyteConcentration > $analyteConcentration AND s.fkBatch = " . $Batch->getPkBatch();
+        if($isVerify)
+        {
+            $where = "s.sampleType = 'Unknown' AND s.calculatedConcentration NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
             $sql   = Verification::update($where, "V24");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();

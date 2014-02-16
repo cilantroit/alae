@@ -47,6 +47,8 @@ class Helper
 	{
 	    return sprintf("<strong>%s</strong> | %s", $session->profile, $session->name);
 	}
+
+        return false;
     }
 
 }

@@ -200,7 +200,13 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $elements = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $elements = $query->getResult();
+
             $Analyte  = $this->getRepository("\\Alae\\Entity\\Analyte")->find($request->getQuery('an'));
             $Study    = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
 
@@ -222,22 +228,26 @@ class ReportController extends BaseController
 
                     if(!is_null($Batch->getFkParameter()))
                     {
-                        $message[] = $Batch->getFkParameter()->getMessageError();
+                        $message[$Batch->getFkParameter()->getPkParameter()] = $Batch->getFkParameter()->getMessageError();
                     }
                     foreach ($elements as $SampleBatch)
                     {
                         if (!is_null($SampleBatch->getParameters()))
                         {
-                            $parameters = explode(",", $SampleBatch->getParameters());
-                            foreach ($parameters as $parameter)
+                            $query    = $this->getEntityManager()->createQuery("
+                                SELECT p
+                                FROM Alae\Entity\Parameter p
+                                WHERE p.pkParameter in (" . $SampleBatch->getParameters() . ")
+                                ORDER BY p.pkParameter");
+                            $parameters = $query->getResult();
+                            foreach ($parameters as $Parameter)
                             {
-                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                                $message[] = $Parameter->getMessageError();
+                                $message[$Parameter->getPkParameter()] = $Parameter->getMessageError();
                             }
                         }
                     }
-
-                    $error = implode("<br>", array_unique($message));
+                    ksort($message);
+                    $error = implode("<br>", $message);
 
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
@@ -262,48 +272,49 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $query   = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch   = $query->getResult();
+            $Analyte = $this->getRepository("\\Alae\\Entity\\Analyte")->find($request->getQuery('an'));
+            $Study   = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
 
             if (count($batch) > 0)
             {
+                $message = array();
                 foreach ($batch as $Batch)
                 {
                     $query    = $this->getEntityManager()->createQuery("
                         SELECT s
                         FROM Alae\Entity\SampleBatch s
-                        WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND s.sampleType = 'Unknown'
+                        WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND s.sampleType = 'Unknown' AND s.parameters IS NOT NULL
                         ORDER By s.sampleName");
                     $elements = $query->getResult();
 
-                    $list = array();
                     foreach ($elements as $SampleBatch)
                     {
-                        if (!is_null($SampleBatch->getParameters()))
+                        $query      = $this->getEntityManager()->createQuery("
+                            SELECT p.messageError
+                            FROM Alae\Entity\Parameter p
+                            WHERE p.pkParameter in (" . $SampleBatch->getParameters() . ")
+                            ORDER BY p.pkParameter");
+                        $parameters = $query->getResult();
+                        foreach ($parameters as $Parameter)
                         {
-                            $message    = array();
-                            $parameters = explode(",", $SampleBatch->getParameters());
-                            foreach ($parameters as $parameter)
-                            {
-                                $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
-                                $message[] = $Parameter->getMessageError();
-                            }
-                            $error  = (count($message) > 0) ? implode(", ", $message) : "";
-                            $list[] = array(
-                                "sample_name" => $SampleBatch->getSampleName(),
-                                "status"      => ($error != "" ? "Rechazado" : "Aceptado"),
-                                "error"       => $error
-                            );
+                            $message[$SampleBatch->getSampleName()] = $Parameter['messageError'];
                         }
                     }
-                    $properties = array(
-                        "batch"    => $Batch,
-                        "list"     => $list,
-                        "filename" => "listado_de_muestras_a_repetir" . date("Ymd-Hi")
-                    );
-                    $viewModel  = new ViewModel($properties);
-                    $viewModel->setTerminal(true);
-                    return $viewModel;
                 }
+
+                $viewModel = new ViewModel();
+                $viewModel->setTerminal(true);
+                $viewModel->setVariable('list', $message);
+                $viewModel->setVariable('analyte', $Analyte->getName());
+                $viewModel->setVariable('study', $Study->getCode());
+                $viewModel->setVariable('filename', "listado_de_muestras_a_repetir" . date("Ymd-Hi"));
+                return $viewModel;
             }
         }
     }
