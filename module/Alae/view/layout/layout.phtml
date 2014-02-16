@@ -51,9 +51,19 @@
 	</div>
         <?php if (Alae\Service\Helper::getUserSession()) : ?>
             <script>
+            var close;
+            $(document).on('mousemove', function(e){
+                clearTimeout(close);
+                closeSession();
+            });
             window.onload = function()
             {
-                setTimeout("window.location.href = '" + basePath + "/index/logout';",900000);
+                closeSession();
+            }
+
+            function closeSession()
+            {
+                close = setTimeout("window.location.href = '" + basePath + "/index/logout';",900000);
             }
             </script>
         <?php endif; ?>

@@ -52,7 +52,7 @@ abstract class BaseController extends AbstractActionController
     {
         $config = new \Zend\Session\Config\StandardConfig();
         $config->setOptions(array(
-            'remember_me_seconds' => 900,
+            'remember_me_seconds' => 900000,
             'name'                => 'zf2',
         ));
         $manager = new \Zend\Session\SessionManager($config);
@@ -71,8 +71,7 @@ abstract class BaseController extends AbstractActionController
     protected function _getSession()
     {
 	$session = new \Zend\Session\Container('user');
-        //var_dump($session);
-	return $this->getRepository("\\Alae\\Entity\\User")->find($session->id);
+        return $this->getRepository("\\Alae\\Entity\\User")->find($session->id);
     }
 
     protected function transaction($section, $description, $system = false)

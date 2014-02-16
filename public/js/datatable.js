@@ -183,8 +183,7 @@ function removeElement(element, pk)
 }
 
 function excel(id)
-{    
-
+{   
     switch(id)
     {   
         case 1:
