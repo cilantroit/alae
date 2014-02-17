@@ -116,7 +116,7 @@ class VerificationController extends BaseController
             $query = $this->getEntityManager()->createQuery($sql);
             $query->setParameter('regexp', '^(CS|QC|(L|H)?DQC)[0-9]+(-[0-9]+)?$');
             $query->execute();
-            $this->verification13_24($Batch);
+            $this->V13_24($Batch);
         }
 
         if ($this->getEvent()->getRouteMatch()->getParam('id'))
