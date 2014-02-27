@@ -15,7 +15,6 @@ use Alae\Controller\BaseController,
 
 class CronController extends BaseController
 {
-
     protected $_Study   = null;
     protected $_Analyte = null;
     protected $_error   = false;
@@ -112,7 +111,7 @@ class CronController extends BaseController
                 }
 
                 $this->insertBatch($file, $this->_Study, $this->_Analyte);
-                unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
+                rename(Helper:: getVarsConfig("batch_directory") . "/" . $file, Helper:: getVarsConfig("batch_directory_older") . "/" . $file);
             }
         }
     }
@@ -309,9 +308,13 @@ class CronController extends BaseController
     private function batchVerify($Batch, $Analyte, $fileName)
     {
         $string = substr($fileName, 0, -4);
-        list($pkBatch, $aux) = explode("-", $string);
+        list($pkBatch, $aux) = explode("_", $string);
         $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2", array("s.validFlag = 0")));
-        $this->execute(\Alae\Service\Verification::update("SUBSTRING(s.fileName, 1, 2) <> '" . $pkBatch . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V3", array("s.validFlag = 0")));
+
+        $where = "s.fileName NOT LIKE '$pkBatch\\\\%' AND s.fkBatch = " . $Batch->getPkBatch();
+        $sql   = \Alae\Service\Verification::update($where, "V3", array("s.validFlag = 0"));
+        $query = $this->getEntityManager()->createQuery($sql);
+        $query->execute();
     }
 
     private function saveSampleBatch($headers, $data, $Batch)
@@ -336,7 +339,6 @@ class CronController extends BaseController
                 $SampleBatch->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
                 $this->getEntityManager()->persist($SampleBatch);
                 $this->getEntityManager()->flush();
-
                 $this->saveSampleBatchOtherColumns($headers, $row, $SampleBatch);
             }
         }
@@ -344,7 +346,6 @@ class CronController extends BaseController
 
     private function saveSampleBatchOtherColumns($headers, $row, $SampleBatch)
     {
-
         $setters = $this->setter($headers, $this->getSampleBatchOtherColumns());
 
         $SampleBatchOtherColumns = new \Alae\Entity\SampleBatchOtherColumns();
@@ -353,7 +354,6 @@ class CronController extends BaseController
         {
             if (isset($setters[$key]))
             {
-
                 $SampleBatchOtherColumns->$setters[$key]($value);
             }
         }
@@ -377,6 +377,10 @@ class CronController extends BaseController
             "Calculated Concentration" => "setCalculatedConcentration",
             "Accuracy"                 => "setAccuracy",
             "Use Record"               => "setUseRecord",
+            "Acquisition Date"         => "setAcquisitionDate",
+            "Analyte Integration Type" => "setAnalyteIntegrationType",
+            "IS Integration Type"      => "setIsIntegrationType",
+            "Record Modified"          => "setRecordModified",
         );
     }
 
@@ -396,7 +400,6 @@ class CronController extends BaseController
             "Sample Annotation"                => "setSampleAnnotation",
             "Disposition"                      => "setDisposition",
             "Analyte Units"                    => "setAnalyteUnits",
-            "Acquisition Date"                 => "setAcquisitionDate", //-->debe ser Datetime
             "Analyte Peak Area for DAD"        => "setAnalytePeakAreaForDad",
             "Analyte Peak Height"              => "setAnalytePeakHeight",
             "Analyte Peak Height for DAD"      => "setAnalytePeakHeightForDad",
@@ -408,7 +411,6 @@ class CronController extends BaseController
             "Analyte Start Time"               => "setAnalyteStartTime",
             "Analyte Stop Scan"                => "setAnalyteStopScan",
             "Analyte Stop Time"                => "setAnalyteStopTime",
-            "Analyte Integration Type"         => "setAnalyteIntegrationType",
             "Analyte Signal To Noise"          => "setAnalyteSignalToNoise",
             "Analyte Peak Width"               => "setAnalytePeakWidth",
             "Standard Query Status"            => "setAnalyteStandarQueryStatus",
@@ -434,7 +436,6 @@ class CronController extends BaseController
             "IS Start Time"                    => "setIsStartTime",
             "IS Stop Scan"                     => "setIsStopScan",
             "IS Stop Time"                     => "setIsStopTime",
-            "IS Integration Type"              => "setIsIntegrationType",
             "IS Signal To Noise"               => "setIsSignalToNoise",
             "IS Peak Width"                    => "setIsPeakWidth",
             "IS Mass Ranges"                   => "setIsMassRanges",
@@ -444,7 +445,6 @@ class CronController extends BaseController
             "IS Slope of Baseline"             => "setIsSlopeOfBaseline",
             "IS Processing Alg."               => "setIsProcessingAlg",
             "IS Peak Asymmetry"                => "setIsPeakAsymemtry",
-            "Record Modified"                  => "setRecordModified",
             "Area Ratio"                       => "setAreaRatio",
             "Calculated Concentration for DAD" => "setCalculatedConcentrationForDad",
             "Relative Retention Time"          => "setRelativeRetentionTime",

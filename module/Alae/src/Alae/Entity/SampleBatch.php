@@ -121,6 +121,34 @@ class SampleBatch
     protected $useRecord = '0';
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="acquisition_date", type="datetime", nullable=false)
+     */
+    protected $acquisitionDate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="analyte_integration_type", type="string", length=50, nullable=true)
+     */
+    protected $analyteIntegrationType;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="is_integration_type", type="string", length=50, nullable=true)
+     */
+    protected $isIntegrationType;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="record_modified", type="integer", nullable=true)
+     */
+    protected $recordModified;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="valid_flag", type="boolean", nullable=true)
@@ -282,7 +310,7 @@ class SampleBatch
 
     public function setCalculatedConcentration($calculatedConcentration)
     {
-        $this->calculatedConcentration = $calculatedConcentration;
+        $this->calculatedConcentration = (is_string($calculatedConcentration) && $calculatedConcentration == "< 0") ? -1 : $calculatedConcentration;
     }
 
     public function getCalculatedConcentrationUnits()
@@ -313,6 +341,47 @@ class SampleBatch
     public function setUseRecord($useRecord)
     {
         $this->useRecord = $useRecord;
+    }
+
+    public function getAcquisitionDate()
+    {
+        return $this->acquisitionDate->format('d.m.Y H:i:s');
+    }
+
+    public function setAcquisitionDate($acquisitionDate)
+    {
+        $date = new \DateTime($acquisitionDate);
+        $this->acquisitionDate = $date;
+    }
+
+    public function getAnalyteIntegrationType()
+    {
+        return $this->analyteIntegrationType;
+    }
+
+    public function setAnalyteIntegrationType($analyteIntegrationType)
+    {
+        $this->analyteIntegrationType = $analyteIntegrationType;
+    }
+
+    public function getIsIntegrationType()
+    {
+        return $this->isIntegrationType;
+    }
+
+    public function setIsIntegrationType($isIntegrationType)
+    {
+        $this->isIntegrationType = $isIntegrationType;
+    }
+
+    public function getRecordModified()
+    {
+        return $this->recordModified;
+    }
+
+    public function setRecordModified($recordModified)
+    {
+        $this->recordModified = $recordModified;
     }
 
     public function getValidFlag()

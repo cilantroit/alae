@@ -50,7 +50,8 @@ return array(
 		    'REGEXP' => 'DoctrineExtensions\Query\Mysql\Regexp',
 		    'CONCAT_WS' => 'DoctrineExtensions\Query\Mysql\ConcatWs',
                     'IF' => 'DoctrineExtensions\Query\Mysql\IfElse',
-                    'FLOOR' => 'DoctrineExtensions\Query\Mysql\Floor'
+                    'FLOOR' => 'DoctrineExtensions\Query\Mysql\Floor',
+                    'GROUP_CONCAT' => 'DoctrineExtensions\Query\Mysql\GroupConcat'
 		),
 		// metadata cache instance to use. The retrieved service name will
 		// be `doctrine.cache.$thisSetting`

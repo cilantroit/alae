@@ -75,11 +75,7 @@
                 Motivo de Rechazo:
             </td>
             <td  colspan="2" align="left"  height="20">
-                <?php
-                    foreach ($errors as $error) :
-                        echo $error['messageError'] . "<br>";
-                    endforeach;
-                ?>
+                <?php echo $errors; ?>
             </td>
         </tr>
         <tr>
@@ -114,37 +110,37 @@
         <?php foreach ($elements as $SampleBatch) : ?>
         <tr>
             <td align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getSampleName() ;?>
+                <?php echo $SampleBatch->getSampleName() ;?>
             </td>
             <td align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getAnalytePeakName() ;?>
+                <?php echo $SampleBatch->getAnalytePeakName() ;?>
             </td>
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getSampleType() ;?>
+                <?php echo $SampleBatch->getSampleType() ;?>
             </td>
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getFileName() ;?>
+                <?php echo $SampleBatch->getFileName() ;?>
             </td>
             <td align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getAnalytePeakArea() ;?>
+                <?php echo $SampleBatch->getAnalytePeakArea() ;?>
             </td>
             <td align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getIsPeakName() ;?>
+                <?php echo $SampleBatch->getIsPeakName() ;?>
             </td>
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getIsPeakArea() ;?>
+                <?php echo $SampleBatch->getIsPeakArea() ;?>
             </td>
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getAnalyteConcentration() ;?>
+                <?php echo $SampleBatch->getAnalyteConcentration() ;?>
             </td>
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getDilutionFactor() ;?>
+                <?php echo $SampleBatch->getDilutionFactor() ;?>
             </td>
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getAccuracy() ;?>
+                <?php echo $SampleBatch->getAccuracy() ;?>
             </td>
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch[0]->getUseRecord() ;?>
+                <?php echo $SampleBatch->getUseRecord() ;?>
             </td>
         </tr>
         <?php endforeach; ?>

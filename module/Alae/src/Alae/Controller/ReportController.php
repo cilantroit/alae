@@ -17,7 +17,6 @@ use Zend\View\Model\ViewModel,
 
 class ReportController extends BaseController
 {
-
     public function init()
     {
         if (!$this->isLogged())
@@ -55,15 +54,13 @@ class ReportController extends BaseController
     public function ajaxAction()
     {
         $request  = $this->getRequest();
-        $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $request->getQuery('id')));
+        $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array(
+            "fkStudy" => $request->getQuery('id')));
         $data     = "";
         foreach ($elements as $anaStudy)
         {
             $data .= '<option value="' . $anaStudy->getFkAnalyte()->getPkAnalyte() . '">' . $anaStudy->getFkAnalyte()->getName() . '</option>';
         }
-
-
-
         return new JsonModel(array("data" => $data));
     }
 
@@ -132,55 +129,46 @@ class ReportController extends BaseController
                 foreach ($batch as $Batch)
                 {
                     $query    = $this->getEntityManager()->createQuery("
-                        SELECT s, o.acquisitionDate, o.analyteIntegrationType, o.isIntegrationType, o.recordModified
-                        FROM Alae\Entity\SampleBatch s, Alae\Entity\SampleBatchOtherColumns o
-                        WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND s.parameters IS NOT NULL AND o.fkSampleBatch = s.pkSampleBatch
+                        SELECT s
+                        FROM Alae\Entity\SampleBatch s
+                        WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND s.parameters IS NOT NULL
                         ORDER By s.sampleName");
                     $elements = $query->getResult();
 
-                    $parameters = array();
-                    foreach ($elements as $key => $value)
+                    $list = $errors = array();
+                    foreach ($elements as $SampleBatch)
                     {
-                        $parameters[] = $value[0]->getParameters();
-                    }
+                        $query    = $this->getEntityManager()->createQuery("
+                            SELECT p
+                            FROM Alae\Entity\Parameter p
+                            WHERE p.pkParameter in (" .$SampleBatch->getParameters(). ")
+                            GROUP BY p.pkParameter
+                            ORDER BY p.pkParameter");
+                        $parameters = $query->getResult();
 
-                    $query    = $this->getEntityManager()->createQuery("
-                        SELECT p.pkParameter, p.messageError, p.codeError, p.rule
-                        FROM Alae\Entity\Parameter p
-                        WHERE p.pkParameter in (" .implode(",",$parameters). ")
-                        GROUP By p.pkParameter");
-                    $parameters = $query->getResult();
-
-                    $errors = array();
-                    foreach ($parameters as $parameter)
-                    {
-                        $errors[$parameter['pkParameter']] = $parameter;
-                    }
-
-                    $list = array();
-                    foreach ($elements as $key => $value)
-                    {
-                        $parameters = explode(",", $value[0]->getParameters());
-                        $message    = $reason     = "";
-                        foreach ($parameters as $parameter)
+                        $message = $reason = array();
+                        foreach ($parameters as $Parameter)
                         {
-                            $message .= $errors[$parameter]['messageError'] . "<br>";
-                            $reason  .= $errors[$parameter]['codeError'];
+                            $message[] = $Parameter->getMessageError();
+                            $reason[]  = $Parameter->getCodeError();
+                            $errors[$Parameter->getPkParameter()] = $Parameter->getMessageError();
                         }
+
                         $list[] = array(
-                            "sample_name"              => $value[0]->getSampleName(),
-                            "acquisition_date"         => $value['acquisitionDate']->format("d.m.Y H:i"),
-                            "analyte_integration_type" => $value['analyteIntegrationType'],
-                            "is_integration_type"      => $value['isIntegrationType'],
-                            "record_modify"            => $value['recordModified'],
-                            "rejection_reason"         => $reason,
-                            "message"                  => $message
+                            "sample_name"              => $SampleBatch->getSampleName(),
+                            "acquisition_date"         => $SampleBatch->getAcquisitionDate(),
+                            "analyte_integration_type" => $SampleBatch->getAnalyteIntegrationType(),
+                            "is_integration_type"      => $SampleBatch->getIsIntegrationType(),
+                            "record_modify"            => $SampleBatch->getRecordModified(),
+                            "rejection_reason"         => implode(",", array_unique($reason)),
+                            "message"                  => implode("<br>", array_unique($message))
                         );
                     }
+                    ksort($errors);
                     $properties = array(
                         "batch"    => $Batch,
                         "elements" => $elements,
-                        "errors"    => $errors,
+                        "errors"    => implode("<br>", $errors),
                         "list"     => $list
                     );
                     $page .= $this->render('alae/report/r2page', $properties);
@@ -223,8 +211,7 @@ class ReportController extends BaseController
                         ORDER By s.sampleName");
                     $elements = $query->getResult();
 
-                    $error = "";
-                    $message    = array();
+                    $message = array();
 
                     if(!is_null($Batch->getFkParameter()))
                     {
@@ -247,12 +234,11 @@ class ReportController extends BaseController
                         }
                     }
                     ksort($message);
-                    $error = implode("<br>", $message);
 
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
-                        "error"    => $error,
-                        "message"  => is_null($Batch->getValidFlag()) ? "Falta validar" : ($Batch->getValidFlag() ? "Aceptado" : "Rechazado")//($error != "" ? "Rechazado" : "Aceptado")
+                        "error"    => implode("<br>", $message),
+                        "message"  => is_null($Batch->getValidFlag()) ? "Falta validar" : ($Batch->getValidFlag() ? "Aceptado" : "Rechazado")
                     );
                 }
 
@@ -272,17 +258,17 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $query   = $this->getEntityManager()->createQuery("
-                SELECT b
-                FROM Alae\Entity\Batch b
-                WHERE b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
-                ORDER BY b.fileName ASC");
-            $batch   = $query->getResult();
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+                "fkAnalyte" => $request->getQuery('an'),
+                "fkStudy"   => $request->getQuery('id'),
+                "validFlag" => true
+            ));
             $Analyte = $this->getRepository("\\Alae\\Entity\\Analyte")->find($request->getQuery('an'));
             $Study   = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
 
             if (count($batch) > 0)
             {
+                ini_set('max_execution_time', 600);
                 $message = array();
                 foreach ($batch as $Batch)
                 {
@@ -303,7 +289,10 @@ class ReportController extends BaseController
                         $parameters = $query->getResult();
                         foreach ($parameters as $Parameter)
                         {
-                            $message[$SampleBatch->getSampleName()] = $Parameter['messageError'];
+                            $message[] = array(
+                                "sampleName"   => $SampleBatch->getSampleName(),
+                                "messageError" => $Parameter['messageError']
+                            );
                         }
                     }
                 }
@@ -324,7 +313,11 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+                "fkAnalyte" => $request->getQuery('an'),
+                "fkStudy"   => $request->getQuery('id'),
+                "validFlag" => true
+            ));
 
             if (count($batch) > 0)
             {
@@ -344,7 +337,11 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+                "fkAnalyte" => $request->getQuery('an'),
+                "fkStudy"   => $request->getQuery('id'),
+                "validFlag" => true
+            ));
 
             $list    = array();
             $pkBatch = array();
@@ -373,7 +370,7 @@ class ReportController extends BaseController
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
-                            $error = implode(",", $errors);
+                            $error = implode(",", array_unique($errors));
                         }
                         $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
                         $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $error);
@@ -426,7 +423,11 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+                "fkAnalyte" => $request->getQuery('an'),
+                "fkStudy"   => $request->getQuery('id'),
+                "validFlag" => true
+            ));
 
             $list    = array();
             $pkBatch = array();
@@ -455,7 +456,7 @@ class ReportController extends BaseController
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
-                            $error = implode(",", $errors);
+                            $error = implode(",", array_unique($errors));
                         }
                         $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
                         $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $error);
@@ -507,7 +508,11 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+                "fkAnalyte" => $request->getQuery('an'),
+                "fkStudy"   => $request->getQuery('id'),
+                "validFlag" => true
+            ));
 
             $list    = array();
             $pkBatch = array();
@@ -536,7 +541,7 @@ class ReportController extends BaseController
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
-                            $error = implode(",", $errors);
+                            $error = implode(",", array_unique($errors));
                         }
                         $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
                         $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, ',', ''), $error);
@@ -590,7 +595,11 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch    = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+                "fkAnalyte" => $request->getQuery('an'),
+                "fkStudy"   => $request->getQuery('id'),
+                "validFlag" => true
+            ));
 
             $list    = array();
             $pkBatch = array();
@@ -619,7 +628,7 @@ class ReportController extends BaseController
                                 $Parameter = $this->getRepository("\\Alae\\Entity\\Parameter")->find($parameter);
                                 $errors[]  = $Parameter->getCodeError();
                             }
-                            $error = implode(",", $errors);
+                            $error = implode(",", array_unique($errors));
                         }
                         $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
                         $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, ',', ''), $error);

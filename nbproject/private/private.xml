@@ -5,13 +5,18 @@
         <group>
             <file>file:/C:/xampp/htdocs/alae/data/sql/created_index_1.sql</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/VerificationController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r2.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/SampleBatchOtherColumns.php</file>
+            <file>file:/C:/xampp/htdocs/alae/public/js/datatable.js</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/ReportController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/vendor/beberlei/DoctrineExtensions/lib/DoctrineExtensions/Query/Mysql/Floor.php</file>
-            <file>file:/C:/xampp/htdocs/alae/vendor/doctrine/doctrine-orm-module/config/module.config.php</file>
-            <file>file:/C:/xampp/htdocs/alae/vendor/beberlei/DoctrineExtensions/lib/DoctrineExtensions/Query/Mysql/Acos.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r2page.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/layout/layout.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/BaseController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/data/sql/cambios.sql</file>
+            <file>file:/C:/xampp/htdocs/alae/data/sql/create_tables_1.sql</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/Batch.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Conversion.php</file>
+            <file>file:/C:/xampp/htdocs/alae/data/sql/update_tables.sql</file>
+            <file>file:/C:/xampp/htdocs/alae/public/excel.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/CronController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/batch/unfilled.phtml</file>
         </group>
     </open-files>
 </project-private>

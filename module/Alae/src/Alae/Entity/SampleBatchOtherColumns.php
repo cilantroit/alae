@@ -105,13 +105,6 @@ class SampleBatchOtherColumns
     protected $analyteUnits;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="acquisition_date", type="datetime", nullable=false)
-     */
-    protected $acquisitionDate;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="analyte_peak_area_for_dad", type="string", length=50, nullable=true)
@@ -187,13 +180,6 @@ class SampleBatchOtherColumns
      * @ORM\Column(name="analyte_stop_time", type="decimal", precision=19, scale=4, nullable=true)
      */
     protected $analyteStopTime;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="analyte_integration_type", type="string", length=50, nullable=true)
-     */
-    protected $analyteIntegrationType;
 
     /**
      * @var string
@@ -373,13 +359,6 @@ class SampleBatchOtherColumns
     /**
      * @var string
      *
-     * @ORM\Column(name="is_integration_type", type="string", length=50, nullable=true)
-     */
-    protected $isIntegrationType;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="is_signal_to_noise", type="string", length=50, nullable=true)
      */
     protected $isSignalToNoise;
@@ -439,13 +418,6 @@ class SampleBatchOtherColumns
      * @ORM\Column(name="is_peak_asymemtry", type="decimal", precision=19, scale=4, nullable=true)
      */
     protected $isPeakAsymemtry;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="record_modified", type="integer", nullable=true)
-     */
-    protected $recordModified;
 
     /**
      * @var string
@@ -617,17 +589,6 @@ class SampleBatchOtherColumns
         $this->analyteUnits = $analyteUnits;
     }
 
-    public function getAcquisitionDate()
-    {
-        return $this->acquisitionDate->format('d.m.Y H:i:s');
-    }
-
-    public function setAcquisitionDate($acquisitionDate)
-    {
-        $date = new \DateTime($acquisitionDate);
-        $this->acquisitionDate = $date;
-    }
-
     public function getAnalytePeakAreaForDad()
     {
         return $this->analytePeakAreaForDad;
@@ -736,16 +697,6 @@ class SampleBatchOtherColumns
     public function setAnalyteStopTime($analyteStopTime)
     {
         $this->analyteStopTime = $analyteStopTime;
-    }
-
-    public function getAnalyteIntegrationType()
-    {
-        return $this->analyteIntegrationType;
-    }
-
-    public function setAnalyteIntegrationType($analyteIntegrationType)
-    {
-        $this->analyteIntegrationType = $analyteIntegrationType;
     }
 
     public function getAnalyteSignalToNoise()
@@ -998,16 +949,6 @@ class SampleBatchOtherColumns
         $this->isStopTime = $isStopTime;
     }
 
-    public function getIsIntegrationType()
-    {
-        return $this->isIntegrationType;
-    }
-
-    public function setIsIntegrationType($isIntegrationType)
-    {
-        $this->isIntegrationType = $isIntegrationType;
-    }
-
     public function getIsSignalToNoise()
     {
         return $this->isSignalToNoise;
@@ -1096,16 +1037,6 @@ class SampleBatchOtherColumns
     public function setIsPeakAsymemtry($isPeakAsymemtry)
     {
         $this->isPeakAsymemtry = $isPeakAsymemtry;
-    }
-
-    public function getRecordModified()
-    {
-        return $this->recordModified;
-    }
-
-    public function setRecordModified($recordModified)
-    {
-        $this->recordModified = $recordModified;
     }
 
     public function getAreaRatio()

@@ -15,7 +15,6 @@ use Zend\View\Model\ViewModel,
 
 class VerificationController extends BaseController
 {
-
     protected $_document = '\\Alae\\Entity\\Batch';
 
     public function init()
@@ -42,14 +41,6 @@ class VerificationController extends BaseController
             if ($response)
             {
                 $this->V13_24($Batch);
-
-                $query = $this->getEntityManager()->createQuery("
-                    SELECT COUNT(s.pkSampleBatch)
-                    FROM Alae\Entity\SampleBatch s
-                    WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
-                $error = $query->getSingleScalarResult();
-                $status = ($error == 0 && is_null($Batch->getFkParameter())) ? true : false;
-                $this->updateBatch($Batch, $status);
             }
             else
             {
@@ -60,41 +51,6 @@ class VerificationController extends BaseController
                 ));
             }
         }
-    }
-
-    protected function back(\Alae\Entity\Batch $Batch)
-    {
-        $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array(
-            "fkAnalyte" => $Batch->getFkAnalyte(),
-            "fkStudy" => $Batch->getFkStudy()
-        ));
-
-        return $this->redirect()->toRoute('batch', array(
-            'controller' => 'batch',
-            'action'     => 'list',
-            'id'         => $AnaStudy[0]->getPkAnalyteStudy()
-        ));
-    }
-
-    protected function updateBatch(\Alae\Entity\Batch $Batch, $valid = true)
-    {
-        $Batch->setValidFlag($valid);
-        $Batch->setValidationDate(new \DateTime('now'));
-        $Batch->setFkUser($this->_getSession());
-        $this->getEntityManager()->persist($Batch);
-        $this->getEntityManager()->flush();
-        $this->back($Batch);
-    }
-
-    protected function rejectBatch(\Alae\Entity\Batch $Batch, \Alae\Entity\Parameter $Parameter)
-    {
-        $Batch->setValidFlag(false);
-        $Batch->setValidationDate(new \DateTime('now'));
-        $Batch->setFkParameter($Parameter);
-        $Batch->setFkUser($this->_getSession());
-        $this->getEntityManager()->persist($Batch);
-        $this->getEntityManager()->flush();
-        //$this->back($Batch);
     }
 
     public function errorAction()
@@ -108,7 +64,7 @@ class VerificationController extends BaseController
             if ($request->getPost('reason') == "V12.8")
             {
                 $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => $request->getPost('reason')));
-                $this->rejectBatch($Batch, $parameters[0]);
+                $this->evaluation($Batch, false, $parameters[0]);
             }
 
             $where = "s.fkBatch = " . $Batch->getPkBatch() . " AND REGEXP(s.sampleName, :regexp) = 1 AND s.validFlag = 0 AND s.useRecord <> 0";
@@ -149,6 +105,45 @@ class VerificationController extends BaseController
         return $viewModel;
     }
 
+    protected function evaluation(\Alae\Entity\Batch $Batch, $status = true, $parameter = false)
+    {
+        if (is_null($Batch->getFkParameter()))
+        {
+            if ($parameter)
+            {
+                $Batch->setFkParameter($parameter);
+            }
+
+            if ($status)
+            {
+                $query = $this->getEntityManager()->createQuery("
+                    SELECT GROUP_CONCAT(s.parameters) as parameters
+                    FROM Alae\Entity\SampleBatch s
+                    WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
+                $errors = array_unique(explode(",", $query->getSingleScalarResult()));
+
+                foreach($errors as $error)
+                {
+                    if (((int)$error >= 1 && (int)$error <= 8) || ((int)$error >= 23 && (int)$error <= 29))
+                    {
+                        $status = false;
+                        break;
+                    }
+                }
+            }
+
+            $Batch->setValidFlag($status);
+            $Batch->setValidationDate(new \DateTime('now'));
+            $Batch->setFkUser($this->_getSession());
+            $this->getEntityManager()->persist($Batch);
+            $this->getEntityManager()->flush();
+
+            return $status;
+        }
+
+        return $Batch->getValidFlag();
+    }
+
     protected function getReason()
     {
         $elements = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("typeParam" => false));
@@ -172,25 +167,7 @@ class VerificationController extends BaseController
             $this->$function($Batch);
         }
 
-        $query = $this->getEntityManager()->createQuery("
-            SELECT DISTINCT(s.parameters) as parameters
-            FROM Alae\Entity\SampleBatch s
-            WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
-        $errors = $query->getResult();
-
-        $continue = true;
-        foreach($errors as $error)
-        {
-            if (
-                    strstr($error['parameters'], "23") || strstr($error['parameters'], "24") || strstr($error['parameters'], "25") ||
-                    strstr($error['parameters'], "26") || strstr($error['parameters'], "27") || strstr($error['parameters'], "28") ||
-                    strstr($error['parameters'], "29")
-                )
-            {
-                $continue = false;
-                break;
-            }
-        }
+        $continue = $this->evaluation($Batch);
 
         if ($continue && is_null($Batch->getFkParameter()))
         {
@@ -200,6 +177,17 @@ class VerificationController extends BaseController
                 $this->$function($Batch);
             }
         }
+
+        $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array(
+            "fkAnalyte" => $Batch->getFkAnalyte(),
+            "fkStudy" => $Batch->getFkStudy()
+        ));
+
+        return $this->redirect()->toRoute('batch', array(
+            'controller' => 'batch',
+            'action'     => 'list',
+            'id'         => $AnaStudy[0]->getPkAnalyteStudy()
+        ));
     }
 
     /**
@@ -413,6 +401,23 @@ class VerificationController extends BaseController
         $query = $this->getEntityManager()->createQuery($sql);
         $query->setParameter('regexp', '^QC[0-9]+-[0-9]+R[0-9]+\\*$');
         $query->execute();
+
+        $query    = $this->getEntityManager()->createQuery("
+            SELECT s.sampleName
+            FROM Alae\Entity\SampleBatch s
+            WHERE REGEXP(s.sampleName, :regexp) = 1 AND (s.useRecord <> 0 OR s.accuracy NOT BETWEEN " . $parameters[0]->getMinValue() . " AND " . $parameters[0]->getMaxValue() . ") AND s.fkBatch = " . $Batch->getPkBatch() . "
+            ORDER BY s.sampleName DESC");
+        $query->setParameter('regexp', '^QC[0-9]+-[0-9]+R[0-9]+\\*$');
+        $elements = $query->getResult();
+
+        foreach($elements as $SampleName)
+        {
+            $name  = preg_replace(array('/QC[0-9]+-[0-9]+/', '/\*/'), '', $SampleName['sampleName']);
+            $where = "s.sampleName LIKE '%" . $name . "%' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V9.3", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+        }
     }
 
     /**
@@ -463,6 +468,20 @@ class VerificationController extends BaseController
         $sql   = Verification::update($where, "V11", array("s.validFlag = 0"));
         $query = $this->getEntityManager()->createQuery($sql);
         $query->execute();
+
+        $query    = $this->getEntityManager()->createQuery("
+            SELECT SUBSTRING(s.sampleName,5,1) as dilutionFactor
+            FROM Alae\Entity\SampleBatch s
+            WHERE s.sampleName LIKE '%DQC%' AND SUBSTRING(s.sampleName,5,1) <> s.dilutionFactor AND s.fkBatch = " . $Batch->getPkBatch());
+        $elements = $query->getResult();
+
+        foreach($elements as $factor)
+        {
+            $where = "s.dilutionFactor = " . $factor['dilutionFactor'] . " AND s.sampleType = 'Unknown' AND s.fkBatch = " . $Batch->getPkBatch();
+            $sql   = Verification::update($where, "V11", array("s.validFlag = 0"));
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+        }
     }
 
     /**
@@ -531,63 +550,63 @@ class VerificationController extends BaseController
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'CS%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'CS%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setCsTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'QC%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setQcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'LDQC%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'LDQC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setLdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'HDQC%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'HDQC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setHdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'CS%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'CS%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setCsAcceptedTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'QC%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setQcAcceptedTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'LDQC%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'LDQC%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setLdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'HDQC%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'HDQC%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setHdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT AVG(s.isPeakArea)
             FROM Alae\Entity\SampleBatch s
-            WHERE (s.sampleName LIKE 'CS%' OR s.sampleName LIKE 'QC%') AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE (s.sampleName LIKE 'CS%' OR s.sampleName LIKE 'QC%') AND s.sampleName NOT LIKE '%R%' AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setIsCsQcAcceptedAvg($value);
 
@@ -610,7 +629,6 @@ class VerificationController extends BaseController
             $sql   = Verification::update($where, "V15");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
-            //$this->rejectBatch($Batch, $parameters[0]);
         }
     }
 
@@ -674,7 +692,7 @@ class VerificationController extends BaseController
 
         if (($Batch->getCorrelationCoefficient() * 100) < $parameters[0]->getMinValue())
         {
-            $this->rejectBatch($Batch, $parameters[0]);
+            $this->evaluation($Batch, false, $parameters[0]);
         }
     }
 
@@ -766,7 +784,6 @@ class VerificationController extends BaseController
             $sql   = Verification::update($where, "V20.1");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
-            //$this->rejectBatch($Batch, $parameters[0]);
         }
 
         $query    = $this->getEntityManager()->createQuery("
@@ -789,7 +806,6 @@ class VerificationController extends BaseController
             $sql   = Verification::update($where, "V20.2");
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
-            //$this->rejectBatch($Batch, $parameters[0]);
         }
     }
 
