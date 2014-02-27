@@ -30,7 +30,7 @@
                     Identificación de la muestra
                 </td>
                 <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
-                    Evaluación ( Aceptado / Rechazado )
+                    Tabla de resultados del lote
                 </td>
                 <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
                     Motivo ( En caso de ser Rechazado )
@@ -42,7 +42,7 @@
                     <?php echo $value['sampleName']; ?>
                 </td>
                 <td width="200px" colspan="2" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-                    Rechazado
+                    <?php echo substr($value['filename'], 0, -4); ?>
                 </td>
                 <td  width="200px" colspan="2" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
                     <?php echo $value['messageError']; ?>

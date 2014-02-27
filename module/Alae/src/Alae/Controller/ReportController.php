@@ -121,8 +121,19 @@ class ReportController extends BaseController
         $page    = "";
         if ($request->isGet())
         {
-            ini_set('max_execution_time', 600);
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
+            ini_set('max_execution_time', 300000);
+
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch = $query->getResult();
+
+//            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
+//                "fkAnalyte" => $request->getQuery('an'),
+//                "fkStudy" => $request->getQuery('id')
+//            ));
 
             if (count($batch) > 0)
             {
@@ -268,7 +279,7 @@ class ReportController extends BaseController
 
             if (count($batch) > 0)
             {
-                ini_set('max_execution_time', 600);
+                ini_set('max_execution_time', 9000);
                 $message = array();
                 foreach ($batch as $Batch)
                 {
@@ -291,7 +302,8 @@ class ReportController extends BaseController
                         {
                             $message[] = array(
                                 "sampleName"   => $SampleBatch->getSampleName(),
-                                "messageError" => $Parameter['messageError']
+                                "messageError" => $Parameter['messageError'],
+                                "filename"     => $Batch->getFileName()
                             );
                         }
                     }
