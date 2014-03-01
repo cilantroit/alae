@@ -107,43 +107,7 @@
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> Accuracy</td>
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Use record</td>
         </tr>
-        <?php foreach ($elements as $SampleBatch) : ?>
-        <tr>
-            <td align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getSampleName() ;?>
-            </td>
-            <td align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getAnalytePeakName() ;?>
-            </td>
-            <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getSampleType() ;?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getFileName() ;?>
-            </td>
-            <td align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getAnalytePeakArea() ;?>
-            </td>
-            <td align="center"  style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getIsPeakName() ;?>
-            </td>
-            <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getIsPeakArea() ;?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getAnalyteConcentration() ;?>
-            </td>
-            <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getDilutionFactor() ;?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getAccuracy() ;?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $SampleBatch->getUseRecord() ;?>
-            </td>
-        </tr>
-        <?php endforeach; ?>
+        <?php echo $tr1; ?>
         <tr>
             <td colspan="20" align="right">&nbsp;</td>
         </tr>
@@ -156,36 +120,12 @@
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Rejection Reason</td>
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Message</td>
         </tr>
-        <?php foreach ($list as $data) : ?>
-        <tr>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $data["sample_name"]; ?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $data["acquisition_date"]; ?>
-            </td>
-            <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $data["analyte_integration_type"]; ?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $data["is_integration_type"]; ?>
-            </td>
-            <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px">
-                <?php echo $data["record_modify"]; ?>
-            </td>
-            <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $data["rejection_reason"]; ?>
-            </td>
-            <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">
-                <?php echo $data["message"]; ?>
-            </td>
-        </tr>
-        <?php endforeach; ?>
+        <?php echo $tr2; ?>
         <tr>
             <td colspan="20" align="right">&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="20" align="right">Fecha y hora de impresión: <?php date("d.m.Y H:i"); ?></td>
+            <td colspan="20" align="right">Fecha y hora de impresión: <?php echo date("d.m.Y H:i"); ?></td>
         </tr>
     </table>
 </div>

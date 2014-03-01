@@ -129,7 +129,6 @@ class CronController extends BaseController
         }
         else
         {
-            $this->execute(\Alae\Service\Verification::update("s.fkBatch = " . $Batch->getPkBatch(), "V1"));
             $this->execute(\Alae\Service\Verification::updateBatch("b.pkBatch = " . $Batch->getPkBatch(), "V1"));
         }
     }
@@ -223,13 +222,7 @@ class CronController extends BaseController
 
     private function updateBatch($Batch, $Analyte, $Study)
     {
-        $query  = $this->getEntityManager()->createQuery("
-            SELECT COUNT(s.pkSampleBatch)
-            FROM Alae\Entity\SampleBatch s
-            WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch());
-        $error  = $query->getSingleScalarResult();
         $header = $this->getHeaderInfo($Analyte);
-
         if (count($header) > 0)
         {
             $Batch->setIntercept($header['intercept']);
@@ -237,20 +230,17 @@ class CronController extends BaseController
             $Batch->setSlope($header['slope']);
         }
 
-        if ($error > 0)
+        $query = $this->getEntityManager()->createQuery("
+            SELECT COUNT(e.fkParameter)
+            FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s
+            WHERE s.pkSampleBatch = e.fkSampleBatch
+                AND s.fkBatch = " . $Batch->getPkBatch());
+        $errors = $query->getSingleScalarResult();
+
+        if ($errors > 0)
         {
             $Batch->setValidFlag(false);
             $Batch->setValidationDate(new \DateTime('now'));
-
-            $query       = $this->getEntityManager()->createQuery("
-            SELECT s.parameters
-            FROM Alae\Entity\SampleBatch s
-            WHERE s.parameters IS NOT NULL AND s.fkBatch = " . $Batch->getPkBatch() . "
-            ORDER BY s.parameters ASC")
-                    ->setMaxResults(1);
-            $pkParameter = $query->getSingleScalarResult();
-            $Parameter   = $this->getRepository("\\Alae\\Entity\\Parameter")->find($pkParameter);
-            $Batch->setFkParameter($Parameter);
         }
 
         $Batch->setAnalyteConcentrationUnits($this->_analyteConcentrationUnits);
@@ -305,16 +295,52 @@ class CronController extends BaseController
         return $header;
     }
 
+    protected function error($where, $fkParameter, $parameters = array(), $isValid = true)
+    {
+        $sql = "
+            SELECT s
+            FROM Alae\Entity\SampleBatch s
+            WHERE $where";
+        $query = $this->getEntityManager()->createQuery($sql);
+        if(count($parameters) > 0)
+            foreach ($parameters as $key => $value)
+                $query->setParameter($key, $value);
+        $elements = $query->getResult();
+
+        $pkParameter = array();
+        foreach($elements as $sampleBatch)
+        {
+            $Error = new \Alae\Entity\Error();
+            $Error->setFkSampleBatch($sampleBatch);
+            $Error->setFkParameter($fkParameter);
+            $this->getEntityManager()->persist($Error);
+            $this->getEntityManager()->flush();
+            $pkParameter[] = $sampleBatch->getPkSampleBatch();
+        }
+
+        if(!$isValid && count($pkParameter) > 0)
+        {
+            $sql = "
+                UPDATE Alae\Entity\SampleBatch s
+                SET s.validFlag = 0
+                WHERE s.pkSampleBatch in (" . implode(",", $pkParameter) . ")";
+            $query = $this->getEntityManager()->createQuery($sql);
+            $query->execute();
+        }
+    }
+
     private function batchVerify($Batch, $Analyte, $fileName)
     {
         $string = substr($fileName, 0, -4);
         list($pkBatch, $aux) = explode("_", $string);
-        $this->execute(\Alae\Service\Verification::update("s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch(), "V2", array("s.validFlag = 0")));
 
+        $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V2"));
+        $where = "s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch();
+        $this->error($where, $fkParameter[0], array(), false);
+
+        $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V3"));
         $where = "s.fileName NOT LIKE '$pkBatch\\\\%' AND s.fkBatch = " . $Batch->getPkBatch();
-        $sql   = \Alae\Service\Verification::update($where, "V3", array("s.validFlag = 0"));
-        $query = $this->getEntityManager()->createQuery($sql);
-        $query->execute();
+        $this->error($where, $fkParameter[0], array(), false);
     }
 
     private function saveSampleBatch($headers, $data, $Batch)
@@ -452,4 +478,3 @@ class CronController extends BaseController
         );
     }
 }
-?>
