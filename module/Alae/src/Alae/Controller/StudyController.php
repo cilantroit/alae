@@ -534,7 +534,7 @@ class StudyController extends BaseController
                     $newStudy->setStatus(true);
                     $newStudy->setApprove(false);
                     $newStudy->setDuplicate(true);
-                    $newStudy->setCreatedAt(new \DateTime('now'));
+                    $newStudy->setCreatedAt($Study->getCreatedAt());
                     $newStudy->setFkUser($User);
                     $this->getEntityManager()->persist($newStudy);
                     $this->getEntityManager()->flush();

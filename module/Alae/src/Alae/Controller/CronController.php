@@ -55,7 +55,7 @@ class CronController extends BaseController
         {
             $qb      = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
                     ->where('s.code like :code')
-                    ->setParameter('code', '%' . $codeStudy);
+                    ->setParameter('code', '%' . substr($codeStudy, 0, 4));
             $studies = $qb->getQuery()->getResult();
 
             if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
@@ -100,7 +100,7 @@ class CronController extends BaseController
             $this->_other = array();
             if (!is_dir($file))
             {
-                if (preg_match("/^([a-zA-Z0-9]+-\d+\_[a-zA-Z0-9]+\.txt)$/i", $file))
+                if (preg_match("/^([a-zA-Z0-9]+-\d{4}+(M|R([0-9])?)?\_[a-zA-Z0-9]+\.txt)$/i", $file))
                 {
                     $this->validateFile($file);
                 }
