@@ -11,6 +11,9 @@
                 <div id="encab">
                     <h2>informes estad&iacute;sticos</h2>
                 </div>
+                <?php if($error) : ?>
+                <ul id="errorBox"><li>No se ha generado información para este reporte</li></ul>
+                <?php endif; ?>
                 <p>
                     <label>C&oacute;digo del Estudio:</label>
                     <select id="study">

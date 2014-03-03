@@ -66,9 +66,9 @@ class ReportController extends BaseController
 
     public function indexAction()
     {
+        $error = $this->getEvent()->getRouteMatch()->getParam('id') > 0 ? true : false;
         $elements = $this->getRepository("\\Alae\\Entity\\Study")->findBy(array("status" => true));
-
-        return new ViewModel(array("studies" => $elements));
+        return new ViewModel(array("studies" => $elements, "error" => $error));
     }
 
     protected function counterAnalyte($pkStudy)
@@ -137,7 +137,7 @@ class ReportController extends BaseController
                     $query = $this->getEntityManager()->createQuery("
                         SELECT
                             s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea,  s.isPeakName, s.isPeakArea, s.analyteConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
-                            s.sampleName as sample2, 'hola', s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
+                            s.sampleName as sample2, s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
                             GROUP_CONCAT(DISTINCT p.codeError) as codeError,
                             GROUP_CONCAT(DISTINCT p.messageError) as messageError
                         FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
@@ -157,6 +157,10 @@ class ReportController extends BaseController
                             $isTable2 = false;
                             foreach ($sampleBatch as $key => $value)
                             {
+                                if($key == "acquisitionDate")
+                                {
+                                    $value = $value->format('d.m.Y H:i:s');
+                                }
                                 if($isTable2 || $key == "sample2")
                                 {
                                     $row2 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
@@ -198,10 +202,16 @@ class ReportController extends BaseController
                             "errors"    => implode("<br>", $message)
                         );
                         $page .= $this->render('alae/report/r2page', $properties);
-
-                        //echo $page;
                     }
                 }
+            }
+            else
+            {
+                return $this->redirect()->toRoute('report', array(
+                    'controller' => 'report',
+                    'action'     => 'index',
+                    'id'         => 1
+                ));
             }
         }
 
@@ -266,6 +276,14 @@ class ReportController extends BaseController
                 $viewModel->setVariable('filename', "resumen_de_lotes_de_un_estudio" . date("Ymd-Hi"));
                 return $viewModel;
             }
+            else
+            {
+                return $this->redirect()->toRoute('report', array(
+                    'controller' => 'report',
+                    'action'     => 'index',
+                    'id'         => 1
+                ));
+            }
         }
     }
 
@@ -321,7 +339,8 @@ class ReportController extends BaseController
             {
                 return $this->redirect()->toRoute('report', array(
                     'controller' => 'report',
-                    'action'     => 'index'
+                    'action'     => 'index',
+                    'id'         => 1
                 ));
             }
         }
@@ -351,7 +370,8 @@ class ReportController extends BaseController
             {
                 return $this->redirect()->toRoute('report', array(
                     'controller' => 'report',
-                    'action'     => 'index'
+                    'action'     => 'index',
+                    'id'         => 1
                 ));
             }
         }
@@ -440,7 +460,8 @@ class ReportController extends BaseController
             {
                 return $this->redirect()->toRoute('report', array(
                     'controller' => 'report',
-                    'action'     => 'index'
+                    'action'     => 'index',
+                    'id'         => 1
                 ));
             }
         }
@@ -529,7 +550,8 @@ class ReportController extends BaseController
             {
                 return $this->redirect()->toRoute('report', array(
                     'controller' => 'report',
-                    'action'     => 'index'
+                    'action'     => 'index',
+                    'id'         => 1
                 ));
             }
         }
@@ -619,7 +641,8 @@ class ReportController extends BaseController
             {
                 return $this->redirect()->toRoute('report', array(
                     'controller' => 'report',
-                    'action'     => 'index'
+                    'action'     => 'index',
+                    'id'         => 1
                 ));
             }
         }
@@ -699,7 +722,8 @@ class ReportController extends BaseController
                 {
                     return $this->redirect()->toRoute('report', array(
                         'controller' => 'report',
-                        'action'     => 'index'
+                        'action'     => 'index',
+                        'id'         => 1
                     ));
                 }
 
@@ -718,7 +742,8 @@ class ReportController extends BaseController
             {
                 return $this->redirect()->toRoute('report', array(
                     'controller' => 'report',
-                    'action'     => 'index'
+                    'action'     => 'index',
+                    'id'         => 1
                 ));
             }
         }

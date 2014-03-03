@@ -135,8 +135,8 @@ return array(
 		    'route' => '/report[/][:action][/:id][/:an]',
 		    'constraints' => array(
 			'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-			'id' => '[a-zA-Z][a-zA-Z0-9_-]*',
-			'an' => '[a-zA-Z][a-zA-Z0-9_-]*',
+			'id' => '[0-9]+',
+			'an' => '[0-9]+',
 		    ),
 		    'defaults' => array(
 			'controller' => 'Alae\Controller\Report',

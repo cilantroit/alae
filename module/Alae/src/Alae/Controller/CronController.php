@@ -29,19 +29,22 @@ class CronController extends BaseController
 
     private function isRepeatedBatch($fileName)
     {
-        $query = $this->getEntityManager()->createQuery("SELECT COUNT(b.pkBatch) FROM Alae\Entity\Batch b WHERE b.fileName = '" . Helper::getVarsConfig("batch_directory") . "/" . $fileName . "'");
+        $query = $this->getEntityManager()->createQuery("
+                SELECT COUNT(b.pkBatch)
+                FROM Alae\Entity\Batch b
+                WHERE b.fileName = '" . $fileName . "'");
         $count = $query->getSingleScalarResult();
 
         if ($count == 0)
         {
-            return true;
+            return false;
         }
         else
         {
             $this->setErrorTransaction('Repeated batch', $fileName);
         }
 
-        return false;
+        return true;
     }
 
     private function validateFile($fileName)
@@ -51,35 +54,32 @@ class CronController extends BaseController
         list($codeStudy, $shortening) = explode("_", $aux);
         $this->_Study   = $this->_Analyte = null;
 
-        if ($this->isRepeatedBatch($fileName))
+        $qb      = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
+                ->where('s.code like :code')
+                ->setParameter('code', '%' . substr($codeStudy, 0, 4));
+        $studies = $qb->getQuery()->getResult();
+
+        if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
         {
-            $qb      = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
-                    ->where('s.code like :code')
-                    ->setParameter('code', '%' . substr($codeStudy, 0, 4));
-            $studies = $qb->getQuery()->getResult();
+            $qb       = $this->getEntityManager()->createQueryBuilder()
+                    ->select("a")
+                    ->from("Alae\Entity\AnalyteStudy", "h")
+                    ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $studies[0]->getPkStudy());
+            $analytes = $qb->getQuery()->getResult();
 
-            if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
+            if ($analytes)
             {
-                $qb       = $this->getEntityManager()->createQueryBuilder()
-                        ->select("a")
-                        ->from("Alae\Entity\AnalyteStudy", "h")
-                        ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $studies[0]->getPkStudy());
-                $analytes = $qb->getQuery()->getResult();
-
-                if ($analytes)
-                {
-                    $this->_Study   = $studies[0];
-                    $this->_Analyte = $analytes[0];
-                }
-                else
-                {
-                    $this->setErrorTransaction('The_analyte_is_not_associated_with_the_study', $shortening);
-                }
+                $this->_Study   = $studies[0];
+                $this->_Analyte = $analytes[0];
             }
             else
             {
-                $this->setErrorTransaction('The_lot_is_not_associated_with_a_registered_study', $fileName);
+                $this->setErrorTransaction('The_analyte_is_not_associated_with_the_study', $shortening);
             }
+        }
+        else
+        {
+            $this->setErrorTransaction('The_lot_is_not_associated_with_a_registered_study', $fileName);
         }
     }
 
@@ -100,18 +100,17 @@ class CronController extends BaseController
             $this->_other = array();
             if (!is_dir($file))
             {
-                if (preg_match("/^([a-zA-Z0-9]+-\d{4}+(M|R([0-9])?)?\_[a-zA-Z0-9]+\.txt)$/i", $file))
+                if(!$this->isRepeatedBatch($file))
                 {
-                    $this->validateFile($file);
-                }
-                else
-                {
-                    $this->isRepeatedBatch($file);
-                    $this->setErrorTransaction('Invalid_file_name_in_the_export_process_batches_of_analytes', $file);
+                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}+(M|R)?[0-9]*\_[a-zA-Z0-9]+\.txt)$/i", $file))
+                    {
+                        $this->validateFile($file);
+                    }
                 }
 
                 $this->insertBatch($file, $this->_Study, $this->_Analyte);
                 rename(Helper:: getVarsConfig("batch_directory") . "/" . $file, Helper:: getVarsConfig("batch_directory_older") . "/" . $file);
+                unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
             }
         }
     }
