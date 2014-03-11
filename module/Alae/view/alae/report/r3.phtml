@@ -1,7 +1,7 @@
 <?php
   ob_start();
 ?>
-<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">
+<page format="432x240" backcolor="#FFFFFF" style="font: arial;">
     <div class="table-container">
         <table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:50px;">
             <tr>
@@ -62,6 +62,9 @@
             </tr>
         </table>
     </div>
+	<page_footer>
+    	pág. [[page_cu]] de [[page_nb]]
+  	</page_footer>
 </page>
 <?php
 $content = ob_get_clean();

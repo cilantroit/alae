@@ -689,8 +689,8 @@ class StudyController extends BaseController
             $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($request->getPost('id'));
             $AnaStudy->setCsValues(implode(",", $request->getPost("cs_number")));
             $AnaStudy->setQcValues(implode(",", $request->getPost("qc_number")));
-            $AnaStudy->setHdqcValues($request->getPost("ldqc_number"));
-            $AnaStudy->setLdqcValues($request->getPost("hdqc_number"));
+            $AnaStudy->setHdqcValues($request->getPost("hdqc_number"));
+            $AnaStudy->setLdqcValues($request->getPost("ldqc_number"));
             $this->getEntityManager()->persist($AnaStudy);
             $this->getEntityManager()->flush();
             $this->transaction(

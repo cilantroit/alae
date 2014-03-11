@@ -31,7 +31,7 @@
         </tr>
         <tr>
             <td  align="center"  style="color:#ffffff;"></td>
-            <td  align="center"  bgcolor="#000000" colspan="2"  style="color:#ffffff;font-size:11px;padding:5px;"><strong>Analitoxx</strong></td>
+            <td  align="center"  bgcolor="#000000" colspan="2"  style="color:#ffffff;font-size:11px;padding:5px;"><strong>Analito</strong></td>
             <td  align="center"></td>
             <td  align="center" colspan="4" bgcolor="#000000"  colspan="2"  style="color:#ffffff;font-size:11px;padding:5px;"><strong>Patrón Interno</strong></td>
         </tr>
@@ -168,6 +168,11 @@
             </td>
             <td   height=20   style="color:#000000;font-size:11px;padding:10px">
                 (<?php echo !is_null($study->getFkUserApprove()) ? $study->getFkUserApprove()->getUsername() : "Sin aprobación"; ?>)
+            </td>
+        </tr>
+        <tr>
+            <td align="center" bgcolor="#fff" style="text-aling:center;" colspan="2">
+                 <?php echo date("d.m.Y H:i:s"); ?>
             </td>
         </tr>
     </table>
