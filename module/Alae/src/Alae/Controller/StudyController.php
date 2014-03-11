@@ -370,7 +370,7 @@ class StudyController extends BaseController
             );
         }
 
-        $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findAll();
+        $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();
         $datatable = new Datatable($data, Datatable::DATATABLE_ANASTUDY, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
@@ -379,7 +379,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('analytes', $Analyte);
         $viewModel->setVariable('units', $Unit);
         $viewModel->setVariable('user', $this->_getSession());
-        $viewModel->setVariable('disabled', (($this->_getSession()->isAdministrador() && !$Study->getCloseFlag()) ? "" : "disabled"));
+        $viewModel->setVariable('disabled', (($this->_getSession()->isAdministrador() && !$Study->getCloseFlag() && !$Study->getApprove()) ? "" : "disabled"));
         return $viewModel;
     }
 

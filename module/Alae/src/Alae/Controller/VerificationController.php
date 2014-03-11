@@ -819,18 +819,13 @@ class VerificationController extends BaseController
 
         if ($AnaStudy[0]->getIsUsed())
         {
-            $min = $Batch->getIsCsQcAcceptedAvg() - $AnaStudy[0]->getInternalStandard();
-            $max = $Batch->getIsCsQcAcceptedAvg() + $AnaStudy[0]->getInternalStandard();
-        }
-        else
-        {
-            $min = $Batch->getIsCsQcAcceptedAvg();
-            $max = $Batch->getIsCsQcAcceptedAvg();
-        }
+            $min = $Batch->getIsCsQcAcceptedAvg() - ($AnaStudy[0]->getInternalStandard() / 100);
+            $max = $Batch->getIsCsQcAcceptedAvg() + ($AnaStudy[0]->getInternalStandard() / 100);
 
-        $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V22"));
-        $where = "s.sampleType = 'Unknown' AND s.isPeakArea NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
-        $this->error($where, $parameters[0], array(), false);
+            $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V22"));
+            $where = "s.sampleType = 'Unknown' AND s.isPeakArea NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
+            $this->error($where, $parameters[0], array(), false);
+        }
     }
 
     /**
@@ -847,24 +842,13 @@ class VerificationController extends BaseController
 
     protected function V24(\Alae\Entity\Batch $Batch)
     {
-        $isVerify = false;
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
             WHERE s.sampleName LIKE 'CS1%' AND s.useRecord = 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $counter = $query->getSingleScalarResult();
 
-        if ($counter != 2)
-        {
-            $query = $this->getEntityManager()->createQuery("
-                SELECT s.analyteConcentration
-                FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE 'CS1%' AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch() . "
-                ORDER BY s.sampleName ASC")
-                ->setMaxResults(1);
-            $min = $query->getSingleScalarResult();
-        }
-        else
+        if ($counter == 2)
         {
             $query = $this->getEntityManager()->createQuery("
                 SELECT s.analyteConcentration
@@ -873,7 +857,10 @@ class VerificationController extends BaseController
                 ORDER BY s.sampleName ASC")
                 ->setMaxResults(1);
             $min = $query->getSingleScalarResult();
-            $isVerify = true;
+
+            $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V24"));
+            $where = "s.sampleType = 'Unknown' AND s.calculatedConcentration < $min AND s.fkBatch = " . $Batch->getPkBatch();
+            $this->error($where, $parameters[0]);
         }
 
         $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->findBy(array(
@@ -885,19 +872,9 @@ class VerificationController extends BaseController
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
             WHERE s.sampleName LIKE 'CS" . $AnaStudy[0]->getCsNumber() . "%' AND s.useRecord = 0 AND s.fkBatch = " . $Batch->getPkBatch());
-        $counter   = $query->getSingleScalarResult();
+        $counter = $query->getSingleScalarResult();
 
-        if ($counter != 2)
-        {
-            $query = $this->getEntityManager()->createQuery("
-                SELECT s.analyteConcentration
-                FROM Alae\Entity\SampleBatch s
-                WHERE s.sampleName LIKE 'CS" . $AnaStudy[0]->getCsNumber() . "%' AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch() . "
-                ORDER BY s.sampleName DESC")
-                ->setMaxResults(1);
-            $max = $query->getSingleScalarResult();
-        }
-        else
+        if ($counter == 2)
         {
             $query = $this->getEntityManager()->createQuery("
                 SELECT s.analyteConcentration
@@ -906,13 +883,9 @@ class VerificationController extends BaseController
                 ORDER BY s.sampleName DESC")
                 ->setMaxResults(1);
             $max = $query->getSingleScalarResult();
-            $isVerify = true;
-        }
 
-        if($isVerify)
-        {
             $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V24"));
-            $where = "s.sampleType = 'Unknown' AND s.calculatedConcentration NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
+            $where = "s.sampleType = 'Unknown' AND s.calculatedConcentration > $max AND s.fkBatch = " . $Batch->getPkBatch();
             $this->error($where, $parameters[0]);
         }
     }

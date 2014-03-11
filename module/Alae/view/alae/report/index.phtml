@@ -26,6 +26,8 @@
                 <p id="ajax" style="display: none">
                     <label>Analito (*): </label>
                     <select id="analyte"></select>
+                    <label>Lotes (*): </label>
+                    <select id="batch"></select>
                 </p>
                 <h4>Seleccione el informe deseado:</h4>
                 <ul class="pdf"><br/>
@@ -93,6 +95,7 @@
             success: function(data)
             {
                 $('#analyte').html(data.data);
+                $('#batch').html(data.batch);
                 $('#ajax').show();
                 $('#analyte').show();
             }

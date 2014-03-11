@@ -110,7 +110,11 @@ class CronController extends BaseController
 
                 $this->insertBatch($file, $this->_Study, $this->_Analyte);
                 rename(Helper:: getVarsConfig("batch_directory") . "/" . $file, Helper:: getVarsConfig("batch_directory_older") . "/" . $file);
-                unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
+
+                if (file_exists(Helper:: getVarsConfig("batch_directory") . "/" . $file))
+                {
+                    unlink(Helper:: getVarsConfig("batch_directory") . "/" . $file);
+                }
             }
         }
     }
@@ -338,7 +342,7 @@ class CronController extends BaseController
         $this->error($where, $fkParameter[0], array(), false);
 
         $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V3"));
-        $where = "s.fileName NOT LIKE '$pkBatch\\\\%' AND s.fkBatch = " . $Batch->getPkBatch();
+        $where = "s.fileName NOT LIKE '$pkBatch%' AND s.fkBatch = " . $Batch->getPkBatch();
         $this->error($where, $fkParameter[0], array(), false);
     }
 
@@ -364,54 +368,29 @@ class CronController extends BaseController
                 $SampleBatch->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
                 $this->getEntityManager()->persist($SampleBatch);
                 $this->getEntityManager()->flush();
-                $this->saveSampleBatchOtherColumns($headers, $row, $SampleBatch);
             }
         }
-    }
-
-    private function saveSampleBatchOtherColumns($headers, $row, $SampleBatch)
-    {
-        $setters = $this->setter($headers, $this->getSampleBatchOtherColumns());
-
-        $SampleBatchOtherColumns = new \Alae\Entity\SampleBatchOtherColumns();
-
-        foreach ($row as $key => $value)
-        {
-            if (isset($setters[$key]))
-            {
-                $SampleBatchOtherColumns->$setters[$key]($value);
-            }
-        }
-        $SampleBatchOtherColumns->setFkSampleBatch($SampleBatch);
-        $this->getEntityManager()->persist($SampleBatchOtherColumns);
-        $this->getEntityManager()->flush();
     }
 
     private function getSampleBatch()
     {
         return array(
-            "Sample Name"              => "setSampleName",
-            "Analyte Peak Name"        => "setAnalytePeakName",
-            "Sample Type"              => "setSampleType",
-            "File Name"                => "setFileName",
-            "Dilution Factor"          => "setDilutionFactor",
-            "Analyte Peak Area"        => "setAnalytePeakArea",
-            "IS Peak Name"             => "setIsPeakName",
-            "IS Peak Area"             => "setIsPeakArea",
-            "Analyte Concentration"    => "setAnalyteConcentration",
-            "Calculated Concentration" => "setCalculatedConcentration",
-            "Accuracy"                 => "setAccuracy",
-            "Use Record"               => "setUseRecord",
-            "Acquisition Date"         => "setAcquisitionDate",
-            "Analyte Integration Type" => "setAnalyteIntegrationType",
-            "IS Integration Type"      => "setIsIntegrationType",
-            "Record Modified"          => "setRecordModified",
-        );
-    }
-
-    private function getSampleBatchOtherColumns()
-    {
-        return array(
+            "Sample Name"                      => "setSampleName",
+            "Analyte Peak Name"                => "setAnalytePeakName",
+            "Sample Type"                      => "setSampleType",
+            "File Name"                        => "setFileName",
+            "Dilution Factor"                  => "setDilutionFactor",
+            "Analyte Peak Area"                => "setAnalytePeakArea",
+            "IS Peak Name"                     => "setIsPeakName",
+            "IS Peak Area"                     => "setIsPeakArea",
+            "Analyte Concentration"            => "setAnalyteConcentration",
+            "Calculated Concentration"         => "setCalculatedConcentration",
+            "Accuracy"                         => "setAccuracy",
+            "Use Record"                       => "setUseRecord",
+            "Acquisition Date"                 => "setAcquisitionDate",
+            "Analyte Integration Type"         => "setAnalyteIntegrationType",
+            "IS Integration Type"              => "setIsIntegrationType",
+            "Record Modified"                  => "setRecordModified",
             "Sample ID"                        => "setSampleId",
             "Sample Comment"                   => "setSampleComment",
             "Set Number"                       => "setSetNumber",
