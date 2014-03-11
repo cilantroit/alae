@@ -1,8 +1,15 @@
 <?php
   ob_start();
 ?>
-<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">
+
+<?php
+//<page format="432x240" orientation="L" backcolor="#FFFFFF" style="font: arial;">
+?>
+<page format="432x240" backcolor="#FFFFFF" style="font: arial;">
     <?php echo $page; ?>
+<page_footer>
+    pág. [[page_cu]] de [[page_nb]]
+  </page_footer>
 </page>
 <?php
 $content = ob_get_clean();
@@ -14,6 +21,7 @@ try
     $html2pdf->setDefaultFont('Arial');
     $html2pdf->writeHTML($content);
     $html2pdf->Output($filename . ".pdf", 'D');
+	
 }
 catch (HTML2PDF_exception $e)
 {

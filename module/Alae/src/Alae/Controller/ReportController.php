@@ -136,7 +136,7 @@ class ReportController extends BaseController
                 {
                     $query = $this->getEntityManager()->createQuery("
                         SELECT
-                            s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea,  s.isPeakName, s.isPeakArea, s.analyteConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
+                            s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea, s.isPeakArea, s.analyteConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
                             s.sampleName as sample2, s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
                             GROUP_CONCAT(DISTINCT p.codeError) as codeError,
                             GROUP_CONCAT(DISTINCT p.messageError) as messageError

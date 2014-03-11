@@ -2,9 +2,15 @@
     Created on : 18-dic-2013, 20:16:46
     Author     : Maria Quiroz
 */
+div#datatable 
+{
+	
+	height:800px;
+}
 #datatable span, a{ margin-right: 5px; }
 #datatable table{
     width: 100%;
+    
     outline: solid 1px #008B8B;
     border-collapse: separate;
     border-spacing: 2px;
