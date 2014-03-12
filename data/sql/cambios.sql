@@ -260,3 +260,6 @@ response_factor,fk_batch
     FROM temporary_alae_sample_batch;
 
 DROP TABLE temporary_alae_sample_batch;
+
+ALTER TABLE  `alae_analyte_study` CHANGE  `hdqc_values`  `hdqc_values` DECIMAL( 19, 4 ) NULL DEFAULT NULL ,
+CHANGE  `ldqc_values`  `ldqc_values` DECIMAL( 19, 4 ) NULL DEFAULT NULL;
