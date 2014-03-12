@@ -69,7 +69,7 @@
                 Resultado de la Evaluación:
             </td>
             <td colspan="2" height="20" style="">
-                <?php echo $batch->getValidFlag(); ?>
+                <?php echo $batch->getValidFlag() ? "ACEPTADO" : "RECHAZADO"; ?>
             </td>
             <td  colspan="2" align="left"  height="20"  align="center" style="font-size: 11px;font-weight: bold">
                 Motivo de Rechazo:
@@ -100,7 +100,7 @@
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Sample Type</td>
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> File name </td>
             <td align="center"   style="color:#000; border: black 1px solid;font-size:11px;padding:4px">Analyte peak area</td>
-            
+
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">IS peak area</td>
             <td align="center"   style=" border: black 1px solid;font-size:11px;padding:4px">Area ratio</td>
             <td align="center"   style="border: black 1px solid;;font-size:11px;padding:4px"> Analyte concentration</td>

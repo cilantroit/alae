@@ -92,7 +92,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         </td>
                         <?php foreach ($list['par'] as $key => $value) : ?>
                         <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
-                            <?php echo ($value[2] != "" && $value[2] != "0") ? "NRV" : $value[0]; ?>
+                            <?php echo ($value[2] != "" && $value[2] != "O") ? "NRV" : $value[0]; ?>
                         </td>
                         <td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
                             <?php echo $value[1]; ?>

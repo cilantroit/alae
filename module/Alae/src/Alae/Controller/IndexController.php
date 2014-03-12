@@ -25,14 +25,19 @@ class IndexController extends BaseController
     public function logoutAction()
     {
         $User = $this->_getSession();
+        if(!$User)
+        {
+            return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
+        }
+
         $this->transaction(
             "Fin de sesión",
             sprintf("El usuario %s ha cerrado sesión", $User->getUsername()),
             false
         );
-	$session_user = new \Zend\Session\Container('user');
-	$session_user->getManager()->getStorage()->clear('user');
-	return new ViewModel(array("username" => $User->getUsername()));
+        $session_user = new \Zend\Session\Container('user');
+        $session_user->getManager()->getStorage()->clear('user');
+        return new ViewModel(array("username" => $User->getUsername()));
     }
 
     public function menuAction()

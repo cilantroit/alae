@@ -152,6 +152,26 @@
         </tr>
         <?php endfor; ?>
         <tr>
+            <td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
+                LDQC
+            </td>
+            <?php foreach ($analytes as $anaStudy) : ?>
+            <td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">
+                <?php echo $anaStudy->getLdqcValues(); ?>
+            </td>
+            <?php endforeach; ?>
+        </tr>
+        <tr>
+            <td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
+                HDQC
+            </td>
+            <?php foreach ($analytes as $anaStudy) : ?>
+            <td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">
+                <?php echo $anaStudy->getHdqcValues(); ?>
+            </td>
+            <?php endforeach; ?>
+        </tr>
+        <tr>
             <td   aling="left" height=20 colspan="8"  bgcolor="#ffffff" style="color:#000000;font-size:11px;padding:10px">&nbsp;</td>
         </tr>
         <tr>

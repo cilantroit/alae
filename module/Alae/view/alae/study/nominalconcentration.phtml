@@ -99,25 +99,82 @@
             answer = confirm('¿Desea aprobar las concentraciones nominales?');
             if (answer === true)
             {
-                $.ajax
-                ({
-                    type: "GET",
-                    dataType: "json",
-                    url: basePath + url,
-                    data: {id: id},
-                    success: function(data)
-                    {
-                        if (data.status)
-                        {
-                            location.reload();
-                        }
-                        else
-                        {
-                            alert(data.message);
-                        }
-                    }
-                });
+                $( "#element_url" ).val(url);
+                $( "#element_id" ).val(id);
+                $( "#dialog-form" ).dialog( "open" );
             }
         }
     </script>
 </div>
+<div id="dialog-form" title="Firma digital">
+    <div id="error-dialog-form"></div>
+    <form id="verification-form" method="POST" action="<?php echo $this->basePath() ?>/index/autentication">
+        <fieldset>
+            <label for="name">Nombre de usuario</label>
+            <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
+            <input type="hidden" name="element_url" id="element_url">
+            <input type="hidden" name="element_id"  id="element_id">
+            <input type="hidden" name="message"  id="message">
+            <input type="submit" class="btn" value="verificar" />
+            <button class="btn" type="button" onclick="closeForm()">cerrar</button>
+        </fieldset>
+    </form>
+</div>
+<script>
+    $(function() {
+        $( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+        });
+
+        $('#verification-form').ajaxForm({
+            dataType:  'json',
+            success:   processJson
+        });
+    });
+
+    function processJson(data) {
+        if (data.response)
+        {
+            closeForm();
+            sendRequest();
+        }
+        else
+        {
+            $("#error-dialog-form").html(data.error);
+        }
+    }
+
+    function closeForm()
+    {
+        $('#dialog-form').dialog('close');
+        $('#verification-form').clearForm();
+        $('#error-dialog-form').html("");
+    }
+
+    function sendRequest()
+    {
+        $.ajax
+        ({
+            type: "GET",
+            dataType: "json",
+            url: basePath + $( "#element_url" ).val(),
+            data: {id: $( "#element_id" ).val()},
+            success: function(data)
+            {
+                if (data.status)
+                {
+                    location.reload();
+                }
+                else
+                {
+                    alert(data.message);
+                }
+            }
+        });
+    }
+</script>

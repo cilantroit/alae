@@ -51,15 +51,32 @@ class ReportController extends BaseController
         return $viewModel;
     }
 
-    public function ajaxAction()
+    public function ajxstudyAction()
     {
         $request  = $this->getRequest();
         $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array(
             "fkStudy" => $request->getQuery('id')));
-        $data     = "";
+        $data     = '<option value="-1">Seleccione</option>';
         foreach ($elements as $anaStudy)
         {
             $data .= '<option value="' . $anaStudy->getFkAnalyte()->getPkAnalyte() . '">' . $anaStudy->getFkAnalyte()->getName() . '</option>';
+        }
+        return new JsonModel(array("data" => $data));
+    }
+
+    public function ajxbatchAction()
+    {
+        $request  = $this->getRequest();
+        $query = $this->getEntityManager()->createQuery("
+            SELECT b
+            FROM Alae\Entity\Batch b
+            WHERE b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+            ORDER BY b.fileName ASC");
+        $elements = $query->getResult();
+        $data     = '<option value="-1">Seleccione</option>';
+        foreach ($elements as $Batch)
+        {
+            $data .= '<option value="' . $Batch->getPkBatch() . '">' . $Batch->getFileName() . '</option>';
         }
         return new JsonModel(array("data" => $data));
     }
@@ -94,8 +111,8 @@ class ReportController extends BaseController
             $qc_values      = array();
             foreach ($analytes as $anaStudy)
             {
-                $cs_values[] = explode(",", $anaStudy->getCsValues());
-                $qc_values[] = explode(",", $anaStudy->getQcValues());
+                $cs_values[]   = explode(",", $anaStudy->getCsValues());
+                $qc_values[]   = explode(",", $anaStudy->getQcValues());
             }
 
             $properties = array(
@@ -122,87 +139,86 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             ini_set('max_execution_time', 300000);
-
-            $query = $this->getEntityManager()->createQuery("
-                SELECT b
-                FROM Alae\Entity\Batch b
-                WHERE b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
-                ORDER BY b.fileName ASC");
-            $batch = $query->getResult();
-
-            if (count($batch) > 0)
+            $Batch = $this->getRepository('\\Alae\\Entity\\Batch')->find($request->getQuery('ba'));
+            if ($Batch && $Batch->getPkBatch())
             {
-                foreach ($batch as $Batch)
+                $qb = $this->getEntityManager()->createQueryBuilder();
+                $qb
+                    ->select('s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea, s.isPeakArea, s.areaRatio, s.analyteConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
+                    s.sampleName as sample2, s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
+                    GROUP_CONCAT(DISTINCT p.codeError) as codeError,
+                    GROUP_CONCAT(DISTINCT p.messageError) as messageError')
+                    ->from('Alae\Entity\SampleBatch', 's')
+                    ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
+                    ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
+                    ->where("s.fkBatch = " . $Batch->getPkBatch())
+                    ->groupBy('s.pkSampleBatch')
+                    ->orderBy('s.pkSampleBatch', 'ASC');
+                $elements = $qb->getQuery()->getResult();
+
+                if(count($elements) > 0)
                 {
+                    $tr1 = $tr2 = "";
+                    foreach ($elements as $sampleBatch)
+                    {
+                        $row1 = $row2 = "";
+                        $isTable2 = false;
+                        foreach ($sampleBatch as $key => $value)
+                        {
+                            if($key == "acquisitionDate")
+                            {
+                                $value = $value->format('d.m.Y H:i:s');
+                            }
+                            if($isTable2 || $key == "sample2")
+                            {
+                                $row2 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
+                                $isTable2 = true;
+                            }
+                            else
+                            {
+                                $row1 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
+                            }
+                        }
+                        $tr1 .= sprintf("<tr>%s</tr>", $row1);
+                        $tr2 .= sprintf("<tr>%s</tr>", $row2);
+                    }
+
                     $query = $this->getEntityManager()->createQuery("
-                        SELECT
-                            s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea, s.isPeakArea, s.analyteConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
-                            s.sampleName as sample2, s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
-                            GROUP_CONCAT(DISTINCT p.codeError) as codeError,
-                            GROUP_CONCAT(DISTINCT p.messageError) as messageError
+                        SELECT DISTINCT(p.pkParameter) as pkParameter, p.messageError
                         FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
                         WHERE s.pkSampleBatch = e.fkSampleBatch
                             AND e.fkParameter = p.pkParameter
-                            AND s.fkBatch = " . $Batch->getPkBatch() . "
-                        GROUP BY s.pkSampleBatch
+                            AND ((p.pkParameter BETWEEN 1 AND 8) OR (p.pkParameter BETWEEN 23 AND 29))
+                            AND s.fkBatch = " . $Batch->getPkBatch() ."
                         ORDER BY p.pkParameter");
-                    $elements = $query->getResult();
+                    $errors = $query->getResult();
 
-                    if(count($elements) > 0)
+                    $message = array();
+                    if(!is_null($Batch->getFkParameter()))
                     {
-                        $tr1 = $tr2 = "";
-                        foreach ($elements as $sampleBatch)
-                        {
-                            $row1 = $row2 = "";
-                            $isTable2 = false;
-                            foreach ($sampleBatch as $key => $value)
-                            {
-                                if($key == "acquisitionDate")
-                                {
-                                    $value = $value->format('d.m.Y H:i:s');
-                                }
-                                if($isTable2 || $key == "sample2")
-                                {
-                                    $row2 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
-                                    $isTable2 = true;
-                                }
-                                else
-                                {
-                                    $row1 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
-                                }
-                            }
-                            $tr1 .= sprintf("<tr>%s</tr>", $row1);
-                            $tr2 .= sprintf("<tr>%s</tr>", $row2);
-                        }
-
-                        $query = $this->getEntityManager()->createQuery("
-                            SELECT DISTINCT(p.pkParameter) as pkParameter, p.messageError
-                            FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
-                            WHERE s.pkSampleBatch = e.fkSampleBatch
-                                AND e.fkParameter = p.pkParameter
-                                AND s.fkBatch = " . $Batch->getPkBatch() ."
-                            ORDER BY p.pkParameter");
-                        $errors = $query->getResult();
-
-                        $message = array();
-                        if(!is_null($Batch->getFkParameter()))
-                        {
-                            $message[$Batch->getFkParameter()->getPkParameter()] = $Batch->getFkParameter()->getMessageError();
-                        }
-                        foreach ($errors as $data)
-                        {
-                            $message[$data['pkParameter']] = $data['messageError'];
-                        }
-                        ksort($message);
-
-                        $properties = array(
-                            "batch"     => $Batch,
-                            "tr1"       => $tr1,
-                            "tr2"       => $tr2,
-                            "errors"    => implode("<br>", $message)
-                        );
-                        $page .= $this->render('alae/report/r2page', $properties);
+                        $message[$Batch->getFkParameter()->getPkParameter()] = $Batch->getFkParameter()->getMessageError();
                     }
+                    foreach ($errors as $data)
+                    {
+                        $message[$data['pkParameter']] = $data['messageError'];
+                    }
+                    ksort($message);
+
+                    $properties = array(
+                        "batch"     => $Batch,
+                        "tr1"       => $tr1,
+                        "tr2"       => $tr2,
+                        "errors"    => implode("<br>", $message)
+                    );
+                    $page .= $this->render('alae/report/r2page', $properties);
+                }
+                else
+                {
+                    return $this->redirect()->toRoute('report', array(
+                        'controller' => 'report',
+                        'action'     => 'index',
+                        'id'         => 1
+                    ));
                 }
             }
             else
@@ -248,6 +264,7 @@ class ReportController extends BaseController
                         FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
                         WHERE s.pkSampleBatch = e.fkSampleBatch
                             AND e.fkParameter = p.pkParameter
+                            AND ((p.pkParameter BETWEEN 1 AND 8) OR (p.pkParameter BETWEEN 23 AND 29))
                             AND s.fkBatch = " . $Batch->getPkBatch());
                     $elements = $query->getResult();
 
@@ -351,11 +368,12 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
-                "fkAnalyte" => $request->getQuery('an'),
-                "fkStudy"   => $request->getQuery('id'),
-                "validFlag" => true
-            ));
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch = $query->getResult();
 
             if (count($batch) > 0)
             {
@@ -383,11 +401,12 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
-                "fkAnalyte" => $request->getQuery('an'),
-                "fkStudy"   => $request->getQuery('id'),
-                "validFlag" => true
-            ));
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch = $query->getResult();
 
             if(count($batch) > 0)
             {
@@ -473,11 +492,12 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
-                "fkAnalyte" => $request->getQuery('an'),
-                "fkStudy"   => $request->getQuery('id'),
-                "validFlag" => true
-            ));
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch = $query->getResult();
 
             if(count($batch) > 0)
             {
@@ -488,7 +508,7 @@ class ReportController extends BaseController
 
                     $qb = $this->getEntityManager()->createQueryBuilder();
                     $qb
-                        ->select('s.calculatedConcentration', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
+                        ->select('s.accuracy', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
                         ->from('Alae\Entity\SampleBatch', 's')
                         ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
                         ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
@@ -504,7 +524,7 @@ class ReportController extends BaseController
                         $counter = 0;
                         foreach ($elements as $temp)
                         {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
+                            $value                                                          = number_format($temp["accuracy"], 2, ',', '');
                             $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $temp["codeError"]);
                             $Concentration[$temp["sampleName"]][]                           = $value;
                             $counter++;
@@ -519,7 +539,7 @@ class ReportController extends BaseController
                 }
 
                 $query    = $this->getEntityManager()->createQuery("
-                    SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                    SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.accuracy) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
                     WHERE s.sampleName LIKE 'CS%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
@@ -563,11 +583,12 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
-                "fkAnalyte" => $request->getQuery('an'),
-                "fkStudy"   => $request->getQuery('id'),
-                "validFlag" => true
-            ));
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch = $query->getResult();
 
             if(count($batch) > 0)
             {
@@ -581,7 +602,7 @@ class ReportController extends BaseController
                         ->from('Alae\Entity\SampleBatch', 's')
                         ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
                         ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
-                        ->where("s.sampleName LIKE 'QC%' AND s.fkBatch = " . $Batch->getPkBatch())
+                        ->where("s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND s.fkBatch = " . $Batch->getPkBatch())
                         ->groupBy('s.pkSampleBatch')
                         ->orderBy('s.sampleName', 'ASC');
                     $elements = $qb->getQuery()->getResult();
@@ -610,7 +631,7 @@ class ReportController extends BaseController
                 $query    = $this->getEntityManager()->createQuery("
                     SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'QC%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
                 $elements = $query->getResult();
@@ -654,11 +675,12 @@ class ReportController extends BaseController
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $batch = $this->getRepository("\\Alae\\Entity\\Batch")->findBy(array(
-                "fkAnalyte" => $request->getQuery('an'),
-                "fkStudy"   => $request->getQuery('id'),
-                "validFlag" => true
-            ));
+            $query = $this->getEntityManager()->createQuery("
+                SELECT b
+                FROM Alae\Entity\Batch b
+                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
+                ORDER BY b.fileName ASC");
+            $batch = $query->getResult();
 
             if(count($batch) > 0)
             {
