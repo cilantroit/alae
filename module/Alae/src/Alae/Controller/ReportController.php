@@ -144,7 +144,7 @@ class ReportController extends BaseController
             {
                 $qb = $this->getEntityManager()->createQueryBuilder();
                 $qb
-                    ->select('s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea, s.isPeakArea, s.areaRatio, s.analyteConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
+                    ->select('s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea, s.isPeakArea, s.areaRatio, s.analyteConcentration, s.calculatedConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
                     s.sampleName as sample2, s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
                     GROUP_CONCAT(DISTINCT p.codeError) as codeError,
                     GROUP_CONCAT(DISTINCT p.messageError) as messageError')
@@ -169,14 +169,26 @@ class ReportController extends BaseController
                             {
                                 $value = $value->format('d.m.Y H:i:s');
                             }
+                        	if($key == "dilutionFactor")
+                            {
+                            
+                                $value = number_format($value,2,'.','');
+                                
+                            }
+                        if($key == "calculatedConcentration")
+                            {
+                            
+                                $value = number_format($value,2,'.','');
+                                
+                            }
                             if($isTable2 || $key == "sample2")
                             {
-                                $row2 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
+                                $row2 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:13px;padding:4px">%s</td>', $value);
                                 $isTable2 = true;
                             }
                             else
                             {
-                                $row1 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:11px;padding:4px">%s</td>', $value);
+                                $row1 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:13px;padding:4px">%s</td>', $value);
                             }
                         }
                         $tr1 .= sprintf("<tr>%s</tr>", $row1);
@@ -432,7 +444,7 @@ class ReportController extends BaseController
                         $counter = 0;
                         foreach ($elements as $temp)
                         {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
+                            $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
                             $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $temp["codeError"]);
                             $Concentration[$temp["sampleName"]][]                           = $value;
                             $counter++;
@@ -458,8 +470,8 @@ class ReportController extends BaseController
                 {
                     $calculations[] = array(
                         "count"  => $element['counter'],
-                        "sum"    => number_format($element['suma'], 2, ',', ''),
-                        "prom"   => number_format($element['promedio'], 2, ',', ''),
+                        "sum"    => number_format($element['suma'], 2, '.', ''),
+                        "prom"   => number_format($element['promedio'], 3, '.', ''),
                         "values" => implode(";", $Concentration[$element['sampleName']])
                     );
                 }
@@ -524,7 +536,7 @@ class ReportController extends BaseController
                         $counter = 0;
                         foreach ($elements as $temp)
                         {
-                            $value                                                          = number_format($temp["accuracy"], 2, ',', '');
+                            $value                                                          = number_format($temp["accuracy"], 2, '.', '');
                             $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $temp["codeError"]);
                             $Concentration[$temp["sampleName"]][]                           = $value;
                             $counter++;
@@ -551,7 +563,7 @@ class ReportController extends BaseController
                 {
                     $calculations[] = array(
                         "count" => $element['counter'],
-                        "prom"  => number_format($element['promedio'], 2, ',', '')
+                        "prom"  => number_format($element['promedio'], 2, '.', '')
                     );
                 }
                 $properties = array(
@@ -614,8 +626,8 @@ class ReportController extends BaseController
                         $counter = 0;
                         foreach ($elements as $temp)
                         {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
-                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, ',', ''), $temp['codeError']);
+                            $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
+                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, '.', ''), $temp['codeError']);
                             $Concentration[$temp["sampleName"]][]                           = $value;
                             $counter++;
                         }
@@ -641,8 +653,8 @@ class ReportController extends BaseController
                 {
                     $calculations[] = array(
                         "count"  => $element['counter'],
-                        "prom"   => number_format($element['promedio'], 2, ',', ''),
-                        "accu"   => number_format($element['accuracy'], 2, ',', ''),
+                        "prom"   => number_format($element['promedio'], 4, '.', ''),
+                        "accu"   => number_format($element['accuracy'], 4, '.', ''),
                         "values" => implode(";", $Concentration[$element['sampleName']])
                     );
                 }

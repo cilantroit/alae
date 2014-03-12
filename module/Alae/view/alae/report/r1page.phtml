@@ -1,26 +1,35 @@
 <nobreak>
 <div>
-    <h3>INFORMACIÓN GENERAL DE UN ESTUDIO</h3>
-    <table border="0" cellspacing="0" cellpadding="0"  style="padding:50px; width:100%;background-color:#fff;margin-top:10px;text-aling:center">
+
+<table border="0" cellspacing="0" cellpadding="0"  style="padding:50px; width:100%;background-color:#fff;text-aling:center; font-size:20px;">
+<tr>
+<td>
+<strong>INFORMACIÓN GENERAL DE UN ESTUDIO</strong>
+</td>
+</tr>
+</table>
+    
+    <table border="0" cellspacing="0" cellpadding="0" style="padding:50px; width:100%;background-color:#fff;margin-top:10px;text-aling:center">
+
         <tr>
             <td  colspan="2" align="center" height="20" bgcolor="#252525" style="width:10%;color:#fff;text-aling:justify;">
                 <strong>Código del Estudio</strong>
             </td>
-            <td   align="center" height="20" bgcolor="#FFFF99" style="border: black 1px solid;">
+            <td   align="center" height="20" style="border: black 1px solid;">
                 <?php echo $study->getCode(); ?>
             </td>
             <td width="20" ></td>
             <td  colspan="2" align="center" height="20" bgcolor="#252525" style="width:10%;color:#fff; border: black 1px solid;">
                 <strong>Nº de Analitos</strong>
             </td>
-            <td   align="center"  height="20" bgcolor="#FFFF99" style="width:10%;border: black 1px solid;">
+            <td   align="center"  height="20" style="width:10%;border: black 1px solid;">
                 <?php echo $counterAnalyte; ?>
             </td>
             <td width="20" ></td>
             <td   align="center" height="20" bgcolor="#000000" style="width:10%;color:#fff; border: black 1px solid;">
                 <strong>Arbol de Diluciónn Nº</strong>
             </td>
-            <td  align="center" height="20" bgcolor="#FFFF99" style="width:10%;border: black 1px solid;">
+            <td  align="center" height="20" style="width:10%;border: black 1px solid;">
                 <?php echo $study->getFkDilutionTree(); ?>
             </td>
         </tr>
@@ -47,26 +56,27 @@
         </tr>
         <?php $count = 1; foreach ($analytes as $anaStudy) : ?>
         <tr>
-            <td  align="center"  width ="100" bgcolor="#F1DADA" style="color:#000000;padding:5px;border: black 1px solid;font-size:11px;">
+            <td  align="center"  width ="100" style="color:#000000;padding:5px;border: black 1px solid;font-size:11px;">
                 <?php echo $count; ?>
             </td>
-            <td  align="center" width ="100"  bgcolor="#FFFF99" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"   style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getFkAnalyte()->getName(); ?>
             </td>
-            <td  align="center" width ="100" bgcolor="#FFFF99" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getFkAnalyte()->getShortening(); ?>
             </td>
             <td  align="center" width ="100" bgcolor="#FFFFFF" style="color:#FFFFFF;font-size:11px;"></td>
-            <td  align="center" width ="100" bgcolor="#FFFF99" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getFkAnalyteIs()->getName(); ?>
             </td>
-            <td  align="center" width ="100" bgcolor="#FFFF99" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getFkAnalyteIs()->getShortening(); ?>
             </td>
-            <td  align="center" width ="100" bgcolor="#FFFF99" style="color:#000000;border: black 1px solid;font-size:11px;">
-                <?php echo $anaStudy->getInternalStandard(); ?>
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
+                <?php echo number_format($anaStudy->getInternalStandard(),2,'.',''); ?>
+                
             </td>
-            <td  align="center" width ="100" bgcolor="#FFFF99" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getIsUsed() ? "S" : "N"; ?>
             </td>
         </tr>
@@ -101,11 +111,11 @@
         </tr>
         <?php for($i = 0; $i < $anaStudy->getCsNumber(); $i++) : ?>
         <tr>
-            <td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
                 CS<?php echo $i + 1; ?>
             </td>
             <?php foreach ($cs_values as $key => $value) : ?>
-            <td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $cs_values[$key][$i]; ?>
             </td>
             <?php endforeach; ?>
@@ -141,32 +151,32 @@
         </tr>
         <?php for($i = 0; $i < $anaStudy->getQcNumber(); $i++) : ?>
         <tr>
-            <td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
                 QC<?php echo $i + 1; ?>
             </td>
             <?php foreach ($qc_values as $key => $value) : ?>
-            <td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100" style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $qc_values[$key][$i]; ?>
             </td>
             <?php endforeach; ?>
         </tr>
         <?php endfor; ?>
         <tr>
-            <td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
                 LDQC
             </td>
             <?php foreach ($analytes as $anaStudy) : ?>
-            <td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getLdqcValues(); ?>
             </td>
             <?php endforeach; ?>
         </tr>
         <tr>
-            <td  align="center" width ="100" bgcolor="#F1DADA" colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100"  colspan="3" style="color:#000000;border: black 1px solid;font-size:11px;">
                 HDQC
             </td>
             <?php foreach ($analytes as $anaStudy) : ?>
-            <td  align="center" width ="100" bgcolor="#B7CCE3" style="color:#000000;border: black 1px solid;font-size:11px;">
+            <td  align="center" width ="100" style="color:#000000;border: black 1px solid;font-size:11px;">
                 <?php echo $anaStudy->getHdqcValues(); ?>
             </td>
             <?php endforeach; ?>
@@ -178,7 +188,7 @@
             <td   height=20  height="20" bgcolor="#000000" style="color:#ffffff;font-size:11px;padding:10px">
                 <strong>Elaboración</strong>
             </td>
-            <td   height=20  height="20" bgcolor="#000000" style="color:#ffffff;font-size:11px;padding:10px">
+            <td   height=20  height="20"  style="color:#000000;font-size:11px;padding:10px">
                 (<?php echo $study->getFkUser()->getUsername(); ?>)
             </td>
         </tr>

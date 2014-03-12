@@ -58,19 +58,19 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
             </tr>
             <?php $count = 0; foreach($batch as $Batch) : ?>
             <tr>
-                <td align="center"  height="20px" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
+                <td align="center"  height="20px"  style="color:#000; border: black 1px solid;font-size:11px;padding:4px">
                     '<?php
                     list($name, $aux) = explode("_", $Batch->getFileName());
                     echo $name;
                     ?>
                 </td>
-                <td  align="center"   bgcolor="#B7CCE3" style=" border: black 1px solid;font-size:11px;padding:4px">
-                    <?php echo $Batch->getSlope(); ?>
+                <td  align="center"    style=" border: black 1px solid;font-size:11px;padding:4px">
+                    <?php echo Alae\Service\Helper::getformatDecimal($Batch->getSlope()); ?>
                 </td>
-                <td  align="center"   bgcolor="#B7CCE3"  style=" border: black 1px solid;font-size:11px;padding:4px">
-                    <?php echo $Batch->getIntercept(); ?>
+                <td  align="center"     style=" border: black 1px solid;font-size:11px;padding:4px">
+                    <?php echo Alae\Service\Helper::getformatDecimal($Batch->getIntercept()); ?>
                 </td>
-                <td  align="center"   bgcolor="#B7CCE3" style="border: black 1px solid;;font-size:11px;padding:4px">
+                <td  align="center"    style="border: black 1px solid;;font-size:11px;padding:4px">
                     <?php echo $Batch->getCorrelationCoefficient(); ?>
                 </td>
             </tr>
@@ -98,9 +98,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
             <tr>
                 <td colspan="4" align="right" style="padding: 10px;">Fecha y hora de impresión: <?php echo date("d.m.Y H:i:s"); ?></td>
             </tr>
-            <tr>
-                <td colspan="4" align="right" style="padding: 10px;">Página: <?php echo "1"; ?> de <?php echo "1"; ?></td>
-            </tr>
+            
         </table>
     </body>
 </html>

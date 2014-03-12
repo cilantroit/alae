@@ -67,15 +67,15 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         <?php endfor; ?>
 		    </tr>
 		    <tr><
-			<td  align="center"  colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
+			<td  align="center"  colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
 			<?php foreach ($qc_values as $key => $value) : ?>
-                        <td  align="center"   colspan="4" bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
+                        <td  align="center"   colspan="4"  style=" border: black 1px solid;padding:2px">
                             <?php echo number_format($value, 2, ',', ''); ?>
                         </td>
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
-			<td  align="center"  bgcolor="#B7CCE3" colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
+			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
 			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
 			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">% Nominal</td>
 			<td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">Conc Found</td>
@@ -87,33 +87,33 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
 		    </tr>
                     <?php foreach($list as $list) : ?>
 		    <tr>
-                        <td  align="center"  bgcolor="#B7CCE3" colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                        <td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong>'<?php echo $list['name']; ?></strong>
                         </td>
                         <?php foreach ($list['par'] as $key => $value) : ?>
-                        <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
+                        <td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[2] != "" && $value[2] != "O") ? "NRV" : $value[0]; ?>
                         </td>
-                        <td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
+                        <td  align="center"   style=" border: black 1px solid;padding:2px">
                             <?php echo $value[1]; ?>
                         </td>
-                        <td  align="center"   bgcolor="#FAD3B3"    style=" border: black 1px solid;padding:2px">
+                        <td  align="center"      style=" border: black 1px solid;padding:2px">
                             <?php echo $value[2]; ?>
                         </td>
                         <?php endforeach; ?>
 		    </tr>
                     <tr>
-                        <td  align="center"  bgcolor="#B7CCE3" colspan="2" bgcolor="#B7CCE3" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                        <td  align="center"   colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong></strong>
                         </td>
 			<?php foreach ($list['impar'] as $key => $value) : ?>
-                        <td  align="center"  bgcolor="#B7CCE3" colspan="2"  style=" border: black 1px solid;padding:2px">
+                        <td  align="center"  colspan="2"  style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[2] != "" && $value[2] != "0") ? "NRV" : $value[0]; ?>
                         </td>
-                        <td  align="center"  bgcolor="#B7CCE3" style=" border: black 1px solid;padding:2px">
+                        <td  align="center"   style=" border: black 1px solid;padding:2px">
                             <?php echo $value[1]; ?>
                         </td>
-                        <td  align="center"   bgcolor="#FAD3B3" style=" border: black 1px solid;padding:2px">
+                        <td  align="center"    style=" border: black 1px solid;padding:2px">
                             <?php echo $value[2]; ?>
                         </td>
                         <?php endforeach; ?>
@@ -129,10 +129,10 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                             <strong>N</strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             <?php echo $calculation['count']; ?>
                         </td>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             <?php echo $calculation['count']; ?>
                         </td>
                         <?php endforeach; ?>
@@ -142,10 +142,10 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                             <strong>Mean</strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td style= "mso-number-format:'#,##0.00';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             <?php echo $calculation['prom']; ?>
                         </td>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             <?php echo $calculation['accu']; ?>
                         </td>
                         <?php endforeach; ?>
@@ -155,23 +155,23 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                             <strong>SD (±) </strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td style= "mso-number-format:'#,##0.0000';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             =DESVEST(<?php echo $calculation['values']; ?>)
                         </td>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
 
                         </td>
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
-			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+			<td style ="mso-number-format:'#,##0.00';" align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong>CV (%)</strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td style= "mso-number-format:'#,##0.00';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             =DESVEST(<?php echo $calculation['values']; ?>)/PROMEDIO(<?php echo $calculation['values']; ?>)
                         </td>
-                        <td  align="center"  bgcolor="#D9EDF2" colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
 
                         </td>
                         <?php endforeach; ?>

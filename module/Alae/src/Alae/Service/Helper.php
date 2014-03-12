@@ -50,7 +50,32 @@ class Helper
 
         return false;
     }
-
+    
+    public static function getformatDecimal($value)
+    {
+	
+    	switch ($value)
+    	{
+    		case $value >= 0.1 && $value <= 0.9:
+    			$decimal = number_format($value, 3, '.', '');
+    			break;
+    		case $value >= 0.01 && $value <= 0.09:
+    			$decimal = number_format($value, 4, '.', '');
+    			break;
+    		case $value >= 0.001 && $value <= 0.009:
+    			$decimal = number_format($value, 5, '.', '');
+    			break;
+    		case $value >= 0.0001 && $value <= 0.0009:
+    			$decimal = number_format($value, 6, '.', '');
+    			break;
+    		case $value >= 0.00001 && $value <= 0.00009:
+    			$decimal = number_format($value, 7, '.', '');
+    			break;
+    		default:
+    			$decimal = $value;
+    	}
+		return $decimal;
+    }
 }
 
 ?>
