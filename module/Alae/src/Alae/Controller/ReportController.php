@@ -145,7 +145,7 @@ class ReportController extends BaseController
                 $qb = $this->getEntityManager()->createQueryBuilder();
                 $qb
                     ->select('s.sampleName, s.analytePeakName, s.sampleType, s.fileName, s.analytePeakArea, s.isPeakArea, s.areaRatio, s.analyteConcentration, s.calculatedConcentration, s.dilutionFactor, s.accuracy, s.useRecord,
-                    s.sampleName as sample2, s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
+                     s.acquisitionDate, s.analyteIntegrationType, s.isIntegrationType, s.recordModified,
                     GROUP_CONCAT(DISTINCT p.codeError) as codeError,
                     GROUP_CONCAT(DISTINCT p.messageError) as messageError')
                     ->from('Alae\Entity\SampleBatch', 's')
@@ -181,16 +181,88 @@ class ReportController extends BaseController
                                 $value = number_format($value,2,'.','');
                                 
                             }
-                            if($isTable2 || $key == "sample2")
+                            
+                        if($key == "analyteConcentration")
                             {
-                                $row2 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:13px;padding:4px">%s</td>', $value);
+                            
+                                $value = number_format($value,2,'.','');
+                                
+                            }
+                            
+                            /*if($isTable2 || $key == "sample2")
+                            {
+                            	if($key =="recordModified")
+                                {
+                                	//$row2 .= sprintf('<td style="text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                }
+                                else 
+                                {
+                                	//$row2 .= sprintf('<td align="center" style="width:40px;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                	
+                                }
                                 $isTable2 = true;
                             }
                             else
-                            {
-                                $row1 .= sprintf('<td align="center" style="border: black 1px solid;;font-size:13px;padding:4px">%s</td>', $value);
+                            {*/
+                            	switch ($key)
+						    	{
+						    		case "sampleName":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "analytePeakName":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "fileName":
+						    			$row1 .= sprintf('<td style="width:110px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		
+						    		case "analytePeakArea":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "isPeakArea":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "areaRatio":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "analyteConcentration":
+						    			$row1 .= sprintf('<td style="width:70px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "calculatedConcentration":
+						    			$row1 .= sprintf('<td style="width:70px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "dilutionFactor":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "accuracy":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "useRecord":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "recordModified":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "acquisitionDate":
+						    			$row1 .= sprintf('<td style="width:80px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "analyteIntegrationType":
+						    			$row1 .= sprintf('<td style="width:80px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "isIntegrationType":
+						    			$row1 .= sprintf('<td style="width:80px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		case "messageError":
+						    			$row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;
+						    		
+						    		default:
+						    			$row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    	}
+                            	
+                            	
                             }
-                        }
+                        //}
                         $tr1 .= sprintf("<tr>%s</tr>", $row1);
                         $tr2 .= sprintf("<tr>%s</tr>", $row2);
                     }
