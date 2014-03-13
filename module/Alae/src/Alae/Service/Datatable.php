@@ -34,7 +34,7 @@ class Datatable
         $this->_data          = $data;
         $this->_datatable     = $datatable;
         $this->_base_url      = \Alae\Service\Helper::getVarsConfig("base_url");
-        $this->_notFilterable = array("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at");
+        $this->_notFilterable = array("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at","filename", "sample_name", "accuracy", "use_record");
     }
 
     protected function getData()
@@ -224,11 +224,11 @@ class Datatable
                 array("key" => "accuracy", "label" => "Accuracy", "sortable" => true),
                 array("key" => "use_record", "label" => "Use Record", "sortable" => true),
                 array("key" => "reason", "label" => "Motivo del rechazo", "sortable" => false, "allowHTML" => true),
-                array("key" => "edit", "allowHTML" => true, "formatter" => '<input value="" type="submit"/>')
+                array("key" => "edit", "allowHTML" => true)
             )),
             "editable" => 0,
             "header"   => json_encode($header),
-            "filters"  => ""
+            "filters"  => $this->getFilters($header)
         );
     }
 
@@ -401,6 +401,9 @@ class Datatable
             case Datatable::DATATABLE_AUDIT_TRAIL:
 		$elements = '<span class="form-download-excel" onclick="excel(7);"></span>';
 		break;
+	    case Datatable::DATATABLE_SAMPLE_BATCH:
+                $elements = '<input value="" type="submit"/>';
+		break;
         }
 
         return $elements;
@@ -419,6 +422,9 @@ class Datatable
             case Datatable::DATATABLE_UNFILLED:
 		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
 		break;
+	    case Datatable::DATATABLE_SAMPLE_BATCH:
+                $elements = '<input value="" type="submit"/>';
+		break;		
             default :
                 $elements = "";
                 break;
