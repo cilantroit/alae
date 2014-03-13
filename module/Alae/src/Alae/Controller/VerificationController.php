@@ -388,7 +388,7 @@ class VerificationController extends BaseController
             $pkSampleBatch = array_keys(array_unique($replicated));
             $where = "s.pkSampleBatch NOT IN (" . implode(",", $pkSampleBatch) . ") AND s.sampleName LIKE '%R%' AND s.sampleName NOT LIKE '%\*%' AND s.fkBatch = " . $Batch->getPkBatch();
             $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V8"));
-            $this->error($where, $fkParameter[0], array(), false);
+            $this->error($where, $fkParameter[0], array(), true);
         }
     }
 
@@ -539,63 +539,63 @@ class VerificationController extends BaseController
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'CS%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'CS%' AND s.sampleName NOT LIKE  '%\*%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setCsTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE  '%\*%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setQcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'LDQC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'LDQC%' AND s.sampleName NOT LIKE  '%\*%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setLdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'HDQC%' AND s.sampleName NOT LIKE '%R%' AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'HDQC%' AND s.sampleName NOT LIKE  '%\*%' AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setHdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'CS%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'CS%' AND s.sampleName NOT LIKE  '%\*%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setCsAcceptedTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE  '%\*%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setQcAcceptedTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'LDQC%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'LDQC%' AND s.sampleName NOT LIKE  '%\*%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setLdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT COUNT(s.pkSampleBatch)
             FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE 'HDQC%' AND s.sampleName NOT LIKE '%R%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE s.sampleName LIKE 'HDQC%' AND s.sampleName NOT LIKE  '%\*%' AND s.validFlag <> 0 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setHdqcTotal($value);
 
         $query = $this->getEntityManager()->createQuery("
             SELECT AVG(s.isPeakArea)
             FROM Alae\Entity\SampleBatch s
-            WHERE (s.sampleName LIKE 'CS%' OR s.sampleName LIKE 'QC%') AND s.sampleName NOT LIKE '%R%' AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch());
+            WHERE (s.sampleName LIKE 'CS%' OR s.sampleName LIKE 'QC%') AND s.sampleName NOT LIKE  '%\*%' AND s.validFlag <> 0 AND s.useRecord = 1 AND s.fkBatch = " . $Batch->getPkBatch());
         $value = $query->getSingleScalarResult();
         $Batch->setIsCsQcAcceptedAvg($value);
 
@@ -819,8 +819,9 @@ class VerificationController extends BaseController
 
         if ($AnaStudy[0]->getIsUsed())
         {
-            $min = $Batch->getIsCsQcAcceptedAvg() - ($AnaStudy[0]->getInternalStandard() / 100);
-            $max = $Batch->getIsCsQcAcceptedAvg() + ($AnaStudy[0]->getInternalStandard() / 100);
+            $varIs = $Batch->getIsCsQcAcceptedAvg() * ($AnaStudy[0]->getInternalStandard() / 100);
+            $min   = $Batch->getIsCsQcAcceptedAvg() - $varIs;
+            $max   = $Batch->getIsCsQcAcceptedAvg() + $varIs;
 
             $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V22"));
             $where = "s.sampleType = 'Unknown' AND s.isPeakArea NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
