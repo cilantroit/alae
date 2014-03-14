@@ -1,59 +1,69 @@
 <page format="432x240" backcolor="#FFFFFF" style="font: arial;">
     <div class="table-container">
-        <table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:100px;">
-            <tr>
-                <td colspan="6">
+    	<table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:40px 40px 0px 40px;">
+    		<tr>
+    		<td colspan="4">
                     <h3>LISTADO DE MUESTRAS A REPETIR </h3>
                 </td>
             </tr>
             <tr>
-                <td  width="100px" align="left" height="30px" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;">
+                <td  height="30px" bgcolor="#000000" style="width:200px;border: black 1px solid;color:#FFF;">
                     Código del estudio:
                 </td>
-                <td width="100px" height="30px" style="border: black 1px solid;">
+                <td style="width:200px;border: black 1px solid;">
                     <?php echo $study; ?>
                 </td>
-                <td width="100px"> &nbsp;</td>
-                <td width="100px"> &nbsp;</td>
-                <td  width="100px" height="30px" bgcolor="#000000" style="border: black 1px solid;color:#F1DADA;">
+                
+                <td  height="30px" bgcolor="#000000" style="width:200px;border: black 1px solid;color:#F1DADA;">
                     Analito
                 </td>
-                <td  width="100px" align="center" height="30px" style="border: black 1px solid;">
+                <td  height="30px" style="width:190px;border: black 1px solid;">
                     <?php echo $analyte; ?>
                 </td>
             </tr>
+    	</table>
+        <table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:40px;">
             <tr>
-                <td colspan="6">&nbsp;</td>
-            </tr>
-            <tr>
-                <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding:4px;font-size:11px;">
+                <td height="20" style="width:90px;text-align:center;border: black 1px solid;padding:4px;font-size:14px;font-weight:bold;">
                     Identificación de la muestra
                 </td>
-                <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
-                    Tabla de resultados del lote
+                <td    height="20" style="width:100px;text-align:center;border: black 1px solid;padding: 4px;font-size:14px;font-weight:bold;">
+                    Código de error
                 </td>
-                <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+                <td    height="20" style="width:350px;text-align:center;border: black 1px solid;padding: 4px;font-size:14px;font-weight:bold;">
                     Motivo ( En caso de ser Rechazado )
                 </td>
+                <td   height="20" style="width:200px;text-align:center;border: black 1px solid;padding: 4px;font-size:14px;font-weight:bold;">
+                    Tabla de resultados del lote
+                </td>
+                
             </tr>
             <?php foreach ($list as $key => $value) : ?>
             <tr>
-                <td width="200px" colspan="2"  align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
+                <td    height="20" style="width:90px;text-align:left;border: black 1px solid;padding:4px;">
                     <?php echo $value['sampleName']; ?>
                 </td>
-                <td width="200px" colspan="2" align="left" height="20" bgcolor="#B7CCE3" style="border: black 1px solid;padding:4px;">
-                    <?php echo substr($value['filename'], 0, -4); ?>
+                <td    height="20" style="width:100px;text-align:center;border: black 1px solid;padding:4px;">
+                    <?php echo $value['codeError']; ?>
                 </td>
-                <td  width="200px" colspan="2" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
+                <td    height="20" style="width:350px;text-align:left;border: black 1px solid;padding:4px;">
                     <?php echo $value['messageError']; ?>
                 </td>
+                <td    height="20" style="width:200px;text-align:left;border: black 1px solid;padding:4px;">
+                    <?php echo substr($value['filename'], 0, -4); ?>
+                </td>
+                
             </tr>
             <?php endforeach; ?>
-            <tr>
-                <td align="right" width="300px" height="20" colspan="3">
+            
+        </table>
+        <table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:0px 40px 0px 40px;">
+        
+		<tr>
+                <td align="right" width="300px" height="20" >
                     Fecha y hora de impresión:
                 </td>
-                <td  align="left" width="300px" height="20"  colspan="3">
+                <td  align="left" width="300px" height="20">
                     <?php echo date("d.m.Y H:i"); ?>
                 </td>
             </tr>

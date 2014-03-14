@@ -238,10 +238,10 @@ class ReportController extends BaseController
 						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
 						    		break;
 						    		case "useRecord":
-						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    			$row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
 						    		break;
 						    		case "recordModified":
-						    			$row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    			$row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
 						    		break;
 						    		case "acquisitionDate":
 						    			$row1 .= sprintf('<td style="width:80px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
@@ -251,6 +251,9 @@ class ReportController extends BaseController
 						    		break;
 						    		case "isIntegrationType":
 						    			$row1 .= sprintf('<td style="width:80px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+						    		break;	
+						    		case "codeError":
+						    			$row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
 						    		break;
 						    		case "messageError":
 						    			$row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
@@ -408,7 +411,7 @@ class ReportController extends BaseController
                 foreach ($batch as $Batch)
                 {
                     $query = $this->getEntityManager()->createQuery("
-                        SELECT s.sampleName, GROUP_CONCAT(DISTINCT p.messageError) as messageError
+                        SELECT s.sampleName, GROUP_CONCAT(DISTINCT p.codeError) as codeError,GROUP_CONCAT(DISTINCT p.messageError) as messageError
                         FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
                         WHERE s.pkSampleBatch = e.fkSampleBatch
                             AND e.fkParameter = p.pkParameter
@@ -422,6 +425,7 @@ class ReportController extends BaseController
                     {
                         $message[] = array(
                             "sampleName"   => $SampleBatch['sampleName'],
+                        	"codeError" => str_replace(",", "<br>", $SampleBatch['codeError']),
                             "messageError" => str_replace(",", "<br>", $SampleBatch['messageError']),
                             "filename"     => $Batch->getFileName()
                         );
