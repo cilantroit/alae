@@ -138,23 +138,27 @@ class BatchController extends BaseController
                 WHERE b.fkAnalyte = " . $AnaStudy->getFkAnalyte()->getPkAnalyte() . " AND b.fkStudy = " . $AnaStudy->getFkStudy()->getPkStudy() . "
                 ORDER BY b.fileName ASC");
         $elements = $query->getResult();
-        
+
         foreach ($elements as $batch)
         {
-            $buttons = "";
+            $modify = $validation = "";
             if ($this->_getSession()->isAdministrador())
             {
-                $buttons = is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-validate"></span>aceptar</button>');
+                $modify = is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-validate"></span>aceptar</button>');
+            }
+            if($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio())
+            {
+                $validation = is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : "";
             }
 
             $data[] = array(
                 "batch"           => $batch->getSerial(),
                 "filename"        => $batch->getFileName(),
                 "create_at"       => $batch->getCreatedAt(),
-                "valid_flag"      => is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : "",
+                "valid_flag"      => $validation,
                 "validation_date" => $batch->getValidationDate(),
                 "result"          => is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? "VÁLIDO" : "NO VÁLIDO"),
-                "modify"          => $buttons,
+                "modify"          => $modify,
                 "accepted_flag"   => is_null($batch->getAcceptedFlag()) ? "" : ($batch->getAcceptedFlag() ? "S" : "N"),
                 "justification"   => is_null($batch->getJustification()) ? "" : $batch->getJustification()
             );
