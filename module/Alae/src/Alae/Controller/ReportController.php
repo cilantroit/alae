@@ -239,6 +239,7 @@ class ReportController extends BaseController
                                     $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "messageError":
+                                	$value = str_replace(",", "<br>", $value);
                                     $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
 
