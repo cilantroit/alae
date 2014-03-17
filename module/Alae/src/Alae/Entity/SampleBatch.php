@@ -156,6 +156,13 @@ class SampleBatch
     protected $validFlag = '1';
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_used", type="boolean", nullable=true)
+     */
+    protected $isUsed = '1';
+
+    /**
      * @var string
      *
      * @ORM\Column(name="code_error", type="string", length=50, nullable=true)
@@ -826,6 +833,16 @@ class SampleBatch
     public function setValidFlag($validFlag)
     {
         $this->validFlag = $validFlag;
+    }
+
+    public function getIsUsed()
+    {
+        return $this->isUsed;
+    }
+
+    public function setIsUsed($isUsed)
+    {
+        $this->isUsed = $isUsed;
     }
 
     public function getCodeError()

@@ -13,7 +13,7 @@
                 <td style="width:200px;border: black 1px solid;">
                     <?php echo $study; ?>
                 </td>
-                
+
                 <td  height="30px" bgcolor="#000000" style="width:200px;border: black 1px solid;color:#F1DADA;">
                     Analito
                 </td>
@@ -36,7 +36,7 @@
                 <td   height="20" style="width:200px;text-align:center;border: black 1px solid;padding: 4px;font-size:14px;font-weight:bold;">
                     Tabla de resultados del lote
                 </td>
-                
+
             </tr>
             <?php foreach ($list as $key => $value) : ?>
             <tr>
@@ -52,13 +52,13 @@
                 <td    height="20" style="width:200px;text-align:left;border: black 1px solid;padding:4px;">
                     <?php echo substr($value['filename'], 0, -4); ?>
                 </td>
-                
+
             </tr>
             <?php endforeach; ?>
-            
+
         </table>
         <table width="600px" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:0px 40px 0px 40px;">
-        
+
 		<tr>
                 <td align="right" width="300px" height="20" >
                     Fecha y hora de impresión:

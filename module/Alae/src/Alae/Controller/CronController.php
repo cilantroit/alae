@@ -122,13 +122,21 @@ class CronController extends BaseController
     private function insertBatch($fileName, $Study, $Analyte)
     {
         $data  = $this->getData(Helper::getVarsConfig("batch_directory") . "/" . $fileName, $Study, $Analyte);
-        $Batch = $this->saveBatch($fileName);
-        $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
 
-        if (!is_null($Analyte) && !is_null($Study))
+        if(count($data) > 0)
         {
-            $this->batchVerify($Batch, $Analyte, $fileName);
-            $this->updateBatch($Batch, $Analyte, $Study);
+            $Batch = $this->saveBatch($fileName);
+            $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
+
+            if (!is_null($Analyte) && !is_null($Study))
+            {
+                $this->batchVerify($Batch, $Analyte, $fileName);
+                $this->updateBatch($Batch, $Analyte, $Study);
+            }
+            else
+            {
+                $this->execute(\Alae\Service\Verification::updateBatch("b.pkBatch = " . $Batch->getPkBatch(), "V1"));
+            }
         }
         else
         {
@@ -153,7 +161,7 @@ class CronController extends BaseController
                 $this->_calculatedConcentrationUnits = preg_replace(array("/Calculated Concentration\s/", "/\(/", "/\)/"), "", $header);
             }
 
-            $newsHeaders[] = preg_replace('/\s\(([a-zA-Z]|\s|\/|%)+\)/i', '', $header);
+            $newsHeaders[] = preg_replace('/\s\(([a-zA-Z]|\s|\/|%)+\)/i', '', trim($header));
         }
         return $newsHeaders;
     }
@@ -342,7 +350,8 @@ class CronController extends BaseController
         $this->error($where, $fkParameter[0], array(), false);
 
         $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V3"));
-        $where = "s.fileName NOT LIKE '$pkBatch%' AND s.fkBatch = " . $Batch->getPkBatch();
+        $fileName = preg_replace("/(M|R)/", "", $pkBatch);
+        $where = "s.fileName NOT LIKE '$fileName%' AND s.fkBatch = " . $Batch->getPkBatch();
         $this->error($where, $fkParameter[0], array(), false);
     }
 

@@ -129,7 +129,7 @@
                 }
             }
         </script>
-        <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC()) : ?>
+        <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC() || $user->isLaboratorio()) : ?>
         <form id="datatable-form" class="" action="" method="POST">
             <h5>ANALITOS DEL ESTUDIO</h5>
             <div id="datatable" class="<?php echo ($study->getCloseFlag() || $study->getApprove()) ? "close" : ""; ?>"></div>

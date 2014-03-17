@@ -11,7 +11,7 @@ class Helper
 
     public static function getVarsConfig($var)
     {
-	if (is_null(self::$_varsConfig))
+        if (is_null(self::$_varsConfig))
 	{
 	    self::$_varsConfig = include 'module\Alae\config\vars.config.php';
 	}
@@ -50,10 +50,10 @@ class Helper
 
         return false;
     }
-    
+
     public static function getformatDecimal($value)
     {
-	
+
     	switch ($value)
     	{
     		case $value >= 0.1 && $value <= 0.9:

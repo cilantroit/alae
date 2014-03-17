@@ -34,7 +34,7 @@ class Datatable
         $this->_data          = $data;
         $this->_datatable     = $datatable;
         $this->_base_url      = \Alae\Service\Helper::getVarsConfig("base_url");
-        $this->_notFilterable = array("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at","filename", "sample_name", "accuracy", "use_record");
+        $this->_notFilterable = array("use", "valid_flag", "modify", "accepted_flag", "password", "profile", "audit_description", "created_at","reason");
     }
 
     protected function getData()
@@ -213,7 +213,7 @@ class Datatable
 
     protected function getSampleBatchColumns()
     {
-        $header = array("filename", "sample_name", "accuracy", "use_record");
+        $header = array("filename", "sample_name", "accuracy", "use_record","reason");
         $data   = $this->getData();
 
         return array(
@@ -424,7 +424,7 @@ class Datatable
 		break;
 	    case Datatable::DATATABLE_SAMPLE_BATCH:
                 $elements = '<input value="" type="submit"/>';
-		break;		
+		break;
             default :
                 $elements = "";
                 break;
