@@ -385,41 +385,45 @@ class ReportController extends BaseController
             ));
             $Analyte = $this->getRepository("\\Alae\\Entity\\Analyte")->find($request->getQuery('an'));
             $Study   = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
-
+			$AnalyteName = $Analyte->getName();
+            $studyName = $Study->getCode();
             if (count($batch) > 0)
             {
                 ini_set('max_execution_time', 9000);
                 $message = array();
                 foreach ($batch as $Batch)
                 {
-                    $query    = $this->getEntityManager()->createQuery("
-                        SELECT s.sampleName, GROUP_CONCAT(DISTINCT p.codeError) as codeError, GROUP_CONCAT(DISTINCT p.messageError) as messageError
-                        FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
-                        WHERE s.pkSampleBatch = e.fkSampleBatch
-                            AND e.fkParameter = p.pkParameter
-                            AND s.sampleType = 'Unknown'
-                            AND s.fkBatch = " . $Batch->getPkBatch() . "
-                        GROUP BY s.pkSampleBatch
-                        ORDER BY p.pkParameter");
-                    $elements = $query->getResult();
-
-                    foreach ($elements as $SampleBatch)
-                    {
-                        $message[] = array(
-                            "sampleName"   => $SampleBatch['sampleName'],
-                            "codeError"    => str_replace(",", "<br>", $SampleBatch['codeError']),
-                            "messageError" => str_replace(",", "<br>", $SampleBatch['messageError']),
+                	
+                $em = $this->getEntityManager();
+			    $db = $em->getConnection();
+			    $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
+			    $stmt->bindValue('pk_batch', $Batch->getPkBatch());
+			    
+			    $stmt->execute();
+			    
+			    while ($row = $stmt->fetch()) {
+			    	
+			        
+			        $message[] = array(
+                            "sampleName"   => $row['sample_name'],
+                            "codeError"    => str_replace(",", "<br>", $row['code_error']),
+                            "messageError" => str_replace(",", "<br>", $row['message_error']),
                             "filename"     => $Batch->getFileName()
                         );
-                    }
+			        
+			    }
+			    
+
                 }
 
+                
                 $viewModel = new ViewModel();
-                $viewModel->setTerminal(true);
+                $viewModel->setTerminal(true);                
                 $viewModel->setVariable('list', $message);
-                $viewModel->setVariable('analyte', $Analyte->getName());
-                $viewModel->setVariable('study', $Study->getCode());
+                $viewModel->setVariable('analyte', $AnalyteName);
+                $viewModel->setVariable('study', $studyName);
                 $viewModel->setVariable('filename', "listado_de_muestras_a_repetir" . date("Ymd-Hi"));
+                
                 return $viewModel;
             }
             else
