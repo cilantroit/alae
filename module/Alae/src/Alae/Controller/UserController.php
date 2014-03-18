@@ -117,6 +117,7 @@ class UserController extends BaseController
     public function adminAction()
     {
 	$users = $this->getRepository()->findAll();
+
 	$data = array();
 	foreach ($users as $user)
 	{
@@ -126,7 +127,7 @@ class UserController extends BaseController
 		"profile" => '<select class="form-datatable-profile" id="form-datatable-profile-' . $user->getPkUser() . '">' . $this->getProfileOptions($user->getFkProfile()->getPkProfile()) . '</select>',
 		"password" => ($user->isAdministrador() || $user->isDirectorEstudio()) ? '<button class="btn" type="button" onclick="sentpassword(' . $user->getPkUser() . ');"><span class="btn-mail"></span>enviar contraseña</button>' : '',
 		"status" => $user->getActiveFlag() ? "S" : "N",
-		"edit" => $user->getActiveFlag() ? '<span class="form-datatable-reject" onclick="reject(' . $user->getPkUser() . ');"></span>': '<span class="form-datatable-approve" onclick="approve(' . $user->getPkUser() . ')"></span>'
+		"edit" => $user->getActiveFlag() ? '<span class="form-datatable-change" onclick="javascript:changeProfile(' . $user->getPkUser() . ');"></span><span class="form-datatable-reject" onclick="reject(' . $user->getPkUser() . ');"></span>': '<span class="form-datatable-approve" onclick="approve(' . $user->getPkUser() . ')"></span>'
 	    );
 	}
 
@@ -164,6 +165,36 @@ class UserController extends BaseController
                     $this->render('alae/user/template_new_account_user',
                     array('email' => $User->getEmail(), 'user' => $User->getUsername())),
                     'Solicitud de Acceso a ALAE'
+                );
+            }
+            catch (Exception $e)
+            {
+                exit;
+            }
+	}
+
+        return new JsonModel();
+    }
+
+    public function changeAction()
+    {
+	$request = $this->getRequest();
+
+	if ($request->isGet() && $request->getQuery('profile') != "" && $request->getQuery('id') != "")
+	{
+            $Profile = $this->getRepository('\\Alae\\Entity\\Profile')->find($request->getQuery('profile'));
+            $User = $this->getRepository()->find($request->getQuery('id'));
+            try
+            {
+                $User->setFkProfile($Profile);
+                $this->getEntityManager()->persist($User);
+                $this->getEntityManager()->flush();
+                $this->transaction(
+                    "Cambio de perfil de acceso de usuario",
+                    sprintf('Se ha cambio el perfil de acceso del usuario %1$s',
+                        $User->getUsername()
+                    ),
+                    false
                 );
             }
             catch (Exception $e)
@@ -307,10 +338,10 @@ class UserController extends BaseController
 		$this->getEntityManager()->flush();
 		$mail = new \Alae\Service\Mailing();
 		$mail->send(
-			array($User[0]->getEmail()), 
+			array($User[0]->getEmail()),
 			$this->render('alae/user/template_reset_pass', array(
-				'active_code' => $User[0]->getActiveCode(), 
-				'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword', 
+				'active_code' => $User[0]->getActiveCode(),
+				'link' => \Alae\Service\Helper::getVarsConfig("base_url") . '/user/newpassword',
 				'username' => $User[0]->getUsername())),
 			'Reinicializar contraseña'
 		);

@@ -21,7 +21,7 @@
         var profile = '';
     </script>
     <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
-    <script>
+    <script type="text/javascript">
         function approve(id)
         {
             var profile = $("#profile").val();
@@ -91,6 +91,36 @@
             }
             else{
                 return false;
+            }
+        }
+
+        function changeProfile(id)
+        {
+            var profile = $("#profile").val();
+            if (profile === '')
+            {
+                alert("Debe cambiar el Nivel de acceso");
+            }
+            else
+            {
+                var answer = confirm("¿Desea cambiar el nivel de acceso?");
+                if (answer === true)
+                {
+                    $.ajax
+                    ({
+                        type: "GET",
+                        dataType: "json",
+                        url: basePath + "/user/change",
+                        data: {id: id, profile: profile},
+                        success: function(data)
+                        {
+                            location.reload();
+                        }
+                    });
+                }
+                else{
+                    return false;
+                }
             }
         }
     </script>
