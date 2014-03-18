@@ -146,7 +146,7 @@ class BatchController extends BaseController
             {
                 $modify = is_null($batch->getValidFlag()) ? "" : ($batch->getValidFlag() ? '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-reject"></span>rechazar</button>' : '<button class="btn" onclick="changeElement(this, ' . $batch->getPkBatch() . ');"><span class="btn-validate"></span>aceptar</button>');
             }
-            if($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio())
+            if($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio() || $this->_getSession()->isLaboratorio())
             {
                 $validation = is_null($batch->getValidFlag()) ? '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/verification/index/' . $batch->getPkBatch() . '" class="btn" type="button"><span class="btn-validate"></span>validar</a>' : "";
             }
