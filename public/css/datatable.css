@@ -84,10 +84,26 @@ div#datatable
     background:url(../img/del.png) no-repeat top left;
     float: left;
 }
+
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-change{
     height: 16px;
     width: 16px;
     background:url(../img/save.png) no-repeat top left;
+    float: left;
+}
+
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-save{
+   height: 16px;
+   width: 16px;
+   background:url(../img/save.png) no-repeat top left;
+   float: left;
+   border: 0 none;
+}
+
+#datatable table tbody tr .yui3-datatable-col-edit .form-datatable-change{
+    height: 16px;
+    width: 16px;
+    background:url(../img/edit.png) no-repeat top left;
     float: left;
 }
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-nominal{

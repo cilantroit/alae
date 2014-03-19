@@ -127,7 +127,7 @@ class UserController extends BaseController
 		"profile" => '<select class="form-datatable-profile" id="form-datatable-profile-' . $user->getPkUser() . '">' . $this->getProfileOptions($user->getFkProfile()->getPkProfile()) . '</select>',
 		"password" => ($user->isAdministrador() || $user->isDirectorEstudio()) ? '<button class="btn" type="button" onclick="sentpassword(' . $user->getPkUser() . ');"><span class="btn-mail"></span>enviar contraseña</button>' : '',
 		"status" => $user->getActiveFlag() ? "S" : "N",
-		"edit" => $user->getActiveFlag() ? '<span class="form-datatable-change" onclick="javascript:changeProfile(' . $user->getPkUser() . ');"></span><span class="form-datatable-reject" onclick="reject(' . $user->getPkUser() . ');"></span>': '<span class="form-datatable-approve" onclick="approve(' . $user->getPkUser() . ')"></span>'
+		"edit" => $user->getActiveFlag() ? '<span class="form-datatable-save" onclick="javascript:changeProfile(' . $user->getPkUser() . ');"></span><span class="form-datatable-reject" onclick="reject(' . $user->getPkUser() . ');"></span>': '<span class="form-datatable-approve" onclick="approve(' . $user->getPkUser() . ')"></span>'
 	    );
 	}
 
