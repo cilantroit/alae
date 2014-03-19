@@ -44,7 +44,7 @@
                     <li>
                         <label>CS<?php echo $i + 1; ?>*</label>
                         <?php $numberCE = isset($cs_number[$i]) ? $cs_number[$i] : ""; ?>
-                        <input type="text" value="<?php echo number_format($numberCE, 2, '.', ''); ?>" <?php echo $disabled; ?> name="cs_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
+                        <input type="text" value="<?php echo $numberCE; ?>" <?php echo $disabled; ?> name="cs_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -56,7 +56,7 @@
                         <?php 
                         $numberQC = isset($qc_number[$i]) ? $qc_number[$i] : "";
                         ?>
-                        <input type="text" value="<?php echo number_format($numberQC, 2, '.', ''); ?>" <?php echo $disabled; ?> name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
+                        <input type="text" value="<?php echo $numberQC; ?>" <?php echo $disabled; ?> name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -66,14 +66,14 @@
                     <?php 
                     	$numberLDQC = isset($ldqc_number) ? $ldqc_number : "";
                     ?>
-                    <input type="text" value="<?php echo number_format($numberLDQC, 2, '.', ''); ?>" <?php echo $disabled; ?> name="ldqc_number" class="nominalconcentration-form-number"/>
+                    <input type="text" value="<?php echo $ldqc_number; ?>" <?php echo $disabled; ?> name="ldqc_number" class="nominalconcentration-form-number"/>
                 </li>
                 <li>
                     <label>HDQC*</label>
                     <?php 
                     	$numberHDQC = isset($hdqc_number) ? $hdqc_number : "";
                     ?>
-                    <input type="text" value="<?php echo number_format($numberHDQC, 2, '.', ''); ?>" <?php echo $disabled; ?> name="hdqc_number" class="nominalconcentration-form-number"/>
+                    <input type="text" value="<?php echo $numberHDQC; ?>" <?php echo $disabled; ?> name="hdqc_number" class="nominalconcentration-form-number"/>
                 </li>
             </ul>
         </div>
