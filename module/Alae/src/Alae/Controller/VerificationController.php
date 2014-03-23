@@ -36,7 +36,6 @@ class VerificationController extends BaseController
                 $function = 'V' . $i;
                 $this->$function($Batch);
             }
-            //$this->V19($Batch);
 
             $response = $this->V12($Batch);
             if ($response)
@@ -58,25 +57,6 @@ class VerificationController extends BaseController
     {
         $request = $this->getRequest();
 
-        if ($request->isPost())
-        {
-            $Batch = $this->getRepository()->find($request->getPost('id'));
-            $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => $request->getPost('reason')));
-            if ($request->getPost('reason') == "V12.8")
-            {
-                $this->evaluation($Batch, false, $parameters[0]);
-            }
-
-            $where = "s.fkBatch = " . $Batch->getPkBatch() . " AND REGEXP(s.sampleName, :regexp) = 1 AND s.validFlag = 0 AND s.useRecord <> 0";
-            $this->error($where, $parameters[0], array('regexp' => '^(CS|QC|(L|H)?DQC)[0-9]+(-[0-9]+)?$'));
-            $this->V13_24($Batch);
-        }
-
-        if ($this->getEvent()->getRouteMatch()->getParam('id'))
-        {
-            $Batch = $this->getRepository()->find($this->getEvent()->getRouteMatch()->getParam('id'));
-        }
-
         $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V10.1"));
         $min1 = $parameters[0]->getMinValue();
         $max1 = $parameters[0]->getMaxValue();
@@ -92,6 +72,36 @@ class VerificationController extends BaseController
         $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V10.4"));
         $min4 = $parameters[0]->getMinValue();
         $max4 = $parameters[0]->getMaxValue();
+
+        if ($request->isPost())
+        {
+            $Batch = $this->getRepository()->find($request->getPost('id'));
+            $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => $request->getPost('reason')));
+            if ($request->getPost('reason') == "V12.8")
+            {
+                $this->evaluation($Batch, false, $parameters[0]);
+            }
+
+            $where = "s.fkBatch = " . $Batch->getPkBatch() . "
+                AND (
+                       (s.sampleName LIKE 'CS1%' AND s.accuracy NOT BETWEEN " . $min1  . " AND " . $max1 . " AND s.useRecord = 1)
+                    OR (REGEXP(s.sampleName, :regexp1) = 1 AND s.sampleName NOT LIKE 'CS1%' AND s.accuracy NOT BETWEEN " . $min2 . " AND " . $max2 . " AND s.useRecord = 1)
+                    OR (REGEXP(s.sampleName, :regexp2) = 1 AND s.accuracy NOT BETWEEN " . $min3 . " AND " . $max3 . " AND s.useRecord = 1)
+                    OR (REGEXP(s.sampleName, :regexp3) = 1 AND s.accuracy NOT BETWEEN " . $min4 . " AND " . $max4 . " AND s.useRecord = 1)
+                    OR (s.sampleName LIKE 'CS1%' AND s.accuracy BETWEEN " . $min1  . " AND " . $max1 . " AND s.useRecord = 0)
+                    OR (REGEXP(s.sampleName, :regexp1) = 1 AND s.sampleName NOT LIKE 'CS1%' AND s.accuracy BETWEEN " . $min2 . " AND " . $max2 . " AND s.useRecord = 0)
+                    OR (REGEXP(s.sampleName, :regexp2) = 1 AND s.accuracy BETWEEN " . $min3 . " AND " . $max3 . " AND s.useRecord = 0)
+                    OR (REGEXP(s.sampleName, :regexp3) = 1 AND s.accuracy BETWEEN " . $min4 . " AND " . $max4 . " AND s.useRecord = 0)
+                )";
+
+            $this->error($where, $parameters[0], array('regexp1' => '^CS[0-9]+(-[0-9]+)?$','regexp2' => '^QC[0-9]+(-[0-9]+)?$','regexp3' => '^((L|H)?DQC)[0-9]+(-[0-9]+)?$'), false);
+            $this->V13_24($Batch);
+        }
+
+        if ($this->getEvent()->getRouteMatch()->getParam('id'))
+        {
+            $Batch = $this->getRepository()->find($this->getEvent()->getRouteMatch()->getParam('id'));
+        }
 
         $query   = $this->getEntityManager()->createQuery("
             SELECT s.fileName, s.sampleName, s.accuracy, s.useRecord
@@ -291,6 +301,8 @@ class VerificationController extends BaseController
                         $cs_values[$i - 1]
                     );
 
+                    echo $value."<br>";
+
                     $where = "s.sampleName LIKE 'CS" . $i . "%' AND s.analyteConcentration <> " . $value . " AND s.fkBatch = " . $Batch->getPkBatch();
                     $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V5"));
                     $this->error($where, $fkParameter[0]);
@@ -306,13 +318,15 @@ class VerificationController extends BaseController
                         $Batch->getAnalyteConcentrationUnits(),
                         $qc_values[$i - 1]
                     );
-
+echo $value."<br>";
                     $where = "s.sampleName LIKE 'QC" . $i . "%' AND s.analyteConcentration <> " . $value . " AND s.fkBatch = " . $Batch->getPkBatch();
                     $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V5"));
                     $this->error($where, $fkParameter[0]);
                 }
             }
         }
+
+        
     }
 
     /**

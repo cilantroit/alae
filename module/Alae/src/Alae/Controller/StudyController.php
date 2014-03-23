@@ -370,6 +370,14 @@ class StudyController extends BaseController
             );
         }
 
+        $query = $this->getEntityManager()->createQuery("
+                SELECT COUNT(b.pkBatch)
+                FROM Alae\Entity\Batch b
+                WHERE
+                    b.validFlag IS NOT NULL AND
+                    b.fkStudy = " . $Study->getPkStudy());
+        $counter = $query->getSingleScalarResult();
+
         $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();
         $datatable = new Datatable($data, Datatable::DATATABLE_ANASTUDY, $this->_getSession()->getFkProfile()->getName());
@@ -379,6 +387,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('analytes', $Analyte);
         $viewModel->setVariable('units', $Unit);
         $viewModel->setVariable('user', $this->_getSession());
+        $viewModel->setVariable('isDuplicated', $counter > 0 ? true : false);
         $viewModel->setVariable('disabled', (($this->_getSession()->isAdministrador() && !$Study->getCloseFlag() && !$Study->getApprove()) ? "" : "disabled"));
         return $viewModel;
     }
@@ -414,33 +423,6 @@ class StudyController extends BaseController
                 }
             }
         }
-    }
-
-    protected function download()
-    {
-        $data     = array();
-        $data[]   = array("Código", "Descripción", "Fecha", "Nº Analitos", "Observaciones", "Cerrado (S/N)");
-        $elements = $this->getRepository()->findAll();
-
-        foreach ($elements as $study)
-        {
-            $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
-            $data[]         = array(
-                $study->getCode(),
-                $study->getDescription(),
-                $study->getCreatedAt(),
-                $counterAnalyte,
-                $study->getObservation(),
-                $study->getCloseFlag() ? "S" : "N"
-            );
-        }
-
-        return json_encode($data);
-    }
-
-    public function excelAction()
-    {
-        \Alae\Service\Download::excel("listado_de_estudios", $this->download());
     }
 
     public function approveAction()
@@ -482,11 +464,11 @@ class StudyController extends BaseController
     {
         $request = $this->getRequest();
 
-	if ($request->isGet() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()))
-	{
+        if ($request->isGet() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()))
+        {
             $Study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
 
-	    if ($Study && $Study->getPkStudy())
+            if ($Study && $Study->getPkStudy())
             {
                 try
                 {
@@ -507,29 +489,32 @@ class StudyController extends BaseController
                     exit;
                 }
             }
-	}
+        }
     }
 
     public function duplicateAction()
     {
-        if ($this->getEvent()->getRouteMatch()->getParam('id') && $this->_getSession()->isAdministrador())
-	{
-            $Study = $this->getRepository('\\Alae\\Entity\\Study')->find($this->getEvent()->getRouteMatch()->getParam('id'));
+        $request = $this->getRequest();
 
-	    if ($Study && $Study->getPkStudy())
+        if ($request->isGet() && $this->_getSession()->isAdministrador())
+        {
+            $Study = $this->getRepository('\\Alae\\Entity\\Study')->find($request->getQuery('id'));
+
+            if ($Study && $Study->getPkStudy())
             {
                 try
                 {
                     $User = $this->_getSession();
-                    $qb = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
-                            ->where('s.code like :code')
-                            ->setParameter('code', '%' . $Study->getCode() . '%');
-                    $studies = $qb->getQuery()->getResult();
+                    $query = $this->getEntityManager()->createQuery("
+                            SELECT COUNT(s.pkStudy)
+                            FROM Alae\Entity\Study s
+                            WHERE s.code LIKE  '%" . $Study->getCode() . "%'");
+                    $counter = $query->getSingleScalarResult();
 
                     $newStudy = new \Alae\Entity\Study();
                     $newStudy->setDescription($Study->getDescription());
                     $newStudy->setObservation($Study->getObservation());
-                    $newStudy->setCode($Study->getCode(). "R" .count($studies));
+                    $newStudy->setCode($Study->getCode(). "-" . str_pad($counter, 2, "0", STR_PAD_LEFT));
                     $newStudy->setCloseFlag(false);
                     $newStudy->setStatus(true);
                     $newStudy->setApprove(false);
@@ -557,6 +542,10 @@ class StudyController extends BaseController
                         $this->getEntityManager()->flush();
                     }
 
+                    $Study->setCloseFlag(true);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+
                     $this->transaction(
                         "Duplicar estudio",
                         sprintf('El usuario %1$s ha duplicado el estudio %2$s.<br>',
@@ -566,29 +555,14 @@ class StudyController extends BaseController
                         false
                     );
 
-                    return $this->redirect()->toRoute('study', array(
-                        'controller' => 'study',
-                        'action'     => 'index'
-                    ));
+                    return new JsonModel(array("status" => true));
                 }
                 catch (Exception $e)
                 {
                     exit;
                 }
             }
-	}
-        else{
-            $this->back($this->getEvent()->getRouteMatch()->getParam('id'));
         }
-    }
-
-    protected function back($pkStudy)
-    {
-        return $this->redirect()->toRoute('study', array(
-            'controller' => 'study',
-            'action'     => 'edit',
-            'id'         => $pkStudy
-        ));
     }
 
     /**
@@ -709,6 +683,15 @@ class StudyController extends BaseController
             );
         }
 
+        $query = $this->getEntityManager()->createQuery("
+                SELECT COUNT(b.pkBatch)
+                FROM Alae\Entity\Batch b
+                WHERE
+                    b.validFlag IS NOT NULL AND
+                    b.fkStudy = " . $AnaStudy->getFkStudy()->getPkStudy() . " AND
+                    b.fkAnalyte = " . $AnaStudy->getFkAnalyte()->getPkAnalyte());
+        $counter = $query->getSingleScalarResult();
+
         $viewModel = new ViewModel();
         $viewModel->setVariable('AnaStudy', $AnaStudy);
         $viewModel->setVariable('cs_number', explode(",", $AnaStudy->getCsValues()));
@@ -716,6 +699,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('ldqc_number', $AnaStudy->getLdqcValues());
         $viewModel->setVariable('hdqc_number', $AnaStudy->getHdqcValues());
         $viewModel->setVariable('User', $this->_getSession());
+        $viewModel->setVariable('isUnlock', $counter == 0 ? true : false);
         $viewModel->setVariable('disabled', (!$AnaStudy->getStatus() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) ? "" : "disabled"));
         return $viewModel;
     }

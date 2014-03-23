@@ -39,7 +39,7 @@
                 <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
                     <?php if(!$study->getApprove()) : ?>
                     <li>
-                        <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span>aprobar</button>
+                        <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> aprobar</button>
                     </li>
                     <?php endif; ?>
                     <?php if ($user->isAdministrador()) : ?>
@@ -49,11 +49,11 @@
                     </li>
                     <?php endif; ?>
                 <?php endif; ?>
-                <?php if($user->isAdministrador() && !$study->getDuplicate()) : ?>
+                <?php if($isDuplicated && $user->isAdministrador() && !$study->getCloseFlag()) : ?>
                 <li>
-                    <button class="btn" type="button" onclick="duplicate('<?php echo $this->basePath() ?>/study/duplicate/<?php echo $study->getPkStudy(); ?>', '¿Desea duplicar el estudio?')">
+                    <button class="btn" type="button" onclick="duplicate(<?php echo $study->getPkStudy(); ?>, '/study/duplicate/', '¿Desea duplicar el estudio?')">
                         <span class="btn-validate"></span>
-                        duplicar
+                         duplicar
                     </button>
                 </li>
                 <?php endif; ?>
@@ -97,12 +97,14 @@
                 }
             });
 
-            function duplicate(url, message)
+            function duplicate(id, url, message)
             {
                 answer = confirm(message);
                 if (answer === true)
                 {
-                    window.location = url;
+                    $( "#element_url" ).val(url);
+                    $( "#element_id" ).val(id);
+                    $( "#dialog-form" ).dialog( "open" );
                 }
             }
 

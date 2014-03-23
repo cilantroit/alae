@@ -32,16 +32,12 @@ class CronController extends BaseController
         $query = $this->getEntityManager()->createQuery("
                 SELECT COUNT(b.pkBatch)
                 FROM Alae\Entity\Batch b
-                WHERE b.fileName = '" . $fileName . "'");
+                WHERE b.fileName = '" . $fileName . "' AND b.fkStudy IS NOT NULL AND b.fkAnalyte IS NOT NULL");
         $count = $query->getSingleScalarResult();
 
         if ($count == 0)
         {
             return false;
-        }
-        else
-        {
-            $this->setErrorTransaction('Repeated batch', $fileName);
         }
 
         return true;
@@ -54,41 +50,31 @@ class CronController extends BaseController
         list($codeStudy, $shortening) = explode("_", $aux);
         $this->_Study   = $this->_Analyte = null;
 
-        $qb      = $this->getEntityManager()->getRepository("\\Alae\\Entity\\Study")->createQueryBuilder('s')
-                ->where('s.code like :code')
-                ->setParameter('code', '%' . substr($codeStudy, 0, 4));
-        $studies = $qb->getQuery()->getResult();
+        $query = $this->getEntityManager()->createQuery("
+                SELECT s
+                FROM Alae\Entity\Study s
+                WHERE s.code LIKE  '%" . substr($codeStudy, 0, 4) . "%' AND s.closeFlag = 0 AND s.approve = 1
+                ORDER BY s.code DESC")
+            ->setMaxResults(1);
+        $elements = $query->getResult();
 
-        if (count($studies) == 1 && $studies [0]->getCloseFlag() == false)
+        if (count($elements) > 0)
         {
-            $qb       = $this->getEntityManager()->createQueryBuilder()
-                    ->select("a")
+            foreach ($elements as $Study)
+            {
+                $qb = $this->getEntityManager()->createQueryBuilder()
+                    ->select("h")
                     ->from("Alae\Entity\AnalyteStudy", "h")
-                    ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $studies[0]->getPkStudy());
-            $analytes = $qb->getQuery()->getResult();
+                    ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $Study->getPkStudy());
+                $anaStudy = $qb->getQuery()->getResult();
 
-            if ($analytes)
-            {
-                $this->_Study   = $studies[0];
-                $this->_Analyte = $analytes[0];
-            }
-            else
-            {
-                $this->setErrorTransaction('The_analyte_is_not_associated_with_the_study', $shortening);
+                if (count($anaStudy) && $anaStudy[0]->getFkStudy()->getApprove())
+                {
+                    $this->_Study   = $Study;
+                    $this->_Analyte = $anaStudy[0]->getFkAnalyte();
+                }
             }
         }
-        else
-        {
-            $this->setErrorTransaction('The_lot_is_not_associated_with_a_registered_study', $fileName);
-        }
-    }
-
-    private function setErrorTransaction($msgError, $value)
-    {
-        $error                = Helper::getError($msgError);
-        $error['description'] = sprintf($error['description'], $value);
-        $this->transactionError($error, true);
-        $this->_error         = true;
     }
 
     public function readAction()

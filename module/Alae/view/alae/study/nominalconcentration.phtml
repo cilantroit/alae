@@ -11,15 +11,15 @@
             <h2><?php echo $AnaStudy->getFkStudy()->getCode(); ?></h2>
         </div>
         <div class="nominalconcentration-form-buttons">
+             <?php if ($User->isAdministrador() && !$isUnlock) : ?>
+            <blockquote class="peq">
+                Existen lotes validados con estas concentraciones nominales, si requiere modificaciones debe <strong>duplicar</strong> el estudio
+            </blockquote>
+            <?php endif; ?>
             <ul>
-                <?php if ($AnaStudy->getStatus() && $User->isAdministrador()) : ?>
+                <?php if ($AnaStudy->getStatus() && $User->isAdministrador() && $isUnlock) : ?>
                 <li>
                     <button class="btn" type="button" onclick="changeStatus('/study/unlock', <?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-reject"></span>desbloquear</button>
-                </li>
-                <?php endif; ?>
-                <?php if ($AnaStudy->getStatus()) : ?>
-                <li>
-                    <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $AnaStudy->getFkUserApprove()->getUsername(), $AnaStudy->getFkUserApprove()->getFkProfile()->getname(), $AnaStudy->getUpdatedAt()); ?></p>
                 </li>
                 <?php endif; ?>
                 <?php if(!$AnaStudy->getStatus() && ($User->isAdministrador() || $User->isDirectorEstudio())) : ?>
@@ -33,6 +33,9 @@
                     <?php endif; ?>
                 <?php endif; ?>
             </ul>
+            <?php if ($AnaStudy->getStatus()) : ?>
+                <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $AnaStudy->getFkUserApprove()->getUsername(), $AnaStudy->getFkUserApprove()->getFkProfile()->getname(), $AnaStudy->getUpdatedAt()); ?></p>
+            <?php endif; ?>
             <p>Arbol de Dilución: (1)</p>
         </div>
         <div style="display: none;"><ul id="errorBox"></ul></div>

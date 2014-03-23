@@ -99,9 +99,9 @@ class AnalyteController extends BaseController
                             SELECT COUNT(a.pkAnalyteStudy)
                             FROM Alae\Entity\AnalyteStudy a
                             WHERE a.fkAnalyte = " . $Analyte->getPkAnalyte() . " OR a.fkAnalyteIs = " . $Analyte->getPkAnalyte());
-                        $AnaStudy = $query->getSingleScalarResult();
+                        $counter = $query->getSingleScalarResult();
 
-                        if(count($AnaStudy) > 0)
+                        if($counter > 0)
                         {
                             $error .= sprintf('<li>El analito %s está asociado a un estudio<li>', $value);
                         }
@@ -145,20 +145,22 @@ class AnalyteController extends BaseController
         foreach ($elements as $analyte)
         {
             $query = $this->getEntityManager()->createQuery("
-                SELECT COUNT(s.pkAnalyteStudy)
-                FROM Alae\Entity\AnalyteStudy s
-                WHERE s.fkAnalyte = " . $analyte->getPkAnalyte());
+                SELECT COUNT(a.pkAnalyteStudy)
+                FROM Alae\Entity\AnalyteStudy a
+                WHERE a.fkAnalyte = " . $analyte->getPkAnalyte() . " OR a.fkAnalyteIs = " . $analyte->getPkAnalyte());
             $counter = $query->getSingleScalarResult();
 
             $buttons = "";
-            if(($this->_getSession()->isSustancias() || $this->_getSession()->isAdministrador()) && $counter == 0)
+            if($counter == 0)
             {
-                $buttons .= '<span class="form-datatable-change" onclick="changeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
-            }
-
-            if($this->_getSession()->isAdministrador() && $counter == 0)
-            {
-                $buttons .= '<span class="form-datatable-delete" onclick="removeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
+                if($this->_getSession()->isSustancias() || $this->_getSession()->isAdministrador())
+                {
+                    $buttons .= '<span class="form-datatable-change" onclick="changeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
+                }
+                if($this->_getSession()->isAdministrador())
+                {
+                    $buttons .= '<span class="form-datatable-delete" onclick="removeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
+                }
             }
 
             $data[] = array(
@@ -186,10 +188,13 @@ class AnalyteController extends BaseController
 
             if ($Analyte && $Analyte->getPkAnalyte())
             {
-                $query = $this->getEntityManager()->createQuery("SELECT COUNT(a.fkAnalyte) FROM \Alae\Entity\AnalyteStudy a WHERE a.fkAnalyte = " . $Analyte->getPkAnalyte());
-                $count = $query->getSingleScalarResult();
+                $query = $this->getEntityManager()->createQuery("
+                    SELECT COUNT(a.pkAnalyteStudy)
+                    FROM Alae\Entity\AnalyteStudy a
+                    WHERE a.fkAnalyte = " . $Analyte->getPkAnalyte() . " OR a.fkAnalyteIs = " . $Analyte->getPkAnalyte());
+                $counter = $query->getSingleScalarResult();
 
-                if ($count == 0)
+                if ($counter == 0)
                 {
                     try
                     {
@@ -215,29 +220,5 @@ class AnalyteController extends BaseController
                 }
             }
         }
-    }
-
-    protected function download()
-    {
-        $data   = array();
-        $data[] = array("Id", "Nombre Analito", "Abreviatura");
-        $elements = $this->getRepository()->findBy(array("status" => true));
-
-        foreach ($elements as $analyte)
-        {
-            $data[] = array($analyte->getPkAnalyte(), $analyte->getName(), $analyte->getShortening());
-        }
-
-        return json_encode($data);
-    }
-
-    public function excelAction()
-    {
-        \Alae\Service\Download::excel("listado_de_analitos", $this->download());
-    }
-
-    public function pdfAction()
-    {
-        \Alae\Service\Download::pdf("listado_de_analitos", $this->download());
     }
 }
