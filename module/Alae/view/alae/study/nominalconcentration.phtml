@@ -46,7 +46,8 @@
                 <?php for ($i = 0; $i < $AnaStudy->getCsNumber(); $i++) : ?>
                     <li>
                         <label>CS<?php echo $i + 1; ?>*</label>
-                        <input type="text" value="<?php echo isset($cs_number[$i]) ? $cs_number[$i] : ""; ?>" <?php echo $disabled; ?> name="cs_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
+                        <?php $numberCE = isset($cs_number[$i]) ? $cs_number[$i] : ""; ?>
+                        <input type="text" value="<?php echo $numberCE; ?>" <?php echo $disabled; ?> name="cs_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -55,18 +56,27 @@
                 <?php for ($i = 0; $i < $AnaStudy->getQcNumber(); $i++) : ?>
                     <li>
                         <label>QC<?php echo $i + 1; ?>*</label>
-                        <input type="text" value="<?php echo isset($qc_number[$i]) ? $qc_number[$i] : ""; ?>" <?php echo $disabled; ?> name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
+                        <?php 
+                        $numberQC = isset($qc_number[$i]) ? $qc_number[$i] : "";
+                        ?>
+                        <input type="text" value="<?php echo $numberQC; ?>" <?php echo $disabled; ?> name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
                     </li>
                 <?php endfor; ?>
             </ul>
             <ul>
                 <li>
                     <label>LDQC*</label>
-                    <input type="text" value="<?php echo isset($ldqc_number) ? $ldqc_number : ""; ?>" <?php echo $disabled; ?> name="ldqc_number" class="nominalconcentration-form-number"/>
+                    <?php 
+                    	$numberLDQC = isset($ldqc_number) ? $ldqc_number : "";
+                    ?>
+                    <input type="text" value="<?php echo $ldqc_number; ?>" <?php echo $disabled; ?> name="ldqc_number" class="nominalconcentration-form-number"/>
                 </li>
                 <li>
                     <label>HDQC*</label>
-                    <input type="text" value="<?php echo isset($hdqc_number) ? $hdqc_number : ""; ?>" <?php echo $disabled; ?> name="hdqc_number" class="nominalconcentration-form-number"/>
+                    <?php 
+                    	$numberHDQC = isset($hdqc_number) ? $hdqc_number : "";
+                    ?>
+                    <input type="text" value="<?php echo $numberHDQC; ?>" <?php echo $disabled; ?> name="hdqc_number" class="nominalconcentration-form-number"/>
                 </li>
             </ul>
         </div>

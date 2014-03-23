@@ -65,10 +65,12 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                     ?>
                 </td>
                 <td  align="center"    style=" border: black 1px solid;font-size:11px;padding:4px">
-                    <?php echo Alae\Service\Helper::getformatDecimal($Batch->getSlope()); ?>
+                    <?php echo number_format($Batch->getSlope(), 3, '.', '');
+                    //Alae\Service\Helper::getformatDecimal($Batch->getSlope()); ?>
                 </td>
                 <td  align="center"     style=" border: black 1px solid;font-size:11px;padding:4px">
-                    <?php echo Alae\Service\Helper::getformatDecimal($Batch->getIntercept()); ?>
+                    <?php echo number_format($Batch->getIntercept(), 3, '.', '');
+                    //Alae\Service\Helper::getformatDecimal($Batch->getIntercept()); ?>
                 </td>
                 <td  align="center"    style="border: black 1px solid;;font-size:11px;padding:4px">
                     <?php echo $Batch->getCorrelationCoefficient(); ?>

@@ -116,7 +116,7 @@
             </td>
             <?php foreach ($cs_values as $key => $value) : ?>
             <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
-                <?php echo $cs_values[$key][$i]; ?>
+                <?php echo number_format($cs_values[$key][$i], 2, '.', ''); ?>
             </td>
             <?php endforeach; ?>
         </tr>
@@ -156,7 +156,7 @@
             </td>
             <?php foreach ($qc_values as $key => $value) : ?>
             <td  align="center" width ="100" style="color:#000000;border: black 1px solid;font-size:11px;">
-                <?php echo $qc_values[$key][$i]; ?>
+                <?php echo number_format($qc_values[$key][$i], 2, '.', ''); ?>
             </td>
             <?php endforeach; ?>
         </tr>
@@ -167,7 +167,7 @@
             </td>
             <?php foreach ($analytes as $anaStudy) : ?>
             <td  align="center" width ="100"  style="color:#000000;border: black 1px solid;font-size:11px;">
-                <?php echo $anaStudy->getLdqcValues(); ?>
+                <?php echo number_format($anaStudy->getLdqcValues(), 2, '.', ''); ?>
             </td>
             <?php endforeach; ?>
         </tr>
@@ -177,7 +177,7 @@
             </td>
             <?php foreach ($analytes as $anaStudy) : ?>
             <td  align="center" width ="100" style="color:#000000;border: black 1px solid;font-size:11px;">
-                <?php echo $anaStudy->getHdqcValues(); ?>
+                <?php echo number_format($anaStudy->getHdqcValues(), 2, '.', ''); ?>
             </td>
             <?php endforeach; ?>
         </tr>

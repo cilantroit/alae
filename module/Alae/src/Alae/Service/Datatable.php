@@ -461,6 +461,9 @@ class Datatable
             case Datatable::DATATABLE_UNFILLED:
 		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';
 		break;
+	    case Datatable::DATATABLE_SAMPLE_BATCH:
+                $elements = '<input value="" type="submit"/>';
+		break;
             default :
                 $elements = "";
                 break;

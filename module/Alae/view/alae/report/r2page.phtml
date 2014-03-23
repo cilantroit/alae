@@ -29,9 +29,11 @@
             </td>
             <td    height="20"  align="left" style="font-size: 13px;">
                 m=
-            </td>
+            </td>            
             <td   align="left"  height="20">
-            <?php echo Alae\Service\Helper::getformatDecimal($batch->getSlope()); ?>                
+            
+            <?php echo number_format($batch->getSlope(), 3, '.', ''); 
+            //Alae\Service\Helper::getformatDecimal($batch->getSlope()); ?>                
             </td>
         </tr>
         <tr>
@@ -42,10 +44,11 @@
                 <?php echo $batch->getFileName(); ?>
             </td>
             <td   align="left" height="20"   style="font-size: 13px;font-weight: bold">
-                x=
+                b=
             </td>
             <td  align="left"  height="20">
-            <?php echo Alae\Service\Helper::getformatDecimal($batch->getIntercept()); ?>
+            <?php echo number_format($batch->getIntercept(), 3, '.', ''); 
+            //Alae\Service\Helper::getformatDecimal($batch->getIntercept()); ?>
             </td>
         </tr>	
         <tr>

@@ -780,8 +780,8 @@ class ReportController extends BaseController
                         $counter = 0;
                         foreach ($elements as $temp)
                         {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, ',', '');
-                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, ',', ''), $temp['codeError']);
+                            $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
+                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, '.', ''), $temp['codeError']);
                             $Concentration[$temp["sampleName"]][]                           = $value;
                             $counter++;
                         }
@@ -808,8 +808,8 @@ class ReportController extends BaseController
                     {
                         $calculations[] = array(
                             "count"  => $element['counter'],
-                            "prom"   => number_format($element['promedio'], 2, ',', ''),
-                            "accu"   => number_format($element['accuracy'], 2, ',', ''),
+                            "prom"   => number_format($element['promedio'], 2, '.', ''),
+                            "accu"   => number_format($element['accuracy'], 2, '.', ''),
                             "values" => implode(";", $Concentration[$element['sampleName']])
                         );
                     }
