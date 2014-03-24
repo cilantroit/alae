@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Description of VerificationController
+ * Modulo encargado de realizar las verificaciones a cada lote
+ * Verificaciones de 4 - 24
  *
  * @author Maria Quiroz
  */
@@ -301,8 +302,6 @@ class VerificationController extends BaseController
                         $cs_values[$i - 1]
                     );
 
-                    echo $value."<br>";
-
                     $where = "s.sampleName LIKE 'CS" . $i . "%' AND s.analyteConcentration <> " . $value . " AND s.fkBatch = " . $Batch->getPkBatch();
                     $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V5"));
                     $this->error($where, $fkParameter[0]);
@@ -318,7 +317,7 @@ class VerificationController extends BaseController
                         $Batch->getAnalyteConcentrationUnits(),
                         $qc_values[$i - 1]
                     );
-echo $value."<br>";
+
                     $where = "s.sampleName LIKE 'QC" . $i . "%' AND s.analyteConcentration <> " . $value . " AND s.fkBatch = " . $Batch->getPkBatch();
                     $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V5"));
                     $this->error($where, $fkParameter[0]);
