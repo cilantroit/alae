@@ -7,6 +7,13 @@
  * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
+ 
+  /**
+ * Modulo encargado del procesamiento de lotes.
+ * En este modulo se comprueban las 3 primeras verificaciones,
+ * además, se asigna cada lote al estudio y analito que corresponde
+ * @author Maria Quiroz
+ */
 
 namespace Alae\Controller;
 
@@ -27,6 +34,9 @@ class CronController extends BaseController
 
     }
 
+    /**
+     * Verificamos que el lote no se encuentre repetido.
+     */
     private function isRepeatedBatch($fileName)
     {
         $query = $this->getEntityManager()->createQuery("
@@ -43,6 +53,12 @@ class CronController extends BaseController
         return true;
     }
 
+    /**
+     * Realizamos la búsqueda del estudio y analito al cual pertenece el lote.
+     *      1.- Buscamos las coincidencias que tenga el nombre del fichero con los estudios que estén definidos
+     *      que no estén cerrados y que estén aprobados.
+     *      2.- Buscamos el analito (abreviatura), que este asociado al estudio
+     */
     private function validateFile($fileName)
     {
         $string         = substr($fileName, 0, -4);
@@ -77,6 +93,13 @@ class CronController extends BaseController
         }
     }
 
+    /**
+     * Leemos el fichero y hacemos las siguientes comprobaciones:
+     *      1.- Descartamos aquellos ficheros que estén repetidos
+     *      2.- Comprobamos que se cumpla la estructura del nombre del fichero
+     *      3.- Insertamos el lote (si el fichero cumple con los puntos 1 y 2, asignamos el lote al analito y
+     *      estudio que corresponde, de lo contrario, pasar a ser un lote sin asignar)
+     */
     public function readAction()
     {
         $files = scandir(Helper::getVarsConfig("batch_directory"), 1);
@@ -105,6 +128,10 @@ class CronController extends BaseController
         }
     }
 
+    /**
+     * Ingreso del lote:
+     *      NOTA: si el lote se asigna a un estudio y analito, comprobamos las verificaciones 2,3 
+     */
     private function insertBatch($fileName, $Study, $Analyte)
     {
         $data  = $this->getData(Helper::getVarsConfig("batch_directory") . "/" . $fileName, $Study, $Analyte);
@@ -152,6 +179,9 @@ class CronController extends BaseController
         return $newsHeaders;
     }
 
+    /**
+     * Leemos el fichero
+     */
     private function getData($filename)
     {
         $fp      = fopen($filename, "r");
