@@ -448,20 +448,18 @@ class ReportController extends BaseController
 	                            "filename"     => $Batch->getFileName()
 				        		
 	                        );
-				    $contador = $contador + 1;    
+				    
 				    }
 				    
                 }
 
-                $iniciopag = "33";
-                $ultimapag = $contador - 1;
+                
                 $viewModel = new ViewModel();
                 $viewModel->setTerminal(true);                
                 $viewModel->setVariable('list', $message);
                 $viewModel->setVariable('analyte', $AnalyteName);
                 $viewModel->setVariable('study', $studyName);
-                $viewModel->setVariable('iniciopag', $iniciopag);
-                $viewModel->setVariable('ultimapag', $ultimapag);
+                
                 $viewModel->setVariable('filename', "listado_de_muestras_a_repetir" . date("Ymd-Hi"));
                 
                 return $viewModel;
