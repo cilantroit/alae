@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Servicio encargado de hacer las conversiones necesarias en la evaluación de lotes analíticos
+ * @author Maria Quiroz
+ */
+
 namespace Alae\Service;
 
 class Conversion

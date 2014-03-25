@@ -1,7 +1,6 @@
 <?php
 /**
- * Description of BatchController
- *
+ * Modulo de gestión de lotes 
  * @author Maria Quiroz
  */
 

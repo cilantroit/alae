@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of ParameterControlller
+ * Modulo de gestión de los parámetros a usar en las Verificaciones
  *
  * @author Maria Quiroz
  */

@@ -7,6 +7,11 @@
  * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
+ 
+  /**
+ * Modulo de reportes del sistema
+ * @author Maria Quiroz
+ */
 
 namespace Alae\Controller;
 
@@ -100,6 +105,10 @@ class ReportController extends BaseController
         return $response ? $query->getSingleScalarResult() : 0;
     }
 
+    /**
+     * Información general del estudio
+     * $_GET['id'] = pkStudy
+     */
     public function r1Action()
     {
         $request = $this->getRequest();
@@ -133,6 +142,10 @@ class ReportController extends BaseController
         }
     }
 
+    /**
+     * Tabla contenedora de cada lote analitico
+     * $_GET['ba'] = pkBatch
+     */
     public function r2Action()
     {
         $request = $this->getRequest();
@@ -320,6 +333,11 @@ class ReportController extends BaseController
         return $viewModel;
     }
 
+    /**
+     * Resumen de lotes de un estudio
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r3Action()
     {
         $request = $this->getRequest();
@@ -386,6 +404,11 @@ class ReportController extends BaseController
         }
     }
 
+   /**
+     * Listado de muestras a repetir
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r4Action()
     {
         $request = $this->getRequest();
@@ -453,7 +476,12 @@ class ReportController extends BaseController
             }
         }
     }
-
+    
+   /**
+     * Summary of calibration curve parameter
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r5Action()
     {
         $request = $this->getRequest();
@@ -485,7 +513,12 @@ class ReportController extends BaseController
             }
         }
     }
-
+    
+   /**
+     * Calculo de las concentraciones de los CS (calculatedConcentration)
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r6Action()
     {
         $request = $this->getRequest();
@@ -577,6 +610,11 @@ class ReportController extends BaseController
         }
     }
 
+   /**
+     * Calculo de las concentraciones de los CS (accuracy)
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r7Action()
     {
         $request = $this->getRequest();
@@ -668,6 +706,11 @@ class ReportController extends BaseController
         }
     }
 
+   /**
+     * Calculo de las concentraciones de los QC
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r8Action()
     {
         $request = $this->getRequest();
@@ -760,6 +803,11 @@ class ReportController extends BaseController
         }
     }
 
+   /**
+     * Calculo de las concentraciones de los (L|H)DQC
+     * $_GET['id'] = pkStudy
+     * $_GET['an'] = pkAnalyte
+     */
     public function r9Action()
     {
         $request = $this->getRequest();

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Description of Datatable
+ * Servicio encargado de la configuración de tablas del sistema
  *
  * @author Maria Quiroz
  */
