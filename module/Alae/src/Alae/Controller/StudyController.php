@@ -7,6 +7,15 @@
  * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
+/**
+ * Modulo de gestión de estudios:
+ * 	1.- Creación y edición de estudios
+ * 	2.- Asignación de analitos para el estudio
+ * 	3.- Ingreso de concentraciones nominales
+ * 	4.- Aprobación, duplicación y cierre de estudios
+ * 	5.- Aprobación y desbloqueo de concentraciones nominales
+ * @author Maria Quiroz
+ */
 
 namespace Alae\Controller;
 
