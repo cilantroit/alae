@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author Maria Quiroz
+ */
+ 
 namespace Alae\Service;
 
 class Helper
@@ -73,8 +77,9 @@ class Helper
     			break;
     		default:
     			$decimal = $value;
+    			break;
     	}
-		return $decimal;
+	return $decimal;
     }
 }
 
