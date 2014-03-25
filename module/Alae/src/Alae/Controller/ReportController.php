@@ -160,10 +160,12 @@ class ReportController extends BaseController
                 if (count($elements) > 0)
                 {
                     $tr1 = $tr2 = "";
+                    
                     foreach ($elements as $sampleBatch)
                     {
                         $row1     = $row2     = "";
                         $isTable2 = false;
+                        
                         foreach ($sampleBatch as $key => $value)
                         {
                             if ($key == "acquisitionDate")
@@ -186,11 +188,17 @@ class ReportController extends BaseController
 
                                 $value = number_format($value, 2, '.', '');
                             }
+                            
+                            if ($key == "accuracy")
+                            {
+
+                                $value = number_format($value, 2, '.', '');
+                            }
 
                             switch ($key)
                             {
                                 case "sampleName":
-                                    $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                    $row1 .= sprintf('<td style="width:75px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "analytePeakName":
                                     $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
@@ -221,13 +229,13 @@ class ReportController extends BaseController
                                     $row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "useRecord":
-                                    $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                    $row1 .= sprintf('<td style="width:40px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "recordModified":
                                     $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "acquisitionDate":
-                                    $row1 .= sprintf('<td style="width:80px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                    $row1 .= sprintf('<td style="width:70px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "analyteIntegrationType":
                                     $row1 .= sprintf('<td style="width:80px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
@@ -239,17 +247,22 @@ class ReportController extends BaseController
                                     $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "messageError":
+                                	//$cErrors = preg_split("/[,]+/", $value);
+                                	
                                 	$value = str_replace(",", "<br>", $value);
+            
                                     $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
 
                                 default:
                                     $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                             }
+                            
                         }
                         //}
                         $tr1 .= sprintf("<tr>%s</tr>", $row1);
                         $tr2 .= sprintf("<tr>%s</tr>", $row2);
+                        
                     }
 
                     $query  = $this->getEntityManager()->createQuery("
@@ -387,41 +400,45 @@ class ReportController extends BaseController
             $Study   = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
 			$AnalyteName = $Analyte->getName();
             $studyName = $Study->getCode();
+            
             if (count($batch) > 0)
             {
                 ini_set('max_execution_time', 9000);
                 $message = array();
+                
                 foreach ($batch as $Batch)
                 {
-                	
-                $em = $this->getEntityManager();
-			    $db = $em->getConnection();
-			    $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
-			    $stmt->bindValue('pk_batch', $Batch->getPkBatch());
-			    
-			    $stmt->execute();
-			    
-			    while ($row = $stmt->fetch()) {
-			    	
-			        
-			        $message[] = array(
-                            "sampleName"   => $row['sample_name'],
-                            "codeError"    => str_replace(",", "<br>", $row['code_error']),
-                            "messageError" => str_replace(",", "<br>", $row['message_error']),
-                            "filename"     => $Batch->getFileName()
-                        );
-			        
-			    }
-			    
-
+           
+	                $em = $this->getEntityManager();
+				    $db = $em->getConnection();
+				    $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
+				    $stmt->bindValue('pk_batch', $Batch->getPkBatch());
+				    
+				    $stmt->execute();
+				    
+				    while ($row = $stmt->fetch()) {
+				    	
+				        $message[] = array(
+	                            "sampleName"   => $row['sample_name'],
+	                            "codeError"    => str_replace(",", "<br>", $row['code_error']),
+	                            "messageError" => str_replace(",", "<br>", $row['message_error']),
+	                            "filename"     => $Batch->getFileName()
+				        		
+	                        );
+				    $contador = $contador + 1;    
+				    }
+				    
                 }
 
-                
+                $iniciopag = "33";
+                $ultimapag = $contador - 1;
                 $viewModel = new ViewModel();
                 $viewModel->setTerminal(true);                
                 $viewModel->setVariable('list', $message);
                 $viewModel->setVariable('analyte', $AnalyteName);
                 $viewModel->setVariable('study', $studyName);
+                $viewModel->setVariable('iniciopag', $iniciopag);
+                $viewModel->setVariable('ultimapag', $ultimapag);
                 $viewModel->setVariable('filename', "listado_de_muestras_a_repetir" . date("Ymd-Hi"));
                 
                 return $viewModel;
