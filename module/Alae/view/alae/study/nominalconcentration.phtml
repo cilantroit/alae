@@ -17,11 +17,6 @@
             </blockquote>
             <?php endif; ?>
             <ul>
-                <?php if ($AnaStudy->getStatus() && $User->isAdministrador() && $isUnlock) : ?>
-                <li>
-                    <button class="btn" type="button" onclick="changeStatus('/study/unlock', <?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-reject"></span>desbloquear</button>
-                </li>
-                <?php endif; ?>
                 <?php if(!$AnaStudy->getStatus() && ($User->isAdministrador() || $User->isDirectorEstudio())) : ?>
                 <li>
                     <input type="submit" class="btn" value="guardar" />
