@@ -49,10 +49,6 @@ class StudyController extends BaseController
             switch ($this->_getSession()->getFkProfile()->getName())
             {
                 case "Administrador":
-                    $buttons = ($study->getCloseFlag()) ?
-                        '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>' :
-                        '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-change"></span></a><span class="form-datatable-delete" onclick="removeElement(this, ' . $study->getPkStudy() . ');"></span>';
-                    break;
                 case "Director Estudio":
                     $buttons = ($study->getCloseFlag()) ?
                         '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>' :
