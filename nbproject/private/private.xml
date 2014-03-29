@@ -4,18 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/BatchController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r9.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/batch/list.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r4.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/nominalconcentration.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/VerificationController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/index.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/CronController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r4c.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/public/js/yui.min.js</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/ReportController.php</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/edit.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Service/Datatable.php</file>
-            <file>file:/C:/xampp/htdocs/alae/data/sql/cambios.sql</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/SampleBatch.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/StudyController.php</file>
         </group>
     </open-files>
 </project-private>

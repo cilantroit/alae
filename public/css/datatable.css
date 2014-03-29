@@ -19,7 +19,7 @@ div#datatable
     border: 3px ridge #008B8B;
     background-color: #008B8B;
     color: #fff;
-    background-image: url('http://cilantroit.com/alae/maqueta/img/asc.png');
+    background-image: url('../img/asc.png');
     background-position: right;
     background-repeat: no-repeat;
     font-family: Calibri;
@@ -74,7 +74,7 @@ div#datatable
 #datatable table tbody tr .form-datatable-edit .form-download-pdf{
     height: 16px;
     width: 16px;
-    background:url(http://cilantroit.com/alae/maqueta/img/pdf.png) no-repeat top left;
+    background:url(../img/pdf.png) no-repeat top left;
     float: left;
 }
 #datatable table tbody tr .yui3-datatable-col-edit .form-datatable-delete,

@@ -190,97 +190,137 @@ class StudyController extends BaseController
             /*
              * Creación de los datos básicos del estudio
              */
-            if ($request->getPost('form') == 1)
+            try
             {
-                try
-                {
-                    $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
-                        $Study->getFkUser()->getUsername(),
-                        $Study->getCode(),
-                        $Study->getDescription(),
-                        $Study->getObservation(),
-                        $Study->getCreatedAt()
-                    );
-                    $Study->setCreatedAt($request->getPost('create_at'));
-                    $Study->setDescription($request->getPost('description'));
-                    $Study->setObservation($request->getPost('observation'));
-                    $Study->setFkDilutionTree($request->getPost('dilution_tree'));
-                    $Study->setFkUser($User);
-                    $this->getEntityManager()->persist($Study);
-                    $this->getEntityManager()->flush();
-                    $this->transaction(
-                        "Edición de estudios",
-                        sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s, Fecha de creación: %6$s',
-                            $User->getUsername(),
-                            $request->getPost('code'),
-                            $older,
-                            $request->getPost('description'),
-                            $request->getPost('observation'),
-                            $request->getPost('create_at')
-                        ),
-                        false
-                    );
-                }
-                catch (Exception $e)
-                {
-                    exit;
-                }
-
+                $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
+                    $Study->getFkUser()->getUsername(),
+                    $Study->getCode(),
+                    $Study->getDescription(),
+                    $Study->getObservation(),
+                    $Study->getCreatedAt()
+                );
+                $Study->setCreatedAt($request->getPost('create_at'));
+                $Study->setDescription($request->getPost('description'));
+                $Study->setObservation($request->getPost('observation'));
+                $Study->setFkDilutionTree($request->getPost('dilution_tree'));
+                $Study->setFkUser($User);
+                $this->getEntityManager()->persist($Study);
+                $this->getEntityManager()->flush();
+                $this->transaction(
+                    "Edición de estudios",
+                    sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s, Fecha de creación: %6$s',
+                        $User->getUsername(),
+                        $request->getPost('code'),
+                        $older,
+                        $request->getPost('description'),
+                        $request->getPost('observation'),
+                        $request->getPost('create_at')
+                    ),
+                    false
+                );
+            }
+            catch (Exception $e)
+            {
+                exit;
             }
 
             /*
              * Asociaciones de analitos y ediciones de los existentes
              */
-            if ($request->getPost('form') == 2)
+            $createAnalyte   = $request->getPost('create-analyte');
+            $createAnalyteIs = $request->getPost('create-analyte_is');
+            $createCsNumber  = $request->getPost('create-cs_number');
+            $createQcNumber  = $request->getPost('create-qc_number');
+            $createUnit      = $request->getPost('create-unit');
+            $createIs        = $request->getPost('create-is');
+            $createUse       = $request->getPost('create-use');
+            $updateCsNumber  = $request->getPost('update-cs_number');
+            $updateQcNumber  = $request->getPost('update-qc_number');
+            $updateIs        = $request->getPost('update-is');
+            $updateUse       = $request->getPost('update-use');
+
+            if (!empty($createAnalyte))
             {
-                $createAnalyte   = $request->getPost('create-analyte');
-                $createAnalyteIs = $request->getPost('create-analyte_is');
-                $createCsNumber  = $request->getPost('create-cs_number');
-                $createQcNumber  = $request->getPost('create-qc_number');
-                $createUnit      = $request->getPost('create-unit');
-                $createIs        = $request->getPost('create-is');
-                $createUse       = $request->getPost('create-use');
-                $updateCsNumber  = $request->getPost('update-cs_number');
-                $updateQcNumber  = $request->getPost('update-qc_number');
-                $updateIs        = $request->getPost('update-is');
-                $updateUse       = $request->getPost('update-use');
-
-                if (!empty($createAnalyte))
+                foreach ($createAnalyte as $key => $value)
                 {
-                    foreach ($createAnalyte as $key => $value)
-                    {
-                        $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($value);
-                        $AnalyteIs = $this->getRepository('\\Alae\\Entity\\Analyte')->find($createAnalyteIs[$key]);
-                        $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->find($createUnit[$key]);
+                    $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($value);
+                    $AnalyteIs = $this->getRepository('\\Alae\\Entity\\Analyte')->find($createAnalyteIs[$key]);
+                    $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->find($createUnit[$key]);
 
+                    try
+                    {
+                        $AnaStudy = new \Alae\Entity\AnalyteStudy();
+                        $AnaStudy->setFkAnalyte($Analyte);
+                        $AnaStudy->setFkAnalyteIs($AnalyteIs);
+                        $AnaStudy->setFkStudy($Study);
+                        $AnaStudy->setCsNumber($createCsNumber[$key]);
+                        $AnaStudy->setQcNumber($createQcNumber[$key]);
+                        $AnaStudy->setFkUnit($Unit);
+                        $AnaStudy->setInternalStandard($createIs[$key]);
+                        $AnaStudy->setStatus(false);
+                        $AnaStudy->setIsUsed((isset($createUse[$key]) ? true : false));
+                        $AnaStudy->setFkUser($User);
+                        $this->getEntityManager()->persist($AnaStudy);
+                        $this->getEntityManager()->flush();
+                        $this->transaction(
+                            "Asociar analitos a estudio",
+                            sprintf('El usuario %1$s ha agrega el analito %2$s(%3$s) al estudio %4$s.<br>Patrón Interno (IS): %5$s, Núm CS: %6$s, Núm QC: %7$s, Unidades: %8$s, % var IS: %9$s, usar: %10$s',
+                                $User->getUsername(),
+                                $Analyte->getName(),
+                                $Analyte->getShortening(),
+                                $Study->getCode(),
+                                $AnalyteIs->getName(),
+                                $createCsNumber[$key],
+                                $createQcNumber[$key],
+                                $Unit->getName(),
+                                $createIs[$key],
+                                (isset($createUse[$key]) ? "S" : "N")
+                            ),
+                            false
+                        );
+                    }
+                    catch (Exception $e)
+                    {
+                        exit;
+                    }
+                }
+            }
+
+            if (!empty($updateCsNumber))
+            {
+                foreach ($updateCsNumber as $key => $value)
+                {
+                    $AnaStudy = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->find($key);
+
+                    if ($AnaStudy && $AnaStudy->getPkAnalyteStudy())
+                    {
                         try
                         {
-                            $AnaStudy = new \Alae\Entity\AnalyteStudy();
-                            $AnaStudy->setFkAnalyte($Analyte);
-                            $AnaStudy->setFkAnalyteIs($AnalyteIs);
-                            $AnaStudy->setFkStudy($Study);
-                            $AnaStudy->setCsNumber($createCsNumber[$key]);
-                            $AnaStudy->setQcNumber($createQcNumber[$key]);
-                            $AnaStudy->setFkUnit($Unit);
-                            $AnaStudy->setInternalStandard($createIs[$key]);
-                            $AnaStudy->setStatus(false);
-                            $AnaStudy->setIsUsed((isset($createUse[$key]) ? true : false));
-                            $AnaStudy->setFkUser($User);
+                            $older =  sprintf('Valores antiguos -> Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
+                                $AnaStudy->getCsNumber(),
+                                $AnaStudy->getQcNumber(),
+                                $AnaStudy->getInternalStandard(),
+                                ($AnaStudy->getIsUsed() ? "S" : "N")
+                            );
+                            $AnaStudy->setCsNumber($updateCsNumber[$key]);
+                            $AnaStudy->setQcNumber($updateQcNumber[$key]);
+                            $AnaStudy->setInternalStandard($updateIs[$key]);
+                            $AnaStudy->setIsUsed(isset($updateUse[$key]) ? true : false);
                             $this->getEntityManager()->persist($AnaStudy);
                             $this->getEntityManager()->flush();
                             $this->transaction(
-                                "Asociar analitos a estudio",
-                                sprintf('El usuario %1$s ha agrega el analito %2$s(%3$s) al estudio %4$s.<br>Patrón Interno (IS): %5$s, Núm CS: %6$s, Núm QC: %7$s, Unidades: %8$s, % var IS: %9$s, usar: %10$s',
+                                "Edición de analitos asociados a estudio",
+                                sprintf('El usuario %1$s ha editado la información del analito %2$s(%3$s) en el estudio %4$s.<br>%5$s'
+                                        . 'Valores nuevos -> Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
                                     $User->getUsername(),
-                                    $Analyte->getName(),
-                                    $Analyte->getShortening(),
+                                    $AnaStudy->getFkAnalyte()->getName(),
+                                    $AnaStudy->getFkAnalyte()->getShortening(),
                                     $Study->getCode(),
-                                    $AnalyteIs->getName(),
-                                    $createCsNumber[$key],
-                                    $createQcNumber[$key],
-                                    $Unit->getName(),
-                                    $createIs[$key],
-                                    (isset($createUse[$key]) ? "S" : "N")
+                                    $older,
+                                    $updateCsNumber[$key],
+                                    $updateQcNumber[$key],
+                                    $updateIs[$key],
+                                    (isset($updateUse[$key]) ? "S" : "N")
                                 ),
                                 false
                             );
@@ -288,53 +328,6 @@ class StudyController extends BaseController
                         catch (Exception $e)
                         {
                             exit;
-                        }
-                    }
-                }
-
-                if (!empty($updateCsNumber))
-                {
-                    foreach ($updateCsNumber as $key => $value)
-                    {
-                        $AnaStudy = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->find($key);
-
-                        if ($AnaStudy && $AnaStudy->getPkAnalyteStudy())
-                        {
-                            try
-                            {
-                                $older =  sprintf('Valores antiguos -> Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
-                                    $AnaStudy->getCsNumber(),
-                                    $AnaStudy->getQcNumber(),
-                                    $AnaStudy->getInternalStandard(),
-                                    ($AnaStudy->getIsUsed() ? "S" : "N")
-                                );
-                                $AnaStudy->setCsNumber($updateCsNumber[$key]);
-                                $AnaStudy->setQcNumber($updateQcNumber[$key]);
-                                $AnaStudy->setInternalStandard($updateIs[$key]);
-                                $AnaStudy->setIsUsed(isset($updateUse[$key]) ? true : false);
-                                $this->getEntityManager()->persist($AnaStudy);
-                                $this->getEntityManager()->flush();
-                                $this->transaction(
-                                    "Edición de analitos asociados a estudio",
-                                    sprintf('El usuario %1$s ha editado la información del analito %2$s(%3$s) en el estudio %4$s.<br>%5$s'
-                                            . 'Valores nuevos -> Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
-                                        $User->getUsername(),
-                                        $AnaStudy->getFkAnalyte()->getName(),
-                                        $AnaStudy->getFkAnalyte()->getShortening(),
-                                        $Study->getCode(),
-                                        $older,
-                                        $updateCsNumber[$key],
-                                        $updateQcNumber[$key],
-                                        $updateIs[$key],
-                                        (isset($updateUse[$key]) ? "S" : "N")
-                                    ),
-                                    false
-                                );
-                            }
-                            catch (Exception $e)
-                            {
-                                exit;
-                            }
                         }
                     }
                 }
