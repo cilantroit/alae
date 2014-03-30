@@ -205,9 +205,8 @@
     </select>
 </div>
 <?php endif; ?>
-
 <div id="dialog-form" title="Firma digital">
-    <div id="error-dialog-form"></div>
+    <div id="error-dialog-form" style="color: red; margin: 5px;font-size: 12px;"></div>
     <form id="verification-form" method="POST" action="<?php echo $this->basePath() ?>/index/autentication">
         <fieldset>
             <p><strong>Nombre y apellido: </strong><?php echo $user->getName(); ?></p>
