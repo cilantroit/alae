@@ -32,8 +32,8 @@
             </td>            
             <td   align="left"  height="20">
             
-            <?php echo number_format($batch->getSlope(), 3, '.', ''); 
-            //Alae\Service\Helper::getformatDecimal($batch->getSlope()); ?>                
+            <?php //echo number_format($batch->getSlope(), 3, '.', ''); 
+            echo Alae\Service\Helper::getformatDecimal($batch->getSlope()); ?>                
             </td>
         </tr>
         <tr>
@@ -47,8 +47,8 @@
                 b=
             </td>
             <td  align="left"  height="20">
-            <?php echo number_format($batch->getIntercept(), 3, '.', ''); 
-            //Alae\Service\Helper::getformatDecimal($batch->getIntercept()); ?>
+            <?php //echo number_format($batch->getIntercept(), 3, '.', ''); 
+            echo Alae\Service\Helper::getformatDecimal($batch->getIntercept()); ?>
             </td>
         </tr>	
         <tr>
@@ -76,7 +76,7 @@
                 Motivo de Rechazo:
             </td>
             <td  align="left"  height="20">
-                <?php echo $errors; ?>
+                <?php echo htmlentities($errors); ?>
             </td>
         </tr>
         <tr>

@@ -47,7 +47,7 @@
                     <?php echo $value['codeError']; ?>
                 </td>
                 <td    height="20" style="width:350px;text-align:left;border: black 1px solid;padding:4px;">
-                    <?php echo $value['messageError']; ?>
+                    <?php echo htmlentities($value['messageError']); ?>
                 </td>
                 <td    height="20" style="width:200px;text-align:left;border: black 1px solid;padding:4px;">
                     <?php echo substr($value['filename'], 0, -4); ?>

@@ -264,7 +264,7 @@ class ReportController extends BaseController
                                 	
                                 	$value = str_replace(",", "<br>", $value);
             
-                                    $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                    $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', htmlentities($value));
                                     break;
 
                                 default:
@@ -287,7 +287,7 @@ class ReportController extends BaseController
                             AND s.fkBatch = " . $Batch->getPkBatch() . "
                         ORDER BY p.pkParameter");
                     $errors = $query->getResult();
-
+					
                     $message = array();
                     if (!is_null($Batch->getFkParameter()))
                     {
@@ -377,6 +377,7 @@ class ReportController extends BaseController
                     {
                         $message[$data['pkParameter']] = $data['messageError'];
                     }
+                    
                     ksort($message);
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
