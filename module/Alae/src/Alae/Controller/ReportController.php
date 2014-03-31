@@ -248,6 +248,7 @@ class ReportController extends BaseController
                                     break;
                                 default:
                                     $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+                                    break;
                             }
                         }
 
