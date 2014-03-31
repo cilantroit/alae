@@ -102,31 +102,21 @@ class IndexController extends BaseController
 
         if ($request->isPost())
 	{
-	    $elements = $this->getRepository('\\Alae\\Entity\\User')->findBy(array(
-                'username'      => $request->getPost('name'),
-                'verification'  => $request->getPost('password')
-            ));
-
-	    if ((!empty($elements)))
-	    {
-		foreach ($elements as $element)
-		{
-		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
-		    {
-                        $response = true;
-                        $this->transaction(
-                            "Firma digital",
-                            sprintf("El usuario %s, ha ingresado su firma digital para %s", $request->getPost('name'), $request->getPost('message')),
-                            false
-                        );
-		    }
-		}
-	    }
+	    $User = $this->_getSession();
+            if ($User->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG && $User->getVerification() == $request->getPost('password'))
+            {
+                $response = true;
+                $this->transaction(
+                    "Firma digital",
+                    sprintf("El usuario %s, ha ingresado su firma digital para %s", $User->getName(), $request->getPost('message')),
+                    false
+                );
+            }
 	}
 
         return new JsonModel(array(
             "response" => $response,
-            "error" => !$response ? "Nombre de usuario o Contraseña incorrecta" : ""
+            "error" => !$response ? "Contraseña incorrecta" : ""
         ));
     }
 

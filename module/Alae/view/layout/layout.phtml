@@ -15,6 +15,7 @@
 		->prependStylesheet($this->basePath() . '/css/alae.css')
 		->prependStylesheet($this->basePath() . '/css/datatable.css')
 		->prependStylesheet($this->basePath() . '/css/reports.css')
+                ->prependStylesheet($this->basePath() . '/css/jquery-ui.css')
 	?>
 	<!-- Scripts -->
 	<?php
@@ -24,7 +25,7 @@
 		->prependFile($this->basePath() . '/js/jquery.validate.min.js')
 		->prependFile($this->basePath() . '/js/jquery.js')
 		->prependFile($this->basePath() . '/js/yui.min.js')
-		->prependFile($this->basePath() . '/public/css/style.css');
+		//->prependFile($this->basePath() . '/public/css/style.css');
 	?>
 	<script>
 	    var basePath = '<?php echo $this->basePath() ?>';
@@ -33,7 +34,7 @@
         <script src="http://yui.yahooapis.com/3.14.0/build/yui/yui-min.js"></script>
         <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+        
         <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
         <script src="http://malsup.github.com/jquery.form.js"></script>
     </head>

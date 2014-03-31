@@ -393,7 +393,7 @@ class Datatable
 		$elements = '<span class="form-download-excel" onclick="excel(6);"></span>';
 		break;
             case Datatable::DATATABLE_ANASTUDY:
-                $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+                $elements = '<span class="form-datatable-new"></span>';
                 break;
             case Datatable::DATATABLE_BATCH:
                 $elements = '<input value="" type="submit"/>';
@@ -417,7 +417,7 @@ class Datatable
 		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><span class="form-download-excel" onclick="excel(2);"></span>';
 		break;
             case Datatable::DATATABLE_ANASTUDY:
-                $elements = '<span class="form-datatable-new"></span><input value="" type="submit"/>';
+                $elements = '<span class="form-datatable-new"></span>';
                 break;
             case Datatable::DATATABLE_UNFILLED:
 		$elements = '<span class="form-download-excel" onclick="excel(5);"></span>';

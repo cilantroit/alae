@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
- 
+
   /**
  * Modulo de reportes del sistema
  * @author Maria Quiroz
@@ -34,12 +34,30 @@ class ReportController extends BaseController
 
     public function auditAction()
     {
-        $query = $this->getEntityManager()->createQuery("
-                SELECT a
-                FROM Alae\Entity\AuditTransaction a
-                ORDER BY a.createdAt DESC");
+        $request = $this->getRequest();
+        $where = "";
+        if ($request->isPost())
+        {
+            $from = $request->getPost('from');
 
+            if ($request->getPost('from') != "" && $request->getPost('to') != "")
+            {
+                $to = $request->getPost('to');
+                $where = "WHERE a.createdAt > '$from' AND a.createdAt < '$to 23:59:00'";
+            }
+            else
+            {
+                $where = "WHERE a.createdAt > '$from'";
+            }
+        }
+
+        $query = $this->getEntityManager()->createQuery("
+            SELECT a
+            FROM Alae\Entity\AuditTransaction a
+            $where
+            ORDER BY a.createdAt DESC");
         $elements = $query->getResult();
+
         $data     = array();
         foreach ($elements as $AuditTransaction)
         {
@@ -173,12 +191,12 @@ class ReportController extends BaseController
                 if (count($elements) > 0)
                 {
                     $tr1 = $tr2 = "";
-                    
+
                     foreach ($elements as $sampleBatch)
                     {
                         $row1     = $row2     = "";
                         $isTable2 = false;
-                        
+
                         foreach ($sampleBatch as $key => $value)
                         {
                             if ($key == "acquisitionDate")
@@ -201,7 +219,7 @@ class ReportController extends BaseController
 
                                 $value = number_format($value, 2, '.', '');
                             }
-                            
+
                             if ($key == "accuracy")
                             {
 
@@ -261,21 +279,26 @@ class ReportController extends BaseController
                                     break;
                                 case "messageError":
                                 	//$cErrors = preg_split("/[,]+/", $value);
-                                	
+
                                 	$value = str_replace(",", "<br>", $value);
+<<<<<<< HEAD
             
                                     $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', htmlentities($value));
+=======
+
+                                    $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
+>>>>>>> b4bd2a1d0b02392f6ddcd38640967f045c3bdfea
                                     break;
 
                                 default:
                                     $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                             }
-                            
+
                         }
                         //}
                         $tr1 .= sprintf("<tr>%s</tr>", $row1);
                         $tr2 .= sprintf("<tr>%s</tr>", $row2);
-                        
+
                     }
 
                     $query  = $this->getEntityManager()->createQuery("
@@ -424,45 +447,45 @@ class ReportController extends BaseController
             $Study   = $this->getRepository("\\Alae\\Entity\\Study")->find($request->getQuery('id'));
 			$AnalyteName = $Analyte->getName();
             $studyName = $Study->getCode();
-            
+
             if (count($batch) > 0)
             {
                 ini_set('max_execution_time', 9000);
                 $message = array();
-                
+
                 foreach ($batch as $Batch)
                 {
-           
+
 	                $em = $this->getEntityManager();
 				    $db = $em->getConnection();
 				    $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
 				    $stmt->bindValue('pk_batch', $Batch->getPkBatch());
-				    
+
 				    $stmt->execute();
-				    
+
 				    while ($row = $stmt->fetch()) {
-				    	
+
 				        $message[] = array(
 	                            "sampleName"   => $row['sample_name'],
 	                            "codeError"    => str_replace(",", "<br>", $row['code_error']),
 	                            "messageError" => str_replace(",", "<br>", $row['message_error']),
 	                            "filename"     => $Batch->getFileName()
-				        		
+
 	                        );
-				    
+
 				    }
-				    
+
                 }
 
-                
+
                 $viewModel = new ViewModel();
-                $viewModel->setTerminal(true);                
+                $viewModel->setTerminal(true);
                 $viewModel->setVariable('list', $message);
                 $viewModel->setVariable('analyte', $AnalyteName);
                 $viewModel->setVariable('study', $studyName);
-                
+
                 $viewModel->setVariable('filename', "listado_de_muestras_a_repetir" . date("Ymd-Hi"));
-                
+
                 return $viewModel;
             }
             else
@@ -475,7 +498,7 @@ class ReportController extends BaseController
             }
         }
     }
-    
+
    /**
      * Summary of calibration curve parameter
      * $_GET['id'] = pkStudy
@@ -512,7 +535,7 @@ class ReportController extends BaseController
             }
         }
     }
-    
+
    /**
      * Calculo de las concentraciones de los CS (calculatedConcentration)
      * $_GET['id'] = pkStudy

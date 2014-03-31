@@ -17,11 +17,6 @@
             </blockquote>
             <?php endif; ?>
             <ul>
-                <?php if ($AnaStudy->getStatus() && $User->isAdministrador() && $isUnlock) : ?>
-                <li>
-                    <button class="btn" type="button" onclick="changeStatus('/study/unlock', <?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-reject"></span>desbloquear</button>
-                </li>
-                <?php endif; ?>
                 <?php if(!$AnaStudy->getStatus() && ($User->isAdministrador() || $User->isDirectorEstudio())) : ?>
                 <li>
                     <input type="submit" class="btn" value="guardar" />
@@ -56,7 +51,7 @@
                 <?php for ($i = 0; $i < $AnaStudy->getQcNumber(); $i++) : ?>
                     <li>
                         <label>QC<?php echo $i + 1; ?>*</label>
-                        <?php 
+                        <?php
                         $numberQC = isset($qc_number[$i]) ? $qc_number[$i] : "";
                         ?>
                         <input type="text" value="<?php echo $numberQC; ?>" <?php echo $disabled; ?> name="qc_number[<?php echo $i; ?>]" class="nominalconcentration-form-number"/>
@@ -66,14 +61,14 @@
             <ul>
                 <li>
                     <label>LDQC*</label>
-                    <?php 
+                    <?php
                     	$numberLDQC = isset($ldqc_number) ? $ldqc_number : "";
                     ?>
                     <input type="text" value="<?php echo $ldqc_number; ?>" <?php echo $disabled; ?> name="ldqc_number" class="nominalconcentration-form-number"/>
                 </li>
                 <li>
                     <label>HDQC*</label>
-                    <?php 
+                    <?php
                     	$numberHDQC = isset($hdqc_number) ? $hdqc_number : "";
                     ?>
                     <input type="text" value="<?php echo $numberHDQC; ?>" <?php echo $disabled; ?> name="hdqc_number" class="nominalconcentration-form-number"/>
@@ -120,18 +115,21 @@
     </script>
 </div>
 <div id="dialog-form" title="Firma digital">
-    <div id="error-dialog-form"></div>
+    <div id="error-dialog-form" style="color: red; margin: 5px;font-size: 12px;"></div>
     <form id="verification-form" method="POST" action="<?php echo $this->basePath() ?>/index/autentication">
         <fieldset>
-            <label for="name">Nombre de usuario</label>
-            <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+            <p><strong>Nombre y apellido: </strong><?php echo $User->getName(); ?></p>
+            <p><strong>Fecha: </strong><?php echo date("d.m.Y H:i"); ?></p>
+            <p><strong>Aprobado por: </strong><?php echo $User->getFkProfile()->getName(); ?></p>
             <label for="password">Contraseña</label>
             <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
             <input type="hidden" name="element_url" id="element_url">
             <input type="hidden" name="element_id"  id="element_id">
             <input type="hidden" name="message"  id="message">
-            <input type="submit" class="btn" value="verificar" />
-            <button class="btn" type="button" onclick="closeForm()">cerrar</button>
+            <div style="margin: 10px;">
+                <input type="submit" class="btn" value="verificar" />
+                <button class="btn" type="button" onclick="closeForm()">cerrar</button>
+            </div>
         </fieldset>
     </form>
 </div>

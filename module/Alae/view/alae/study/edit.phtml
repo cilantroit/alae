@@ -6,220 +6,221 @@
     [<a href="<?php echo Alae\Service\Helper::getVarsConfig('base_url') . '/index/menu' ?>">regresar al menú</a>]
 </div>
 <div id="cuerpo">
-    <div id="edit-study" style="font-size:0.85em;">
-        <div id="encab">
-            <h2>ficha del estudio</h2>
-        </div>
-        <h3>Datos Generales del Estudio</h3>
-        <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
-        <form id="study-form" action="" method="POST">
-            <p>
-                <label>Código:</label>
-                <input type="text" name="code" disabled="" value="<?php echo $study->getCode(); ?>">
-                <label>Fecha creación:</label>
-                <input class="centro" type="date" name="create_at" value="<?php echo $study->getCreatedAt(); ?>">
-                <label>Arbol de Dilución:</label>
-                <select <?php echo $disabled; ?> name="dilution_tree">
-                    <option>1</option>
-                </select>
-                <label>Cerrado: <?php echo $study->getCloseFlag() ? "S" : "N"; ?></label>
-                <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
-                <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>, 1)"><span class="btn-lock"></span> cerrar estudio</button>
-                <?php endif; ?>
-            </p>
-            <p>
-                <label>Descripción:</label>
-                <textarea <?php echo $disabled; ?> name="description" rows="2" cols="50"><?php echo $study->getDescription(); ?></textarea>
-            </p>
-            <p>
-                <label>Observaciones:</label>
-                <textarea <?php echo $disabled; ?> name="observation" rows="2" cols="50"><?php echo $study->getObservation(); ?></textarea>
-            </p>
-            <ul>
-                <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
-                    <?php if(!$study->getApprove()) : ?>
+    <form id="study-form" action="" method="POST">
+        <div id="edit-study" style="font-size:0.85em;">
+            <div id="encab">
+                <h2>ficha del estudio</h2>
+            </div>
+            <h3>Datos Generales del Estudio</h3>
+            <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
+                <p>
+                    <label>Código:</label>
+                    <input type="text" name="code" disabled="" value="<?php echo $study->getCode(); ?>">
+                    <label>Fecha creación:</label>
+                    <input class="centro" type="date" name="create_at" value="<?php echo $study->getCreatedAt(); ?>">
+                    <label>Arbol de Dilución:</label>
+                    <select <?php echo $disabled; ?> name="dilution_tree">
+                        <option>1</option>
+                    </select>
+                    <label>Cerrado: <?php echo $study->getCloseFlag() ? "S" : "N"; ?></label>
+                    <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
+                    <button class="btn" type="button" onclick="changeStatus('/study/close', <?php echo $study->getPkStudy(); ?>, 1)"><span class="btn-lock"></span> cerrar estudio</button>
+                    <?php endif; ?>
+                </p>
+                <p>
+                    <label>Descripción:</label>
+                    <textarea <?php echo $disabled; ?> name="description" rows="2" cols="50"><?php echo $study->getDescription(); ?></textarea>
+                </p>
+                <p>
+                    <label>Observaciones:</label>
+                    <textarea <?php echo $disabled; ?> name="observation" rows="2" cols="50"><?php echo $study->getObservation(); ?></textarea>
+                </p>
+                <ul>
+                    <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
+                        <?php if(!$study->getApprove()) : ?>
+                        <li>
+                            <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> confirmar</button>
+                        </li>
+                        <?php endif; ?>
+                        <?php if ($user->isAdministrador()) : ?>
+
+                        <li>
+                            <input type="submit" class="btn" value="guardar" />
+                        </li>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if($isDuplicated && $user->isAdministrador() && !$study->getCloseFlag()) : ?>
                     <li>
-                        <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> aprobar</button>
+                        <button class="btn" type="button" onclick="duplicate(<?php echo $study->getPkStudy(); ?>, '/study/duplicate/', '¿Desea duplicar el estudio?')">
+                            <span class="btn-validate"></span>
+                             duplicar
+                        </button>
                     </li>
                     <?php endif; ?>
-                    <?php if ($user->isAdministrador()) : ?>
-
+                    <?php if($study->getApprove()) : ?>
                     <li>
-                        <input type="submit" class="btn" value="guardar" />
+                        <p class="approve_notification"><?php printf("confirmado por: %s (%s). %s", $study->getFkUserApprove()->getUsername(), $study->getFkUserApprove()->getFkProfile()->getname(), $study->getUpdatedAt()); ?></p>
                     </li>
                     <?php endif; ?>
-                <?php endif; ?>
-                <?php if($isDuplicated && $user->isAdministrador() && !$study->getCloseFlag()) : ?>
-                <li>
-                    <button class="btn" type="button" onclick="duplicate(<?php echo $study->getPkStudy(); ?>, '/study/duplicate/', '¿Desea duplicar el estudio?')">
-                        <span class="btn-validate"></span>
-                         duplicar
-                    </button>
-                </li>
-                <?php endif; ?>
-                <?php if($study->getApprove()) : ?>
-                <li>
-                    <p class="approve_notification"><?php printf("aprobado por: %s (%s). %s", $study->getFkUserApprove()->getUsername(), $study->getFkUserApprove()->getFkProfile()->getname(), $study->getUpdatedAt()); ?></p>
-                </li>
-                <?php endif; ?>
-            </ul>
-            <input type="hidden" name="form" value="1"/>
-            <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
-        </form>
-        <script>
-            jQuery.validator.addMethod("regex", function(value, element, params) {
-                return this.optional(element) || /^[A-Z0-9]+(\-[0-9]+)?$/.test(value);
-            }, "Please enter a valid Rule");
-            $("#study-form").validate({
-                rules: {
-                    code: {
-                        required: true,
-                        regex: true
+                </ul>
+                <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
+            <script>
+                jQuery.validator.addMethod("regex", function(value, element, params) {
+                    return this.optional(element) || /^[A-Z0-9]+(\-[0-9]+)?$/.test(value);
+                }, "Please enter a valid Rule");
+                $("#study-form").validate({
+                    rules: {
+                        code: {
+                            required: true,
+                            regex: true
+                        }
+                    },
+                    messages: {
+                        code: {
+                            required: "El campo <strong>Código</strong> es requerido",
+                            regex: "Por favor, ingreso un <strong>Código</strong> válido. Ejm: XXANE-YYYY"
+                        }
+                    },
+                    errorLabelContainer: "#errorBox",
+                    wrapper: "li",
+                    submitHandler: function(form){
+                        answer = confirm("¿Desea guardar los cambios?");
+                        if (answer === true){
+                            form.submit();
+                            return true;
+                        }
+                        else{
+                            return false;
+                        }
                     }
-                },
-                messages: {
-                    code: {
-                        required: "El campo <strong>Código</strong> es requerido",
-                        regex: "Por favor, ingreso un <strong>Código</strong> válido. Ejm: XXANE-YYYY"
-                    }
-                },
-                errorLabelContainer: "#errorBox",
-                wrapper: "li",
-                submitHandler: function(form){
-                    answer = confirm("¿Desea guardar los cambios?");
-                    if (answer === true){
-                        form.submit();
-                        return true;
-                    }
-                    else{
-                        return false;
-                    }
-                }
-            });
+                });
 
-            function duplicate(id, url, message)
-            {
-                answer = confirm(message);
-                if (answer === true)
+                function duplicate(id, url, message)
                 {
-                    $( "#element_url" ).val(url);
-                    $( "#element_id" ).val(id);
-                    $( "#dialog-form" ).dialog( "open" );
-                }
-            }
-
-            function changeStatus(url, id, type)
-            {
-                switch(type)
-                {
-                    case 1:
-                        var message = '¿Desea cerrar el estudio?';
-                        $("#message").val("cerrar estudio");
-                        break;
-                    case 2:
-                        var message = '¿Desea aprobar el estudio?';
-                        $("#message").val("aprobar estudio");
-                        break;
-                }
-
-                answer = confirm(message);
-                if (answer === true)
-                {
-                    $( "#element_url" ).val(url);
-                    $( "#element_id" ).val(id);
-                    $( "#dialog-form" ).dialog( "open" );
-                }
-            }
-        </script>
-        <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC() || $user->isLaboratorio()) : ?>
-        <form id="datatable-form" class="" action="" method="POST">
-            <h5>ANALITOS DEL ESTUDIO</h5>
-            <div id="datatable" class="<?php echo ($study->getCloseFlag() || $study->getApprove()) ? "close" : ""; ?>"></div>
-            <input type="hidden" name="form" value="2"/>
-            <input type="hidden" name="study_id" value="<?php echo $study->getPkStudy(); ?>"/>
-        </form>
-        <script>
-            var createNumberIncr = 0;
-            var data = <?php echo $data; ?>;
-            var filters = <?php echo $header; ?>;
-            var columns = <?php echo $columns; ?>;
-            var editable = <?php echo $editable; ?>;
-            var deleteUrl = basePath + '/study/deleteanastudy';
-            var filtersHtml = '<?php echo $filters; ?>';
-        </script>
-        <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
-        <script>
-            jQuery.validator.addMethod("rule", function(value, element, params) {
-                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
-            }, "Please enter a valid number");
-
-            jQuery.validator.addClassRules('datatable-class-cs_number', {
-                required: true,
-                digits: true,
-                min: 6,
-                max: 15
-            });
-            jQuery.validator.addClassRules('datatable-class-qc_number', {
-                required: true,
-                digits: true,
-                min: 3,
-                max: 6
-            });
-            jQuery.validator.addClassRules('datatable-class-is', {
-                required: true,
-                rule: true
-            });
-            $("#datatable-form").validate({
-                submitHandler: function(form){
-                    answer = confirm("¿Desea guardar los cambios?");
-                    if (answer === true){
-                        form.submit();
-                        return true;
-                    }
-                    else{
-                        return false;
+                    answer = confirm(message);
+                    if (answer === true)
+                    {
+                        $( "#element_url" ).val(url);
+                        $( "#element_id" ).val(id);
+                        $( "#dialog-form" ).dialog( "open" );
                     }
                 }
-            });
-        </script>
-        <div id="analyte">
-            <select class="form-datatable-select">
-                <?php foreach ($analytes as $analyte) : ?>
-                    <option value="<?php echo $analyte->getPkAnalyte() ?>"><?php echo $analyte->getShortening() ?></option>
-                <?php endforeach; ?>
-            </select>
+
+                function changeStatus(url, id, type)
+                {
+                    switch(type)
+                    {
+                        case 1:
+                            var message = '¿Desea cerrar el estudio?';
+                            $("#message").val("cerrar estudio");
+                            break;
+                        case 2:
+                            var message = '¿Desea aprobar el estudio?';
+                            $("#message").val("aprobar estudio");
+                            break;
+                    }
+
+                    answer = confirm(message);
+                    if (answer === true)
+                    {
+                        $( "#element_url" ).val(url);
+                        $( "#element_id" ).val(id);
+                        $( "#dialog-form" ).dialog( "open" );
+                    }
+                }
+            </script>
+            <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC() || $user->isLaboratorio()) : ?>
+            <div id="datatable-form">
+                <h5>ANALITOS DEL ESTUDIO</h5>
+                <div id="datatable" class="<?php echo ($study->getCloseFlag() || $study->getApprove()) ? "close" : ""; ?>"></div>
+            </div>
+            <script>
+                var createNumberIncr = 0;
+                var data = <?php echo $data; ?>;
+                var filters = <?php echo $header; ?>;
+                var columns = <?php echo $columns; ?>;
+                var editable = <?php echo $editable; ?>;
+                var deleteUrl = basePath + '/study/deleteanastudy';
+                var filtersHtml = '<?php echo $filters; ?>';
+            </script>
+            <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
+            <script>
+                jQuery.validator.addMethod("rule", function(value, element, params) {
+                    return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
+                }, "Please enter a valid number");
+
+                jQuery.validator.addClassRules('datatable-class-cs_number', {
+                    required: true,
+                    digits: true,
+                    min: 6,
+                    max: 15
+                });
+                jQuery.validator.addClassRules('datatable-class-qc_number', {
+                    required: true,
+                    digits: true,
+                    min: 3,
+                    max: 6
+                });
+                jQuery.validator.addClassRules('datatable-class-is', {
+                    required: true,
+                    rule: true
+                });
+                $("#datatable-form").validate({
+                    submitHandler: function(form){
+                        answer = confirm("¿Desea guardar los cambios?");
+                        if (answer === true){
+                            form.submit();
+                            return true;
+                        }
+                        else{
+                            return false;
+                        }
+                    }
+                });
+            </script>
+            <?php endif; ?>
         </div>
-        <div id="analyte_is">
-            <select class="form-datatable-select">
-                <?php foreach ($analytes as $analyte) : ?>
-                    <option value="<?php echo $analyte->getPkAnalyte() ?>"><?php echo $analyte->getShortening() ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div id="unit">
-            <select class="form-datatable-select">
-                <?php foreach ($units as $unit) : ?>
-                    <option value="<?php echo $unit->getPkUnit() ?>"><?php echo $unit->getName() ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <?php endif; ?>
-    </div>
+    </form>
 </div>
-
+<?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isUGC() || $user->isLaboratorio()) : ?>
+<div id="analyte">
+    <select class="form-datatable-select">
+        <?php foreach ($analytes as $analyte) : ?>
+            <option value="<?php echo $analyte->getPkAnalyte() ?>"><?php echo $analyte->getShortening() ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+<div id="analyte_is">
+    <select class="form-datatable-select">
+        <?php foreach ($analytes as $analyte) : ?>
+            <option value="<?php echo $analyte->getPkAnalyte() ?>"><?php echo $analyte->getShortening() ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+<div id="unit">
+    <select class="form-datatable-select">
+        <?php foreach ($units as $unit) : ?>
+            <option value="<?php echo $unit->getPkUnit() ?>"><?php echo $unit->getName() ?></option>
+        <?php endforeach; ?>
+    </select>
+</div>
+<?php endif; ?>
 <div id="dialog-form" title="Firma digital">
-    <div id="error-dialog-form"></div>
+    <div id="error-dialog-form" style="color: red; margin: 5px;font-size: 12px;"></div>
     <form id="verification-form" method="POST" action="<?php echo $this->basePath() ?>/index/autentication">
         <fieldset>
-            <label for="name">Nombre de usuario</label>
-            <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+            <p><strong>Nombre y apellido: </strong><?php echo $user->getName(); ?></p>
+            <p><strong>Fecha: </strong><?php echo date("d.m.Y H:i"); ?></p>
+            <p><strong>Aprobado por: </strong><?php echo $user->getFkProfile()->getName(); ?></p>
             <label for="password">Contraseña</label>
             <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
             <input type="hidden" name="element_url" id="element_url">
             <input type="hidden" name="element_id"  id="element_id">
             <input type="hidden" name="message"  id="message">
-            <input type="submit" class="btn" value="verificar" />
-            <button class="btn" type="button" onclick="closeForm()">cerrar</button>
+            <div style="margin: 10px;">
+                <input type="submit" class="btn" value="verificar" />
+                <button class="btn" type="button" onclick="closeForm()">cerrar</button>
+            </div>
         </fieldset>
     </form>
 </div>
