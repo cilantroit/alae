@@ -199,64 +199,30 @@ class ReportController extends BaseController
 
                         foreach ($sampleBatch as $key => $value)
                         {
-                            if ($key == "acquisitionDate")
-                            {
-                                $value = $value->format('d.m.Y H:i:s');
-                            }
-                            if ($key == "dilutionFactor")
-                            {
-
-                                $value = number_format($value, 2, '.', '');
-                            }
-                            if ($key == "calculatedConcentration")
-                            {
-
-                                $value = number_format($value, 2, '.', '');
-                            }
-
-                            if ($key == "analyteConcentration")
-                            {
-
-                                $value = number_format($value, 2, '.', '');
-                            }
-
-                            if ($key == "accuracy")
-                            {
-
-                                $value = number_format($value, 2, '.', '');
-                            }
-
                             switch ($key)
                             {
                                 case "sampleName":
                                     $row1 .= sprintf('<td style="width:75px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
-                                case "analytePeakName":
-                                    $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
-                                    break;
                                 case "fileName":
                                     $row1 .= sprintf('<td style="width:110px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
-
                                 case "analytePeakArea":
-                                    $row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
-                                    break;
                                 case "isPeakArea":
-                                    $row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
-                                    break;
                                 case "areaRatio":
                                     $row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "analyteConcentration":
+                                    $value = number_format($value, 2, '.', '');
                                     $row1 .= sprintf('<td style="width:70px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "calculatedConcentration":
+                                    $value = number_format($value, 2, '.', '');
                                     $row1 .= sprintf('<td style="width:70px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "dilutionFactor":
-                                    $row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
-                                    break;
                                 case "accuracy":
+                                    $value = number_format($value, 2, '.', '');
                                     $row1 .= sprintf('<td style="width:50px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "useRecord":
@@ -266,11 +232,10 @@ class ReportController extends BaseController
                                     $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "acquisitionDate":
+                                    $value = $value->format('d.m.Y H:i:s');
                                     $row1 .= sprintf('<td style="width:70px;text-align:right;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "analyteIntegrationType":
-                                    $row1 .= sprintf('<td style="width:80px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
-                                    break;
                                 case "isIntegrationType":
                                     $row1 .= sprintf('<td style="width:80px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
@@ -278,24 +243,14 @@ class ReportController extends BaseController
                                     $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "messageError":
-                                	//$cErrors = preg_split("/[,]+/", $value);
-
                                 	$value = str_replace(",", "<br>", $value);
-<<<<<<< HEAD
-            
                                     $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', htmlentities($value));
-=======
-
-                                    $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
->>>>>>> b4bd2a1d0b02392f6ddcd38640967f045c3bdfea
                                     break;
-
                                 default:
                                     $row1 .= sprintf('<td style="width:50px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                             }
-
                         }
-                        //}
+
                         $tr1 .= sprintf("<tr>%s</tr>", $row1);
                         $tr2 .= sprintf("<tr>%s</tr>", $row2);
 
@@ -310,7 +265,7 @@ class ReportController extends BaseController
                             AND s.fkBatch = " . $Batch->getPkBatch() . "
                         ORDER BY p.pkParameter");
                     $errors = $query->getResult();
-					
+
                     $message = array();
                     if (!is_null($Batch->getFkParameter()))
                     {
@@ -355,7 +310,7 @@ class ReportController extends BaseController
         $viewModel->setVariable('filename', "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi"));
         return $viewModel;
     }
-
+    
     /**
      * Resumen de lotes de un estudio
      * $_GET['id'] = pkStudy
