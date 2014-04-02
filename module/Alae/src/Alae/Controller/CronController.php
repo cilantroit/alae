@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
- 
+
   /**
  * Modulo encargado del procesamiento de lotes.
  * En este modulo se comprueban las 3 primeras verificaciones,
@@ -61,15 +61,13 @@ class CronController extends BaseController
      */
     private function validateFile($fileName)
     {
-        $string         = substr($fileName, 0, -4);
-        list($pkBatch, $aux) = explode("-", $string);
-        list($codeStudy, $shortening) = explode("_", $aux);
+        $response = $this->explodeFile($fileName);
         $this->_Study   = $this->_Analyte = null;
 
         $query = $this->getEntityManager()->createQuery("
                 SELECT s
                 FROM Alae\Entity\Study s
-                WHERE s.code LIKE  '%" . substr($codeStudy, 0, 4) . "%' AND s.closeFlag = 0 AND s.approve = 1
+                WHERE s.code LIKE  '%" . $response['study'] . "%' AND s.closeFlag = 0 AND s.approve = 1
                 ORDER BY s.code DESC")
             ->setMaxResults(1);
         $elements = $query->getResult();
@@ -81,7 +79,7 @@ class CronController extends BaseController
                 $qb = $this->getEntityManager()->createQueryBuilder()
                     ->select("h")
                     ->from("Alae\Entity\AnalyteStudy", "h")
-                    ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $shortening . "' AND h.fkStudy = " . $Study->getPkStudy());
+                    ->innerJoin("Alae\Entity\Analyte", "a", "WITH", "h.fkAnalyte = a.pkAnalyte AND a.shortening = '" . $response['analyte'] . "' AND h.fkStudy = " . $Study->getPkStudy());
                 $anaStudy = $qb->getQuery()->getResult();
 
                 if (count($anaStudy) && $anaStudy[0]->getFkStudy()->getApprove())
@@ -111,7 +109,7 @@ class CronController extends BaseController
             {
                 if(!$this->isRepeatedBatch($file))
                 {
-                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}+(M|R)?[0-9]*\_[a-zA-Z0-9]+\.txt)$/i", $file))
+                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}(-[0-9]+)?)\/(M|O|R)[0-9]*\_[a-zA-Z0-9]+\.txt$/i", $file))
                     {
                         $this->validateFile($file);
                     }
@@ -129,8 +127,41 @@ class CronController extends BaseController
     }
 
     /**
+     * Extraemos la información del fichero, obteniendo:
+     *      Lote
+     *      Código de estudio
+     *      Abrv. Analito
+     * @param string $file
+     * @return array
+     */
+    protected function explodeFile($file)
+    {
+        $string = substr($file, 0, -4);
+        $array = explode("-", $string);
+
+        if (count($array) == 3)
+        {
+            $return = array(
+                "batch"   => $array[0],
+                "study"   => $array[1],
+                "analyte" => preg_replace("/[0-9]+\/(M|O|R)[0-9]*\_/", "", $array[2])
+            );
+        }
+        else
+        {
+            $return = array(
+                "batch"   => $array[0],
+                "study"   => preg_replace("/\/(M|O|R)[0-9]*\_[a-zA-Z0-9]+/", "", $array[1]),
+                "analyte" => preg_replace("/[0-9]+\/(M|O|R)[0-9]*\_/", "", $array[1])
+            );
+        }
+
+        return $return;
+    }
+
+    /**
      * Ingreso del lote:
-     *      NOTA: si el lote se asigna a un estudio y analito, comprobamos las verificaciones 2,3 
+     *      NOTA: si el lote se asigna a un estudio y analito, comprobamos las verificaciones 2,3
      */
     private function insertBatch($fileName, $Study, $Analyte)
     {
@@ -234,11 +265,10 @@ class CronController extends BaseController
 
     private function saveBatch($fileName)
     {
-        $string = substr($fileName, 0, -4);
-        list($serial, $aux) = explode("-", $string);
+        $response = $this->explodeFile($fileName);
 
         $Batch = new \Alae\Entity\Batch();
-        $Batch->setSerial((string) $serial);
+        $Batch->setSerial((string) $response['batch']);
         $Batch->setFileName($fileName);
         $Batch->setFkUser($this->_getSystem());
         $this->getEntityManager()->persist($Batch);
@@ -358,15 +388,14 @@ class CronController extends BaseController
 
     private function batchVerify($Batch, $Analyte, $fileName)
     {
-        $string = substr($fileName, 0, -4);
-        list($pkBatch, $aux) = explode("_", $string);
+        $response = $this->explodeFile($fileName);
 
         $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V2"));
         $where = "s.analytePeakName <> '" . $Analyte->getShortening() . "' AND s.fkBatch = " . $Batch->getPkBatch();
         $this->error($where, $fkParameter[0], array(), false);
 
         $fkParameter = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V3"));
-        $fileName = preg_replace("/(M|R)/", "", $pkBatch);
+        $fileName = $response['batch'] . "-" . $response['study'];
         $where = "s.fileName NOT LIKE '$fileName%' AND s.fkBatch = " . $Batch->getPkBatch();
         $this->error($where, $fkParameter[0], array(), false);
     }
