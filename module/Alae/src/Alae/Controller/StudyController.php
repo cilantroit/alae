@@ -502,17 +502,18 @@ class StudyController extends BaseController
             {
                 try
                 {
-                    $User = $this->_getSession();
+                    $User  = $this->_getSession();
+                    $code  = explode("-", $Study->getCode());
                     $query = $this->getEntityManager()->createQuery("
                             SELECT COUNT(s.pkStudy)
                             FROM Alae\Entity\Study s
-                            WHERE s.code LIKE  '%" . $Study->getCode() . "%'");
+                            WHERE s.code LIKE  '%" . ($code[0] . "-" . $code[1]) . "%'");
                     $counter = $query->getSingleScalarResult();
 
                     $newStudy = new \Alae\Entity\Study();
                     $newStudy->setDescription($Study->getDescription());
                     $newStudy->setObservation($Study->getObservation());
-                    $newStudy->setCode($Study->getCode(). "-" . str_pad($counter, 2, "0", STR_PAD_LEFT));
+                    $newStudy->setCode($code[0] . "-" . $code[1] . "-" . str_pad($counter, 2, "0", STR_PAD_LEFT));
                     $newStudy->setCloseFlag(false);
                     $newStudy->setStatus(true);
                     $newStudy->setApprove(false);

@@ -311,7 +311,7 @@ class ReportController extends BaseController
         $viewModel->setVariable('filename', "tabla_alae_de_cada_lote_analitico" . date("Ymd-Hi"));
         return $viewModel;
     }
-    
+
     /**
      * Resumen de lotes de un estudio
      * $_GET['id'] = pkStudy
@@ -356,7 +356,7 @@ class ReportController extends BaseController
                     {
                         $message[$data['pkParameter']] = $data['messageError'];
                     }
-                    
+
                     ksort($message);
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
@@ -886,5 +886,10 @@ class ReportController extends BaseController
                 ));
             }
         }
+    }
+
+    public function graphicsAction()
+    {
+
     }
 }

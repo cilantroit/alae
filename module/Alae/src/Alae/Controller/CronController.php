@@ -151,7 +151,7 @@ class CronController extends BaseController
         {
             $return = array(
                 "batch"   => $array[0],
-                "study"   => preg_replace("/\/(M|O|R)[0-9]*\_[a-zA-Z0-9]+/", "", $array[1]),
+                "study"   => preg_replace("/\+(M|O|R)[0-9]*\_[a-zA-Z0-9]+/", "", $array[1]),
                 "analyte" => preg_replace("/[0-9]+\+(M|O|R)[0-9]*\_/", "", $array[1])
             );
         }
