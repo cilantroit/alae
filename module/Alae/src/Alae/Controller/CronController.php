@@ -109,7 +109,7 @@ class CronController extends BaseController
             {
                 if(!$this->isRepeatedBatch($file))
                 {
-                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}(-[0-9]+)?)\/(M|O|R)[0-9]*\_[a-zA-Z0-9]+\.txt$/i", $file))
+                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}(-[0-9]+)?)\+(M|O|R)[0-9]*\_[a-zA-Z0-9]+\.txt$/i", $file))
                     {
                         $this->validateFile($file);
                     }
@@ -144,7 +144,7 @@ class CronController extends BaseController
             $return = array(
                 "batch"   => $array[0],
                 "study"   => $array[1],
-                "analyte" => preg_replace("/[0-9]+\/(M|O|R)[0-9]*\_/", "", $array[2])
+                "analyte" => preg_replace("/[0-9]+\+(M|O|R)[0-9]*\_/", "", $array[2])
             );
         }
         else
@@ -152,7 +152,7 @@ class CronController extends BaseController
             $return = array(
                 "batch"   => $array[0],
                 "study"   => preg_replace("/\/(M|O|R)[0-9]*\_[a-zA-Z0-9]+/", "", $array[1]),
-                "analyte" => preg_replace("/[0-9]+\/(M|O|R)[0-9]*\_/", "", $array[1])
+                "analyte" => preg_replace("/[0-9]+\+(M|O|R)[0-9]*\_/", "", $array[1])
             );
         }
 
