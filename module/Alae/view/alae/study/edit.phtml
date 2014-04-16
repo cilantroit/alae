@@ -42,8 +42,7 @@
                             <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> confirmar</button>
                         </li>
                         <?php endif; ?>
-                        <?php if ($user->isAdministrador()) : ?>
-
+                        <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isLaboratorio()) : ?>
                         <li>
                             <input type="submit" class="btn" value="guardar" />
                         </li>
