@@ -46,14 +46,14 @@ class AnalyteStudy
     /**
      * @var string
      *
-     * @ORM\Column(name="hdqc_values", type="integer", nullable=false)
+     * @ORM\Column(name="hdqc_values", type="decimal", precision=19, scale=4, nullable=false)
      */
     protected $hdqcValues;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ldqc_values", type="integer", nullable=false)
+     * @ORM\Column(name="ldqc_values", type="decimal", precision=19, scale=4, nullable=false)
      */
     protected $ldqcValues;
 
@@ -69,7 +69,7 @@ class AnalyteStudy
      *
      * @ORM\Column(name="internal_standard", type="decimal", precision=19, scale=4, nullable=false)
      */
-    protected $internalStandard = '0.0000';
+    protected $internalStandard;
 
     /**
      * @var boolean
@@ -209,7 +209,7 @@ class AnalyteStudy
 
     public function getInternalStandard()
     {
-        return $this->internalStandard;
+        return (float) $this->internalStandard;
     }
 
     public function setInternalStandard($internalStandard)

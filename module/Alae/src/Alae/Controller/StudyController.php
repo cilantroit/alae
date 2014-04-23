@@ -179,49 +179,67 @@ class StudyController extends BaseController
 
         if ($this->getEvent()->getRouteMatch()->getParam('id'))
         {
-            $Study = $this->getRepository()->find($this->getEvent()->getRouteMatch()->getParam('id'));
+            $Study   = $this->getRepository()->find($this->getEvent()->getRouteMatch()->getParam('id'));
+            $canEdit = ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) && !$Study->getCloseFlag() && !$Study->getApprove();
         }
 
         if ($request->isPost())
         {
-            $User  = $this->_getSession();
-            $Study = $this->getRepository()->find($request->getPost('study_id'));
+            $User    = $this->_getSession();
+            $Study   = $this->getRepository()->find($request->getPost('study_id'));
+            $canEdit = ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) && !$Study->getCloseFlag() && !$Study->getApprove();
 
             /*
              * Creación de los datos básicos del estudio
              */
-            try
+            if ($canEdit &&
+               (($Study->getDescription() != $request->getPost('description') && $request->getPost('description') != '') ||
+                ($Study->getObservation() != $request->getPost('observation') && $request->getPost('observation') != '') ||
+                ($Study->getCreatedAt() != $request->getPost('create_at') && $request->getPost('create_at') != '') ||
+                ($Study->getFkDilutionTree() != $request->getPost('dilution_tree') && $request->getPost('dilution_tree') != '')))
             {
-                $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
-                    $Study->getFkUser()->getUsername(),
-                    $Study->getCode(),
-                    $Study->getDescription(),
-                    $Study->getObservation(),
-                    $Study->getCreatedAt()
-                );
-                $Study->setCreatedAt($request->getPost('create_at'));
-                $Study->setDescription($request->getPost('description'));
-                $Study->setObservation($request->getPost('observation'));
-                $Study->setFkDilutionTree($request->getPost('dilution_tree'));
-                $Study->setFkUser($User);
-                $this->getEntityManager()->persist($Study);
-                $this->getEntityManager()->flush();
-                $this->transaction(
-                    "Edición de estudios",
-                    sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s, Fecha de creación: %6$s',
-                        $User->getUsername(),
-                        $request->getPost('code'),
-                        $older,
-                        $request->getPost('description'),
-                        $request->getPost('observation'),
-                        $request->getPost('create_at')
-                    ),
-                    false
-                );
-            }
-            catch (Exception $e)
-            {
-                exit;
+                try
+                {
+                    $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
+                        $Study->getFkUser()->getUsername(),
+                        $Study->getCode(),
+                        $Study->getDescription(),
+                        $Study->getObservation(),
+                        $Study->getCreatedAt()
+                    );
+
+                    if($Study->getDescription() != $request->getPost('description') && $request->getPost('description') != '')
+                        $Study->setDescription($request->getPost('description'));
+
+                    if($Study->getObservation() != $request->getPost('observation') && $request->getPost('observation') != '')
+                        $Study->setObservation($request->getPost('observation'));
+
+                    if($Study->getCreatedAt() != $request->getPost('create_at') && $request->getPost('create_at') != '')
+                        $Study->setCreatedAt($request->getPost('create_at'));
+
+                    if($Study->getFkDilutionTree() != $request->getPost('dilution_tree') && $request->getPost('dilution_tree') != '')
+                        $Study->set($request->getPost('dilution_tree'));
+
+                    $Study->setFkUser($User);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(
+                        "Edición de estudios",
+                        sprintf('El usuario %1$s ha editado el estudio %2$s <br> %3$s <br> Valores nuevos -> Código: %2$s, Descripción: %4$s, Observaciones: %5$s, Fecha de creación: %6$s',
+                            $User->getUsername(),
+                            $request->getPost('code'),
+                            $older,
+                            $request->getPost('description'),
+                            $request->getPost('observation'),
+                            $request->getPost('create_at')
+                        ),
+                        false
+                    );
+                }
+                catch (Exception $e)
+                {
+                    exit;
+                }
             }
 
             /*
@@ -234,6 +252,7 @@ class StudyController extends BaseController
             $createUnit      = $request->getPost('create-unit');
             $createIs        = $request->getPost('create-is');
             $createUse       = $request->getPost('create-use');
+            $updateAnalyteIs = $request->getPost('update-analyte_is');
             $updateCsNumber  = $request->getPost('update-cs_number');
             $updateQcNumber  = $request->getPost('update-qc_number');
             $updateIs        = $request->getPost('update-is');
@@ -296,12 +315,16 @@ class StudyController extends BaseController
                     {
                         try
                         {
-                            $older =  sprintf('Valores antiguos -> Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
+                            $older =  sprintf('Valores antiguos -> Patrón Internos IS: %5$s, Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
                                 $AnaStudy->getCsNumber(),
                                 $AnaStudy->getQcNumber(),
                                 $AnaStudy->getInternalStandard(),
-                                ($AnaStudy->getIsUsed() ? "S" : "N")
+                                ($AnaStudy->getIsUsed() ? "S" : "N"),
+                                $AnaStudy->getFkAnalyteIs()->getShortening()
                             );
+                            $AnalyteIs = $this->getRepository('\\Alae\\Entity\\Analyte')->find($updateAnalyteIs[$key]);
+
+                            $AnaStudy->setFkAnalyteIs($AnalyteIs);
                             $AnaStudy->setCsNumber($updateCsNumber[$key]);
                             $AnaStudy->setQcNumber($updateQcNumber[$key]);
                             $AnaStudy->setInternalStandard($updateIs[$key]);
@@ -311,7 +334,7 @@ class StudyController extends BaseController
                             $this->transaction(
                                 "Edición de analitos asociados a estudio",
                                 sprintf('El usuario %1$s ha editado la información del analito %2$s(%3$s) en el estudio %4$s.<br>%5$s'
-                                        . 'Valores nuevos -> Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
+                                        . 'Valores nuevos -> Patrón Internos IS: %10$s, Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
                                     $User->getUsername(),
                                     $AnaStudy->getFkAnalyte()->getName(),
                                     $AnaStudy->getFkAnalyte()->getShortening(),
@@ -320,7 +343,8 @@ class StudyController extends BaseController
                                     $updateCsNumber[$key],
                                     $updateQcNumber[$key],
                                     $updateIs[$key],
-                                    (isset($updateUse[$key]) ? "S" : "N")
+                                    (isset($updateUse[$key]) ? "S" : "N"),
+                                    $AnalyteIs->getShortening()
                                 ),
                                 false
                             );
@@ -362,7 +386,7 @@ class StudyController extends BaseController
                 "cs_number"  => $anaStudy->getCsNumber(),
                 "qc_number"  => $anaStudy->getQcNumber(),
                 "unit"       => $anaStudy->getFkUnit()->getName(),
-                "is"         => $anaStudy->getInternalStandard(),
+                "is"         => number_format($anaStudy->getInternalStandard(), 4, '.', ''),
                 "use"        => $anaStudy->getIsUsed(),
                 "edit"       => $buttons
             );
@@ -386,7 +410,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('units', $Unit);
         $viewModel->setVariable('user', $this->_getSession());
         $viewModel->setVariable('isDuplicated', $counter > 0 ? true : false);
-        $viewModel->setVariable('disabled', (($this->_getSession()->isAdministrador() && !$Study->getCloseFlag() && !$Study->getApprove()) ? "" : "disabled"));
+        $viewModel->setVariable('disabled', (($canEdit) ? '' : 'disabled=""'));
         return $viewModel;
     }
 
@@ -588,11 +612,14 @@ class StudyController extends BaseController
                         "Aprobación de concentraciones nominales",
                         sprintf('El usuario %1$s ha aprobado las concentraciones nominales del estudio %2$s<br>'
                                 . 'Concentración Nominal de los Estándares de Calibración: %3$s<br>'
-                                . 'Concentración Nominal de los Controles de Calidad: %4$s',
+                                . 'Concentración Nominal de los Controles de Calidad: %4$s<br>'
+                                . 'Concentración Nominal de los LDQC y HDQC, respectivamente: %5$s, %6$s',
                             $User->getUsername(),
                             $AnaStudy->getFkStudy()->getCode(),
                             $AnaStudy->getCsValues(),
-                            $AnaStudy->getQcValues()
+                            $AnaStudy->getQcValues(),
+                            $AnaStudy->getLdqcValues(),
+                            $AnaStudy->getHdqcValues()
                         ),
                         false
                     );
@@ -648,7 +675,7 @@ class StudyController extends BaseController
 	}
     }
 
-    public function nominalconcentrationAction()
+     public function nominalconcentrationAction()
     {
         $request = $this->getRequest();
 
@@ -671,12 +698,15 @@ class StudyController extends BaseController
                 sprintf('El usuario %1$s ha ingresado las concentraciones nominales del estudio %2$s<br>'
                         . 'Analito: %3$s<br>'
                         . 'Concentración Nominal de los Estándares de Calibración: %4$s<br>'
-                        . 'Concentración Nominal de los Controles de Calidad: %5$s',
+                        . 'Concentración Nominal de los Controles de Calidad: %5$s<br>'
+                        . 'Concentración Nominal de los LDQC y HDQC, respectivamente: %6$s, %7$s',
                     $this->_getSession()->getUsername(),
                     $AnaStudy->getFkStudy()->getCode(),
                     $AnaStudy->getFkAnalyte()->getName(),
                     implode(",", $request->getPost("cs_number")),
-                    implode(",", $request->getPost("qc_number"))
+                    implode(",", $request->getPost("qc_number")),
+                    $request->getPost("ldqc_number"),
+                    $request->getPost("hdqc_number")
                 ),
                 false
             );
@@ -695,11 +725,11 @@ class StudyController extends BaseController
         $viewModel->setVariable('AnaStudy', $AnaStudy);
         $viewModel->setVariable('cs_number', explode(",", $AnaStudy->getCsValues()));
         $viewModel->setVariable('qc_number', explode(",", $AnaStudy->getQcValues()));
-        $viewModel->setVariable('ldqc_number', $AnaStudy->getLdqcValues());
-        $viewModel->setVariable('hdqc_number', $AnaStudy->getHdqcValues());
+        $viewModel->setVariable('ldqc_number', number_format($AnaStudy->getLdqcValues(), 2, '.',''));
+        $viewModel->setVariable('hdqc_number', number_format($AnaStudy->getHdqcValues(), 2, '.',''));
         $viewModel->setVariable('User', $this->_getSession());
         $viewModel->setVariable('isUnlock', $counter == 0 ? true : false);
-        $viewModel->setVariable('disabled', (!$AnaStudy->getStatus() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) ? "" : "disabled"));
+        $viewModel->setVariable('disabled', (!$AnaStudy->getStatus() && ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) ? '' : 'disabled=""'));
         return $viewModel;
     }
 
