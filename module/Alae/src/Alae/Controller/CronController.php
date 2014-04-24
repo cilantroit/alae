@@ -166,10 +166,10 @@ class CronController extends BaseController
     private function insertBatch($fileName, $Study, $Analyte)
     {
         $data  = $this->getData(Helper::getVarsConfig("batch_directory") . "/" . $fileName, $Study, $Analyte);
+        $Batch = $this->saveBatch($fileName);
 
-        if(count($data) > 0)
+        if(count($data["data"]) > 0)
         {
-            $Batch = $this->saveBatch($fileName);
             $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
 
             if (!is_null($Analyte) && !is_null($Study))
