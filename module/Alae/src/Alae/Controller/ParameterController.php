@@ -48,7 +48,7 @@ class ParameterController extends BaseController
                 {
                     try
                     {
-                        $older = sprintf('Valores antiguos -> Descripción: %1$, Min: %2$s, Max: %3$s, Motivo: %4$s, Mensaje de error: %5$s',
+                        $older = sprintf('Valores antiguos -> Descripción: %1$s, Min: %2$s, Max: %3$s, Motivo: %4$s, Mensaje de error: %5$s',
                             $Parameter->getVerification(),
                             $Parameter->getMinValue(),
                             $Parameter->getMaxValue(),
@@ -66,7 +66,7 @@ class ParameterController extends BaseController
                         $this->getEntityManager()->flush();
                         $this->transaction(
                             "Edición de Parámetros del sistema",
-                            sprintf('%1$s<br>Valores nuevos -> Descripción: %2$, Min: %3$s, Max: %4$s, Motivo: %5$s, Mensaje de error: %6$s',
+                            sprintf('%1$s<br>Valores nuevos -> Descripción: %2$s, Min: %3$s, Max: %4$s, Motivo: %5$s, Mensaje de error: %6$s',
                                 $older,
                                 $updateVerification[$key],
                                 $updateMin[$key],
