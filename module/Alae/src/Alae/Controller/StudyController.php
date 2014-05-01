@@ -252,6 +252,7 @@ class StudyController extends BaseController
             $createUnit      = $request->getPost('create-unit');
             $createIs        = $request->getPost('create-is');
             $createUse       = $request->getPost('create-use');
+            $updateAnalyte   = $request->getPost('update-analyte');
             $updateAnalyteIs = $request->getPost('update-analyte_is');
             $updateCsNumber  = $request->getPost('update-cs_number');
             $updateQcNumber  = $request->getPost('update-qc_number');
@@ -315,15 +316,18 @@ class StudyController extends BaseController
                     {
                         try
                         {
-                            $older =  sprintf('Valores antiguos -> Patrón Internos IS: %5$s, Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
+                            $older =  sprintf('Valores antiguos -> Analito: %6$s, Patrón Internos IS: %5$s, Núm CS: %1$s, Núm QC: %2$s, % var IS: %3$s, usar: %4$s<br>',
                                 $AnaStudy->getCsNumber(),
                                 $AnaStudy->getQcNumber(),
                                 $AnaStudy->getInternalStandard(),
                                 ($AnaStudy->getIsUsed() ? "S" : "N"),
-                                $AnaStudy->getFkAnalyteIs()->getShortening()
+                                $AnaStudy->getFkAnalyteIs()->getShortening(),
+                                $AnaStudy->getFkAnalyte()->getShortening()
                             );
+                            $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($updateAnalyte[$key]);
                             $AnalyteIs = $this->getRepository('\\Alae\\Entity\\Analyte')->find($updateAnalyteIs[$key]);
 
+                            $AnaStudy->setFkAnalyte($Analyte);
                             $AnaStudy->setFkAnalyteIs($AnalyteIs);
                             $AnaStudy->setCsNumber($updateCsNumber[$key]);
                             $AnaStudy->setQcNumber($updateQcNumber[$key]);
@@ -334,7 +338,7 @@ class StudyController extends BaseController
                             $this->transaction(
                                 "Edición de analitos asociados a estudio",
                                 sprintf('El usuario %1$s ha editado la información del analito %2$s(%3$s) en el estudio %4$s.<br>%5$s'
-                                        . 'Valores nuevos -> Patrón Internos IS: %10$s, Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
+                                        . 'Valores nuevos -> Analito: %11$s, Patrón Internos IS: %10$s, Núm CS: %6$s, Núm QC: %7$s, % var IS: %8$s, usar: %9$s',
                                     $User->getUsername(),
                                     $AnaStudy->getFkAnalyte()->getName(),
                                     $AnaStudy->getFkAnalyte()->getShortening(),
@@ -344,7 +348,8 @@ class StudyController extends BaseController
                                     $updateQcNumber[$key],
                                     $updateIs[$key],
                                     (isset($updateUse[$key]) ? "S" : "N"),
-                                    $AnalyteIs->getShortening()
+                                    $AnalyteIs->getShortening(),
+                                    $Analyte->getShortening()
                                 ),
                                 false
                             );

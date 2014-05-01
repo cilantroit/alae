@@ -181,7 +181,7 @@ class Datatable
                 array("key" => "use", "label" => "usar", "sortable" => false, "allowHTML" => true, "formatter" => '{value}'),
                 array("key" => "edit", "allowHTML" => true)
             )),
-            "editable" => json_encode(array("analyte_is", "cs_number", "qc_number", "unit", "is", "use")),
+            "editable" => json_encode(array("analyte", "analyte_is", "cs_number", "qc_number", "unit", "is", "use")),
             "header"   => json_encode($header),
             "filters"  => $this->getFilters($header)
         );

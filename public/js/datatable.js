@@ -42,11 +42,6 @@ YUI().use('datatable', function(Y) {
 
     $('.form-datatable-profile').on("change", function(event) {
 	event.stopPropagation();
-//	var elementId = $(this).attr('id');
-//	$('.form-datatable-profile').each(function(k, v) {
-//	    if ($(this).attr('id') != elementId)
-//		$(this).children().removeAttr("selected");
-//	});
 	$("#profile").val(this.value);
     });
     
@@ -120,6 +115,12 @@ function changeElement(element, pk)
             if (value == "use"){
                 $(parentId + ' .yui3-datatable-col-' + value + ' > input').prop('disabled',false);
                 $(parentId + ' .yui3-datatable-col-' + value + ' > input').attr("name", "update-" + value + "[" + pk + "]");
+            }
+            else if (value == 'analyte')
+            {
+                $('#analyte > select').attr("name", "update-" + value + "[" + pk + "]");
+                input = $('#analyte').html();
+                $(parentId + ' .yui3-datatable-col-' + value).html(input);
             }
             else if (value == 'analyte_is')
             {
@@ -222,6 +223,8 @@ function excel(id)
          $(this).children("th").each(function (index2) {
             if($(this).children("div").is(':visible')){
                 headers += '<th>' + $(this).children("div").text() + '</th>';
+            }else if($(this).text() == "Nivel de Acceso"){
+                headers += '<th>' + $(this).text() + '</th>';
             }
          });
          headers += '</tr>';
@@ -233,7 +236,13 @@ function excel(id)
          {
             rows += '<tr>';
             $(this).children("td").each(function (index2) {
-                rows += '<td>'+$(this).text()+'</td>';
+                if($(this).hasClass("yui3-datatable-col-profile")){
+                    rows += '<td>'+$(this).find('option:selected').text()+'</td>';
+                }else if($(this).hasClass("yui3-datatable-col-password")){
+                    rows += '';
+                } else {
+                    rows += '<td>'+$(this).text()+'</td>';
+                }                
             });
             rows += '</tr>';
          }

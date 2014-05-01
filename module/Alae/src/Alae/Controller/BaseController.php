@@ -4,7 +4,7 @@
  * Controlador padre con funciones comunes.
  * @author Maria Quiroz
  */
- 
+
 namespace Alae\Controller;
 
 use Zend\View\Model\JsonModel,
