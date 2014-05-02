@@ -518,6 +518,7 @@ class VerificationController extends BaseController
         $where = "s.sampleName LIKE '%DQC%' AND SUBSTRING(s.sampleName,5,1) <> s.dilutionFactor AND s.fkBatch = " . $Batch->getPkBatch();
         $this->error($where, $parameters[0], array(), false);
 
+        /**
         $query    = $this->getEntityManager()->createQuery("
             SELECT SUBSTRING(s.sampleName,5,1) as dilutionFactor
             FROM Alae\Entity\SampleBatch s
@@ -529,6 +530,7 @@ class VerificationController extends BaseController
             $where = "s.dilutionFactor = " . $factor['dilutionFactor'] . " AND s.sampleType = 'Unknown' AND s.fkBatch = " . $Batch->getPkBatch();
             $this->error($where, $parameters[0], array(), false);
         }
+        **/
     }
 
     /**
