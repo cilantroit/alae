@@ -465,6 +465,7 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
+            
             $query = $this->getEntityManager()->createQuery("
                 SELECT b
                 FROM Alae\Entity\Batch b
@@ -666,7 +667,7 @@ class ReportController extends BaseController
                     "cs_values"    => explode(",", $analytes[0]->getCsValues()),
                     "list"         => $list,
                     "calculations" => $calculations,
-                    "filename"     => "calculated_nominal_concentration_of_calibration_standards" . date("Ymd-Hi")
+                    "filename"     => "percent_calculated_nominal_concentration_of_calibration_standards" . date("Ymd-Hi")
                 );
 
                 $viewModel = new ViewModel($properties);
@@ -763,7 +764,7 @@ class ReportController extends BaseController
                     "qc_values"    => explode(",", $analytes[0]->getQcValues()),
                     "list"         => $list,
                     "calculations" => $calculations,
-                    "filename"     => "calculated_nominal_concentration_of_calibration_standards" . date("Ymd-Hi")
+                    "filename"     => "between_run_accuracy_and_precision_of_quality_control_samples " . date("Ymd-Hi")
                 );
 
                 $viewModel = new ViewModel($properties);
@@ -870,7 +871,7 @@ class ReportController extends BaseController
                     "analyte"      => $analytes[0],
                     "list"         => $list,
                     "calculations" => $calculations,
-                    "filename"     => "calculated_nominal_concentration_of_calibration_standards" . date("Ymd-Hi")
+                    "filename"     => "Between_Run_Accuracy_and_Precision_of_dilution_Quality_Control_Samples" . date("Ymd-Hi")
                 );
 
                 $viewModel = new ViewModel($properties);

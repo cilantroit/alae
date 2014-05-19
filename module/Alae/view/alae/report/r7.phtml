@@ -72,8 +72,8 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
 		    <tr>
 			<td  align="center"  colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
 			<?php foreach ($cs_values as $key => $value) : ?>
-                        <td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">
-                            <?php echo $value; ?>
+                        <td style="mso-number-format:'#,##0.00';" align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">
+                            <?php echo number_format($value,2,'.',''); ?>
                         </td>
                         <?php endforeach; ?>
 		    </tr>
@@ -92,7 +92,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                             <strong>'<?php echo $list['name']; ?></strong>
                         </td>
                         <?php foreach ($list['par'] as $key => $value) : ?>
-                        <td  align="center"    style=" border: black 1px solid;padding:2px">
+                        <td  style="mso-number-format:'#,##0.00';" align="center"    style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
                         </td>
                         <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:11px">

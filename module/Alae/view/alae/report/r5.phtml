@@ -70,8 +70,9 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                 <td  align="center"     style=" border: black 1px solid;font-size:11px;padding:4px">
                     <?php echo Alae\Service\Helper::getformatDecimal($Batch->getIntercept()); ?>
                 </td>
-                <td  align="center"    style="border: black 1px solid;;font-size:11px;padding:4px">
-                    <?php echo $Batch->getCorrelationCoefficient(); ?>
+                <td style="mso-number-format:'#,##0.0000';" align="center"    style="border: black 1px solid;;font-size:11px;padding:4px">
+                    
+                    <?php echo number_format($Batch->getCorrelationCoefficient(), 4, '.', ''); ?>
                 </td>
             </tr>
             <?php $count++; endforeach; ?>
