@@ -411,26 +411,22 @@ class ReportController extends BaseController
 
                 foreach ($batch as $Batch)
                 {
+                    $em   = $this->getEntityManager();
+                    $db   = $em->getConnection();
+                    $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
+                    $stmt->bindValue('pk_batch', $Batch->getPkBatch());
 
-	                $em = $this->getEntityManager();
-				    $db = $em->getConnection();
-				    $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
-				    $stmt->bindValue('pk_batch', $Batch->getPkBatch());
+                    $stmt->execute();
 
-				    $stmt->execute();
-
-				    while ($row = $stmt->fetch()) {
-
-				        $message[] = array(
-	                            "sampleName"   => $row['sample_name'],
-	                            "codeError"    => str_replace(",", "<br>", $row['code_error']),
-	                            "messageError" => str_replace(",", "<br>", $row['message_error']),
-	                            "filename"     => $Batch->getFileName()
-
-	                        );
-
-				    }
-
+                    while ($row = $stmt->fetch())
+                    {
+                        $message[] = array(
+                            "sampleName"   => $row['sample_name'],
+                            "codeError"    => str_replace(",", "<br>", $row['code_error']),
+                            "messageError" => str_replace(",", "<br>", $row['message_error']),
+                            "filename"     => $Batch->getFileName()
+                        );
+                    }
                 }
 
 
@@ -465,7 +461,7 @@ class ReportController extends BaseController
         $request = $this->getRequest();
         if ($request->isGet())
         {
-            
+
             $query = $this->getEntityManager()->createQuery("
                 SELECT b
                 FROM Alae\Entity\Batch b
@@ -551,7 +547,7 @@ class ReportController extends BaseController
                 $query    = $this->getEntityManager()->createQuery("
                     SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, SUM(s.calculatedConcentration) as suma, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'CS%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    WHERE s.sampleName LIKE 'CS%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
                 $elements = $query->getResult();
@@ -649,7 +645,7 @@ class ReportController extends BaseController
                 $query    = $this->getEntityManager()->createQuery("
                     SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.accuracy) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'CS%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    WHERE s.sampleName LIKE 'CS%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
                 $elements = $query->getResult();
@@ -737,14 +733,13 @@ class ReportController extends BaseController
                     $calculatedConcentration['name'] = $name;
 
                     $list[] = $calculatedConcentration;
-
                     $pkBatch[] = $Batch->getPkBatch();
                 }
 
                 $query    = $this->getEntityManager()->createQuery("
                     SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    WHERE s.sampleName LIKE 'QC%' AND s.validFlag = 1 AND s.sampleName NOT LIKE '%*%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
                 $elements = $query->getResult();
