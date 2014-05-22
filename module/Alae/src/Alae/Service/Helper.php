@@ -75,6 +75,9 @@ class Helper
     		case $value >= 0.00001 && $value <= 0.00009:
     			$decimal = number_format($value, 7, '.', '');
     			break;
+                case $value = 0:
+    			$decimal = number_format($value, 2, '.', '');
+    			break;
     		default:
     			$decimal = $value;
     			break;
