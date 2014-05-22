@@ -75,7 +75,7 @@ class IndexController extends BaseController
 	    {
 		foreach ($elements as $element)
 		{
-		    if ($element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
+		    if (!$element->isCron() && $element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
 		    {
 			$this->_setSession($element);
 			return $this->redirect()->toRoute('index', array('controller' => 'index', 'action' => 'menu'));

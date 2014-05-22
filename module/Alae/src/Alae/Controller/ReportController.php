@@ -361,7 +361,8 @@ class ReportController extends BaseController
                     $properties[] = array(
                         "filename" => $Batch->getFileName(),
                         "error"    => implode("<br>", $message),
-                        "message"  => is_null($Batch->getValidFlag()) ? "Falta validar" : ($Batch->getValidFlag() ? "Aceptado" : "Rechazado")
+                        "message"  => is_null($Batch->getValidFlag()) ? "Falta validar" : ($Batch->getValidFlag() ? "Aceptado" : "Rechazado"),
+                        "veredicto"=> $Batch->getJustification()
                     );
                 }
 
@@ -799,11 +800,12 @@ class ReportController extends BaseController
             {
                 $list    = array();
                 $pkBatch = array();
+                $Concentration = array();
                 foreach ($batch as $Batch)
                 {
                     $qb       = $this->getEntityManager()->createQueryBuilder();
                     $qb
-                            ->select('s.calculatedConcentration', 's.accuracy', 's.dilutionFactor', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
+                            ->select('s.calculatedConcentration', 's.accuracy', 's.dilutionFactor', 'SUBSTRING(s.sampleName, 1, 5) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError', 'SUBSTRING(s.sampleName, 1, 4) as discriminador')
                             ->from('Alae\Entity\SampleBatch', 's')
                             ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
                             ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
@@ -812,17 +814,15 @@ class ReportController extends BaseController
                             ->orderBy('s.sampleName', 'ASC');
                     $elements = $qb->getQuery()->getResult();
 
-                    $Concentration           = array();
+
                     $calculatedConcentration = array();
                     if (count($elements) > 0)
                     {
-                        $counter = 0;
                         foreach ($elements as $temp)
                         {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
-                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, '.', ''), $temp['codeError']);
-                            $Concentration[$temp["sampleName"]][]                           = $value;
-                            $counter++;
+                            $value                                = number_format($temp["calculatedConcentration"], 2, '.', '');
+                            $calculatedConcentration["valores"][] = array($value, $temp['codeError'], number_format($temp["dilutionFactor"], 2, '.', ''), number_format($temp["accuracy"], 2, '.', ''));
+                            $Concentration[$temp["discriminador"]][] = number_format($temp["accuracy"], 2, '.', '');
                         }
 
                         list($name, $aux) = explode("_", $Batch->getFileName());
@@ -836,11 +836,11 @@ class ReportController extends BaseController
                 if (count($pkBatch) > 0)
                 {
                     $query    = $this->getEntityManager()->createQuery("
-                        SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                        SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 4) as sampleName
                         FROM Alae\Entity\SampleBatch s
                         WHERE s.sampleName LIKE 'LDQC%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                         GROUP BY sampleName
-                        ORDER By s.sampleName");
+                        ORDER By sampleName");
                     $elements = $query->getResult();
 
                     foreach ($elements as $element)
@@ -849,7 +849,7 @@ class ReportController extends BaseController
                             "count"  => $element['counter'],
                             "prom"   => number_format($element['promedio'], 2, '.', ''),
                             "accu"   => number_format($element['accuracy'], 2, '.', ''),
-                            "values" => implode(";", $Concentration[$element['sampleName']])
+                            "values" => implode(";", $Concentration[$element["sampleName"]])
                         );
                     }
                 }

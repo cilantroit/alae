@@ -38,6 +38,9 @@
                 <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
                     Motivo ( En caso de ser Rechazado )
                 </td>
+                <td  width="200px"  colspan="2" align="center" height="20" bgcolor="#000000" style="border: black 1px solid;color:#97C1DA;padding: 4px">
+                    Veredicto
+                </td>
             </tr>
             <?php foreach ($list as $data) : ?>
             <tr>
@@ -48,7 +51,10 @@
                     <?php echo $data['message']; ?>
                 </td>
                 <td  width="200px" colspan="2" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
-                    <?php echo htmlentities($data['error']); ?>
+                    <?php echo $data['error']; ?>
+                </td>
+                <td  width="200px" colspan="2" align="left" height="20" bgcolor="#F1DADA" style="border: black 1px solid;padding:4px;">
+                    <?php echo $data['veredicto']; ?>
                 </td>
             </tr>
             <?php endforeach; ?>

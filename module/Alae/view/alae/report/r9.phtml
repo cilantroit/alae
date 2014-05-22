@@ -73,38 +73,25 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
 			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> % Nominal (accuracy)</td>
 		    </tr>
                     <?php foreach($list as $list) : ?>
-		    <tr>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <strong>'<?php echo $list['name']; ?></strong>
-                        </td>
-			<?php foreach ($list['par'] as $key => $value) : ?>
-                        <td  align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
-                            <?php echo ($value[2] != "" && $value[2] != "0") ? "NRV" : $value[0]; ?>
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $value[1]; ?>
-                        </td>
-                        <td  align="center"  bgcolor="" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $value[2]; ?>
-                        </td>
+                        <?php foreach ($list['valores'] as $key => $value) : ?>
+                        <tr>
+                            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                                <strong>'<?php echo $key == 0 ? $list['name']: ""; ?></strong>
+                            </td>
+                            <td  align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
+                                <?php echo ($value[1] == "O") ? "NRV" : $value[0]; ?>
+                            </td>
+                            <td  align="center" bgcolor="" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                                <?php echo $value[1]; ?>
+                            </td>
+                            <td  align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                                <?php echo $value[2]; ?>
+                            </td>
+                            <td  align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                                <?php echo $value[3]; ?>
+                            </td>
+                        </tr>
                         <?php endforeach; ?>
-		    </tr>
-                    <tr>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <strong></strong>
-                        </td>
-			<?php foreach ($list['impar'] as $key => $value) : ?>
-                        <td  align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
-                            <?php echo ($value[2] != "" && $value[2] != "0") ? "NRV" : $value[0]; ?>
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $value[1]; ?>
-                        </td>
-                        <td  align="center"  bgcolor="" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $value[2]; ?>
-                        </td>
-                        <?php endforeach; ?>
-		    </tr>
                     <?php endforeach; ?>
 		    <tr>
 			<td  align="center"  colspan="12" style=" border: black 1px solid;padding:5px;font-size: 11px"></td>
@@ -126,7 +113,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
-                        <td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                        <td  align="center"   colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong>Mean</strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
@@ -142,7 +129,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
-			<td  style= "mso-number-format:'#,##0.0000';" align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+			<td align="center"   colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong>SD (±) </strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
@@ -158,11 +145,11 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
-			<td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+			<td align="center" colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong>CV (%)</strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
-                        <td style= "mso-number-format:'#,##0.00';" align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                        <td align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
                             =DESVEST(<?php echo $calculation['values']; ?>)/PROMEDIO(<?php echo $calculation['values']; ?>)
                         </td>
                         <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">

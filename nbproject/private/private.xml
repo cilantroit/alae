@@ -3,8 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/create.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/edit.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r9.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/ReportController.php</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r3c.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/layout/layout.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r8.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/User.php</file>
         </group>
     </open-files>
 </project-private>
