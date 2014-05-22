@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/StudyController.php</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r8.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Entity/AnalyteStudy.php</file>
@@ -16,6 +17,10 @@
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/layout/layout.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/nominalconcentration.phtml</file>
             <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r7.phtml</file>
+=======
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/create.phtml</file>
+            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/study/edit.phtml</file>
+>>>>>>> 258a1cc682807ef8a659cec2e7e8f21b1926c4e1
         </group>
     </open-files>
 </project-private>

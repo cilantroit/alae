@@ -212,7 +212,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
                         <td style= "mso-number-format:'#,##0.0000';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
-                            =DESVEST(<?php echo $calculation['values']; ?>)
+                            =REDONDEAR(DESVEST(<?php echo $calculation['values']; ?>);4)
                         </td>
                         <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
 

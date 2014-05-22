@@ -187,10 +187,10 @@ xmlns="http://www.w3.org/TR/REC-html40">
 			<td  align="center" colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>SD (±) </strong> </td>
 			<?php foreach ($calculations as $calculation) : ?>
                         <td  style="mso-number-format:'#,##0.0000';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
-                        	<?php 
+                        	<?php
                         	//$sdvalue = number_format($calculation['values'],2,'.','');
                         	?>
-                            =DESVEST(<?php echo $calculation['values']; ?>)
+                            =REDONDEAR(DESVEST(<?php echo $calculation['values']; ?>);4)
                         </td>
                         <?php endforeach; ?>
 		    </tr>
