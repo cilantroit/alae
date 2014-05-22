@@ -571,7 +571,7 @@ class ReportController extends BaseController
                     "cs_values"    => explode(",", $analytes[0]->getCsValues()),
                     "list"         => $list,
                     "calculations" => $calculations,
-                    "filename"     => "back-calculated_concentration_of_calibration_standard" . date("Ymd-Hi")
+                    "filename"     => "back_calculated_concentration_of_calibration_standard" . date("Ymd-Hi")
                 );
 
                 $viewModel = new ViewModel($properties);

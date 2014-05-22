@@ -2,13 +2,63 @@
 header('Content-Disposition: attachment; filename="'. $filename .'.xls";');
 header('Content-Type: application/vnd.ms-excel;charset=utf-8');
 ?>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-    </head>
-    <body>
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 11">
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Pat Willener</o:Author>
+  <o:Company>Good Day Books</o:Company>
+ </o:DocumentProperties>
+ <o:OfficeDocumentSettings>
+  <o:RelyOnVML/>
+  <o:AllowPNG/>
+ </o:OfficeDocumentSettings>
+</xml><![endif]-->
+<style>
+<!--
+@page
+	{mso-page-orientation:landscape;}
+
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <x:ExcelWorkbook>
+  <x:ExcelWorksheets>
+   <x:ExcelWorksheet>
+    <x:Name>back_calculated_concentration_of_calibration_standard</x:Name>
+    <x:WorksheetOptions>
+     <x:Print>
+      <x:ValidPrinterInfo/>
+      <x:PaperSizeIndex>9</x:PaperSizeIndex>
+     </x:Print>
+     <x:Selected/>
+     <x:Panes>
+      <x:Pane>
+       <x:Number>1</x:Number>
+       <x:ActiveRow>1</x:ActiveRow>
+      </x:Pane>
+     </x:Panes>
+     <x:ProtectContents>False</x:ProtectContents>
+     <x:ProtectObjects>False</x:ProtectObjects>
+     <x:ProtectScenarios>False</x:ProtectScenarios>
+    </x:WorksheetOptions>
+   </x:ExcelWorksheet>
+  </x:ExcelWorksheets>
+  
+  <x:ProtectStructure>False</x:ProtectStructure>
+  <x:ProtectWindows>False</x:ProtectWindows>
+ </x:ExcelWorkbook>
+</xml><![endif]-->
+
+<title></title>
+</head>
+<body>
 	<div class="table-container">
 	    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;padding:10px 0 0 0;">
 		<tr>
@@ -95,7 +145,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         <td style="mso-number-format:'#,##0.00';" align="center"    style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
                         </td>
-                        <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:11px">
+                        <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:10px">
                             <?php echo $value[1]; ?>
                         </td>
                         <?php endforeach; ?>
@@ -108,7 +158,7 @@ header('Content-Type: application/vnd.ms-excel;charset=utf-8');
                         <td  align="center"    style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
                         </td>
-                        <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:11px">
+                        <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:10px">
                             <?php echo $value[1]; ?>
                         </td>
                         <?php endforeach; ?>
