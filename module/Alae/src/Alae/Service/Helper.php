@@ -57,7 +57,6 @@ class Helper
 
     public static function getformatDecimal($value)
     {
-
     	switch ($value)
     	{
     		case $value >= 0.1 && $value <= 0.9:
@@ -75,13 +74,39 @@ class Helper
     		case $value >= 0.00001 && $value <= 0.00009:
     			$decimal = number_format($value, 7, '.', '');
     			break;
-                
     		default:
     			$decimal = $value;
     			break;
     	}
 	return $decimal;
     }
+    
+    public static function getformatDecimal2($value)
+    {
+    	switch ($value)
+    	{
+    		case $value >= 0.1 && $value <= 0.9:
+    			$decimal = "mso-number-format:'#,##0.000'";
+    			break;
+    		case $value >= 0.01 && $value <= 0.09:
+    			$decimal = "mso-number-format:'#,##0.0000'";
+    			break;
+    		case $value >= 0.001 && $value <= 0.009:
+    			$decimal = "mso-number-format:'#,##0.00000'";
+    			break;
+    		case $value >= 0.0001 && $value <= 0.0009:
+    			$decimal = "mso-number-format:'#,##0.000000'";
+    			break;
+    		case $value >= 0.00001 && $value <= 0.00009:
+    			$decimal = "mso-number-format:'#,##0.0000000'";
+    			break;
+    		default:
+    			$decimal = "";
+    			break;
+    	}
+	return $decimal;
+    }
+    
 }
 
 ?>
