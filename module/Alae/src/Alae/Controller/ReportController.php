@@ -737,10 +737,16 @@ class ReportController extends BaseController
                     $pkBatch[] = $Batch->getPkBatch();
                 }
 
-                $query    = $this->getEntityManager()->createQuery("
+                /*$query    = $this->getEntityManager()->createQuery("
                     SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
                     WHERE s.sampleName LIKE 'QC%' AND s.validFlag = 1 AND s.sampleName NOT LIKE '%*%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    GROUP BY sampleName
+                    ORDER By s.sampleName");*/
+                $query    = $this->getEntityManager()->createQuery("
+                    SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                    FROM Alae\Entity\SampleBatch s
+                    WHERE s.sampleName LIKE 'QC%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
                 $elements = $query->getResult();
