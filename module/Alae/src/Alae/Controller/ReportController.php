@@ -743,7 +743,7 @@ class ReportController extends BaseController
                     WHERE s.sampleName LIKE 'QC%' AND s.validFlag = 1 AND s.sampleName NOT LIKE '%*%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
-                
+
                 $elements = $query->getResult();
 
                 $calculations = array();
@@ -751,8 +751,8 @@ class ReportController extends BaseController
                 {
                     $calculations[] = array(
                         "count"  => $element['counter'],
-                        "prom"   => number_format($element['promedio'], 4, '.', ''),
-                        "accu"   => number_format($element['accuracy'], 4, '.', ''),
+                        "prom"   => number_format($element['promedio'], 2, '.', ''),
+                        "accu"   => number_format($element['accuracy'], 2, '.', ''),
                         "values" => implode(";", $Concentration[$element['sampleName']])
                     );
                 }
