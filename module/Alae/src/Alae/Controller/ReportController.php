@@ -708,7 +708,7 @@ class ReportController extends BaseController
                 {
                     $qb       = $this->getEntityManager()->createQueryBuilder();
                     $qb
-                            ->select('s.calculatedConcentration', 's.accuracy', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
+                            ->select('s.pkSampleBatch','s.calculatedConcentration', 's.accuracy', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
                             ->from('Alae\Entity\SampleBatch', 's')
                             ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
                             ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
@@ -727,20 +727,27 @@ class ReportController extends BaseController
                             $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
                             $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, '.', ''), $temp['codeError']);
                             $Concentration[$temp["sampleName"]][]                           = $value;
+
+                            if (is_null($temp['codeError']) || $temp['codeError'] == 'O')
+                            {
+                                $pkBatch[] = $temp["pkSampleBatch"];
+                            }
                             $counter++;
                         }
                     }
+
+
                     list($name, $aux) = explode("_", $Batch->getFileName());
                     $calculatedConcentration['name'] = $name;
 
                     $list[] = $calculatedConcentration;
-                    $pkBatch[] = $Batch->getPkBatch();
+
                 }
 
                 $query    = $this->getEntityManager()->createQuery("
-                    SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
+                    SELECT COUNT(s.pkSampleBatch) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
                     FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'QC%' AND s.validFlag = 1 AND s.sampleName NOT LIKE '%*%' AND s.fkBatch in (" . implode(",", $pkBatch) . ")
+                    WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND s.pkSampleBatch in (" . implode(",", $pkBatch) . ")
                     GROUP BY sampleName
                     ORDER By s.sampleName");
 
