@@ -125,8 +125,8 @@ xmlns="http://www.w3.org/TR/REC-html40">
 		    <tr><
 			<td  align="center"  colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"></td>
 			<?php foreach ($qc_values as $key => $value) : ?>
-                        <td  align="center"   colspan="4"  style=" border: black 1px solid;padding:2px">
-                            <?php echo number_format($value, 2, ',', ''); ?>
+                        <td  style= "mso-number-format:'#,##0.00';" align="center"   colspan="4"  style=" border: black 1px solid;padding:2px">
+                            <?php echo number_format($value, 2, '.', ''); ?>
                         </td>
                         <?php endforeach; ?>
 		    </tr>
