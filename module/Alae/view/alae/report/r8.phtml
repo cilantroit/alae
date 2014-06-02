@@ -198,10 +198,10 @@ xmlns="http://www.w3.org/TR/REC-html40">
                             <strong>Mean</strong>
                         </td>
 			<?php foreach ($calculations as $calculation) : ?>
-                        <td align="center"   colspan="2" style="border: black 1px solid;padding:2px;">
+                        <td style= "mso-number-format:'#,##0.000';" align="center"   colspan="2" style="border: black 1px solid;padding:2px;">
                             <?php echo ($calculation['prom']); ?>
                         </td>
-                        <td  align="center"   colspan="2" style="border: black 1px solid;padding:2px;">
+                        <td style= "mso-number-format:'#,##0.00';" align="center"   colspan="2" style="border: black 1px solid;padding:2px;">
                             <?php echo $calculation['accu']; ?>
                         </td>
                         <?php endforeach; ?>
