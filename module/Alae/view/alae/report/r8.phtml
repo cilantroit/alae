@@ -147,10 +147,10 @@ xmlns="http://www.w3.org/TR/REC-html40">
                             <strong>'<?php echo $list['name']; ?></strong>
                         </td>
                         <?php foreach ($list['par'] as $key => $value) : ?>
-                        <td  align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">
+                        <td  style= "mso-number-format:'#,##0.00';" align="center"   colspan="2"  style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[2] != "" && $value[2] != "O") ? "NRV" : $value[0]; ?>
                         </td>
-                        <td  align="center"   style=" border: black 1px solid;padding:2px">
+                        <td style= "mso-number-format:'#,##0.00';" align="center"   style=" border: black 1px solid;padding:2px">
                             <?php echo $value[1]; ?>
                         </td>
                         <td  align="center"      style=" border: black 1px solid;padding:2px">
@@ -163,10 +163,10 @@ xmlns="http://www.w3.org/TR/REC-html40">
                             <strong></strong>
                         </td>
 			<?php foreach ($list['impar'] as $key => $value) : ?>
-                        <td  align="center"  colspan="2"  style=" border: black 1px solid;padding:2px">
+                        <td  style= "mso-number-format:'#,##0.00';" align="center"  colspan="2"  style=" border: black 1px solid;padding:2px">
                             <?php echo ($value[2] != "" && $value[2] != "0") ? "NRV" : $value[0]; ?>
                         </td>
-                        <td  align="center"   style=" border: black 1px solid;padding:2px">
+                        <td style= "mso-number-format:'#,##0.00';" align="center"   style=" border: black 1px solid;padding:2px">
                             <?php echo $value[1]; ?>
                         </td>
                         <td  align="center"    style=" border: black 1px solid;padding:2px">
