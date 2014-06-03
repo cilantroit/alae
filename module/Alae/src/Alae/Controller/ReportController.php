@@ -833,17 +833,17 @@ class ReportController extends BaseController
                     $concentration = $accuracy = $properties = array();
                     foreach ($elements as $element)
                     {
-                        $error = ($element['codeError'] == '' || $element['codeError'] == 'O') ? number_format($element[0]->getCalculatedConcentration(), 2, ',', '') : "NVR";
+                        $error = ($element['codeError'] == '' || $element['codeError'] == 'O') ? number_format($element[0]->getCalculatedConcentration(), 2, '.', '') : "NVR";
                         $properties[$element[0]->getFkBatch()->getFileName()][] = array(
                             "sampleName"              => $element[0]->getSampleName(),
                             "calculatedConcentration" => $error,
-                            "dilutionFactor"          => number_format($element[0]->getDilutionFactor(), 2, ',', ''),
-                            "accuracy"                => number_format($element[0]->getAccuracy(), 2, ',', ''),
+                            "dilutionFactor"          => number_format($element[0]->getDilutionFactor(), 2, '.', ''),
+                            "accuracy"                => number_format($element[0]->getAccuracy(), 2, '.', ''),
                             "error"                   => $element['codeError']
                         );
 
                         $concentration[] = $error;
-                        $accuracy[]      = number_format($element[0]->getAccuracy(), 2, ',', '');
+                        $accuracy[]      = number_format($element[0]->getAccuracy(), 2, '.', '');
                     }
 
                     $page .= $this->render('alae/report/r9page', array(
