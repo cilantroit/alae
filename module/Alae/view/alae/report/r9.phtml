@@ -111,123 +111,18 @@ xmlns="http://www.w3.org/TR/REC-html40">
 		</tr>
 	    </table>
 	    <div class="cler"></div>
-	    <div class="table-row">
-		<table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
-		    <tr>
-			<td  colspan="2" align="center"></td>
-		    </tr>
-		    <tr>
-			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:10px;font-size: 11px"><strong>Batch Results Table No></strong></td>
-			<td  align="center" bgcolor="" colspan="9" style=" border: black 1px solid;padding:10px;font-size: 11px">
-                            <strong>LDQC</strong>
-                        </td>
-		    </tr>
-		    <tr>
-			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
-			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">Concentration Found</td>
-			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">Dilution Factor</td>
-			<td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> % Nominal (accuracy)</td>
-		    </tr>
-                    <?php foreach($list as $list) : ?>
-                        <?php foreach ($list['valores'] as $key => $value) : ?>
-                        <tr>
-                            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                                <strong>'<?php echo $key == 0 ? $list['name']: ""; ?></strong>
-                            </td>
-                            <td style= "mso-number-format:'#,##0.00';" align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
-                                <?php echo ($value[1] == "O") ? "NRV" : $value[0]; ?>
-                            </td>
-                            <td  align="center" bgcolor="" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                                <?php echo $value[1]; ?>
-                            </td>
-                            <td  align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                                <?php echo $value[2]; ?>
-                            </td>
-                            <td style= "mso-number-format:'#,##0.00';" align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                                <?php echo $value[3]; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
-		    <tr>
-			<td  align="center"  colspan="12" style=" border: black 1px solid;padding:5px;font-size: 11px"></td>
-		    </tr>
-                    <tr>
-			<td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <strong>N</strong>
-                        </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $calculation['count']; ?>
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            N/AP
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $calculation['count']; ?>
-                        </td>
-                        <?php endforeach; ?>
-		    </tr>
-		    <tr>
-                        <td  align="center"   colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
-                            <strong>Mean</strong>
-                        </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td style= "mso-number-format:'#,##0.00';" align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $calculation['prom']; ?>
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            N/AP
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            <?php echo $calculation['accu']; ?>
-                        </td>
-                        <?php endforeach; ?>
-		    </tr>
-		    <tr>
-			<td align="center"   colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
-                            <strong>SD (±) </strong>
-                        </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td style= "mso-number-format:'#,##0.0000';" align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            =DESVEST(<?php echo $calculation['values']; ?>)
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            N/AP
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-
-                        </td>
-                        <?php endforeach; ?>
-		    </tr>
-		    <tr>
-			<td align="center" colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
-                            <strong>CV (%)</strong>
-                        </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            =DESVEST(<?php echo $calculation['values']; ?>)/PROMEDIO(<?php echo $calculation['values']; ?>)
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                            N/AP
-                        </td>
-                        <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-
-                        </td>
-                        <?php endforeach; ?>
-		    </tr>
-		    <tr>
-			<td colspan="20" align="left" style="padding: 10px 0 2px 0;">Acceptance criteria: </td>
-		    </tr>
-		    <tr>
-			<td colspan="20" align="left" style="padding: wpx;">For each DQC level, at least 2 of 3 must be 100 ± 15% nominal values for each analytical batch </td>
-		    </tr>
-		    <tr>
-			<td colspan="20" align="left" style="padding: 2px;">RCS: Rejected Calibration Standard</td>
-		    </tr>
-
-		</table>
-	    </div>
+            <?php echo $page; ?>
+            <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
+                <tr>
+                    <td colspan="20" align="left" style="padding: 10px 0 2px 0;">Acceptance criteria: </td>
+                </tr>
+                <tr>
+                    <td colspan="20" align="left" style="padding: wpx;">For each DQC level, at least 2 of 3 must be 100 ± 15% nominal values for each analytical batch </td>
+                </tr>
+                <tr>
+                    <td colspan="20" align="left" style="padding: 2px;">RCS: Rejected Calibration Standard</td>
+                </tr>
+            </table>
 	</div>
       </div>
     </body>

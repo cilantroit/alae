@@ -1,0 +1,96 @@
+<div class="table-row">
+    <table width="900" border="0" cellspacing="0" cellpadding="0"  style="background-color:#fff;margin-top:10px;text-aling:center;">
+        <tr>
+            <td  colspan="2" align="center"></td>
+        </tr>
+        <tr>
+            <td  align="center"  colspan="3" style=" border: black 1px solid;padding:10px;font-size: 11px"><strong>Batch Results Table No></strong></td>
+            <td  align="center" bgcolor="" colspan="9" style=" border: black 1px solid;padding:10px;font-size: 11px">
+                <strong><?php echo $name; ?></strong>
+            </td>
+        </tr>
+        <tr>
+            <td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
+            <td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">Concentration Found</td>
+            <td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">Dilution Factor</td>
+            <td  align="center"  colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"> % Nominal (accuracy)</td>
+        </tr>
+        <?php $aux = ""; foreach($properties as $key => $values) : ?>
+            <?php foreach($values as $value) : ?>
+            <tr>
+                <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                    <strong>'<?php if($key != $aux) : echo substr($key, 0, -4); $aux = $key; endif; ?></strong>
+                </td>
+                <td align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
+                    <?php echo $value["calculatedConcentration"]; ?>
+                </td>
+                <td  align="center" bgcolor="" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                    <?php echo $value["error"]; ?>
+                </td>
+                <td  align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                    <?php echo $value["dilutionFactor"]; ?>
+                </td>
+                <td align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                    <?php echo $value["accuracy"]; ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+        <tr>
+            <td  align="center"  colspan="12" style=" border: black 1px solid;padding:5px;font-size: 11px"></td>
+        </tr>
+        <tr>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                <strong>N</strong>
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                =CONTAR(<?php echo implode(";", $concentration); ?>)
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                N/AP
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                =CONTAR(<?php echo implode(";", $accuracy); ?>)
+            </td>
+        </tr>
+        <tr>
+            <td  align="center"   colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                <strong>Mean</strong>
+            </td>
+            <td style= "mso-number-format:'#,##0.00';" align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                =REDONDEAR(PROMEDIO(<?php echo implode(";", $concentration); ?>);3)
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                N/AP
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                =REDONDEAR(PROMEDIO(<?php echo implode(";", $accuracy); ?>);3)
+            </td>
+        </tr>
+        <tr>
+            <td align="center"   colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                <strong>SD (±) </strong>
+            </td>
+            <td style= "mso-number-format:'#,##0.0000';" align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                =REDONDEAR(DESVEST(<?php echo implode(";", $concentration); ?>);4)
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                N/AP
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="3"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+                <strong>CV (%)</strong>
+            </td>
+            <td align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                =DESVEST(<?php echo implode(";", $concentration); ?>)*100
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                N/AP
+            </td>
+            <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px"></td>
+        </tr>
+    </table>
+</div>
+<div class="cler"></div>
