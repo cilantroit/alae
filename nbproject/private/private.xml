@@ -2,11 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r9.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/view/alae/report/r3.phtml</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/ReportController.php</file>
-            <file>file:/C:/xampp/htdocs/alae/module/Alae/src/Alae/Controller/IndexController.php</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
