@@ -818,34 +818,34 @@ class ReportController extends BaseController
             {
                 foreach($factor as $key => $value)
                 {
-                    $qb       = $this->getEntityManager()->createQueryBuilder();
+                    $qb = $this->getEntityManager()->createQueryBuilder();
                     $qb
-                            ->select('s', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
-                            ->from('Alae\Entity\SampleBatch', 's')
-                            ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
-                            ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
-                            ->leftJoin('Alae\Entity\Batch', 'b', \Doctrine\ORM\Query\Expr\Join::WITH, 's.fkBatch = b.pkBatch')
-                            ->where("s.sampleName LIKE '$key%' AND b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id'))
-                            ->groupBy('b.pkBatch, s.pkSampleBatch')
-                            ->orderBy('b.fileName', 'ASC');
+                        ->select('s', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
+                        ->from('Alae\Entity\SampleBatch', 's')
+                        ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
+                        ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
+                        ->innerJoin('Alae\Entity\Batch', 'b', \Doctrine\ORM\Query\Expr\Join::WITH, 's.fkBatch = b.pkBatch')
+                        ->where("s.sampleName LIKE '$key%' AND b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id'))
+                        ->groupBy('b.pkBatch, s.pkSampleBatch')
+                        ->orderBy('b.fileName, s.sampleName', 'ASC');
                     $elements = $qb->getQuery()->getResult();
 
                     $concentration = $accuracy = $properties = array();
                     foreach ($elements as $element)
                     {
-                        $error = ($element['codeError'] == '' || $element['codeError'] == 'O') ? number_format($element[0]->getCalculatedConcentration(), 2, '.', '') : "NVR";
+                        $error = ($element['codeError'] == '' || $element['codeError'] == 'O') ? number_format((float)$element[0]->getCalculatedConcentration(), 2, '.', '') : "NVR";
                         $properties[$element[0]->getFkBatch()->getFileName()][] = array(
                             "sampleName"              => $element[0]->getSampleName(),
                             "calculatedConcentration" => $error,
-                            "dilutionFactor"          => number_format($element[0]->getDilutionFactor(), 2, '.', ''),
-                            "accuracy"                => number_format($element[0]->getAccuracy(), 2, '.', ''),
+                            "dilutionFactor"          => number_format((float)$element[0]->getDilutionFactor(), 2, '.', ''),
+                            "accuracy"                => number_format((float)$element[0]->getAccuracy(), 2, '.', ''),
                             "error"                   => $element['codeError']
                         );
 
                         $concentration[] = $error;
-                        $accuracy[]      = number_format($element[0]->getAccuracy(), 2, '.', '');
+                        $accuracy[]      = number_format((float)$element[0]->getAccuracy(), 2, '.', '');
                     }
-
+                    //var_dump($properties);
                     $page .= $this->render('alae/report/r9page', array(
                         "name"          => $key,
                         "properties"    => $properties,
@@ -853,7 +853,7 @@ class ReportController extends BaseController
                         "accuracy"      => $accuracy
                     ));
                 }
-
+//die();
                 $properties = array(
                     "analyte"      => $analytes[0],
                     "filename"     => "Between_Run_Accuracy_and_Precision_of_dilution_Quality_Control_Samples" . date("Ymd-Hi"),
