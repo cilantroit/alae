@@ -325,7 +325,7 @@ class VerificationController extends BaseController
             }
         }
 
-        
+
     }
 
     /**
@@ -515,8 +515,28 @@ class VerificationController extends BaseController
     protected function V11(\Alae\Entity\Batch $Batch)
     {
         $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V11"));
-        $where = "s.sampleName LIKE '%DQC%' AND SUBSTRING(s.sampleName,5,1) <> s.dilutionFactor AND s.fkBatch = " . $Batch->getPkBatch();
-        $this->error($where, $parameters[0], array(), false);
+        $query      = $this->getEntityManager()->createQuery("
+            SELECT s.pkSampleBatch, s.sampleName, s.dilutionFactor
+            FROM Alae\Entity\SampleBatch s
+            WHERE s.sampleName LIKE '%DQC%' AND s.fkBatch = " . $Batch->getPkBatch());
+        $elements = $query->getResult();
+
+        $pkSampleBatch = array();
+        foreach($elements as $SampleBatch)
+        {
+            $factor = preg_replace('/LDQC|HDQC|-\d+/i', '', $SampleBatch['sampleName']);
+            if((float)$factor <> (float)$SampleBatch['dilutionFactor'])
+            {
+                $pkSampleBatch[] = $SampleBatch['pkSampleBatch'];
+            }
+        }
+
+        if(count($pkSampleBatch) > 0)
+        {
+            $ids = implode(",", $pkSampleBatch);
+            $where = "s.pkSampleBatch in ($ids) AND s.fkBatch = " . $Batch->getPkBatch();
+            $this->error($where, $parameters[0], array(), false);
+        }
 
         /**
         $query    = $this->getEntityManager()->createQuery("

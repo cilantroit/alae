@@ -84,7 +84,7 @@
                 <strong>CV (%)</strong>
             </td>
             <td align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                =DESVEST(<?php echo implode(";", $concentration); ?>)*100
+                 =(REDONDEAR(DESVEST(<?php echo implode(";", $concentration); ?>);4) / REDONDEAR(PROMEDIO(<?php echo implode(";", $concentration); ?>);3) ) * 100
             </td>
             <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
                 N/AP
