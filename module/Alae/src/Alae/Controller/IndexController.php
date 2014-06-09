@@ -37,7 +37,25 @@ class IndexController extends BaseController
         );
         $session_user = new \Zend\Session\Container('user');
         $session_user->getManager()->getStorage()->clear('user');
-        return new ViewModel(array("username" => $User->getUsername()));
+        
+        $query1 = $this->getEntityManager()->createQuery("
+        SELECT COUNT(s.pkStudy)
+        FROM Alae\Entity\Study s
+        WHERE s.status = 1");
+        $study1 = $query1->getSingleScalarResult();
+        
+        $query2 = $this->getEntityManager()->createQuery("
+        SELECT COUNT(a.pkAnalyte)
+        FROM Alae\Entity\Analyte a
+        WHERE a.status = 1");
+        $analyte1 = $query2->getSingleScalarResult();
+        
+        $query3 = $this->getEntityManager()->createQuery("
+        SELECT COUNT(b.pkBatch)
+        FROM Alae\Entity\Batch b");
+        $batch1 = $query3->getSingleScalarResult();
+        
+        return new ViewModel(array("username" => $User->getUsername(),"study1" => $study1,"analyte1" => $analyte1,"batch1" => $batch1));
     }
 
     public function menuAction()
