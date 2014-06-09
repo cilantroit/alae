@@ -20,7 +20,7 @@ try
 {
     $html2pdf = new HTML2PDF('P', array(432, 240), 'en', true, 'UTF-8', array(0, 0, 0, 0));
     $html2pdf->setDefaultFont('Arial');
-    $html2pdf->pdf->SetProtection(array('print'), 'my_password');
+    $html2pdf->pdf->SetProtection(array('print'), '', 'admin_password');
     $html2pdf->writeHTML($content);
     $html2pdf->Output($filename . ".pdf", 'D');
 	
