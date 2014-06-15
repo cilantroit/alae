@@ -404,6 +404,7 @@ class StudyController extends BaseController
                     b.validFlag IS NOT NULL AND
                     b.fkStudy = " . $Study->getPkStudy());
         $counter = $query->getSingleScalarResult();*/
+        $isDuplicated = !$Study->getDuplicate() && $Study->getApprove();
 
         $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();
@@ -414,7 +415,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('analytes', $Analyte);
         $viewModel->setVariable('units', $Unit);
         $viewModel->setVariable('user', $this->_getSession());
-        $viewModel->setVariable('isDuplicated', $anaStudy->getFkStudy()->getDuplicate() ? false : true);
+        $viewModel->setVariable('isDuplicated',  $isDuplicated);
         $viewModel->setVariable('disabled', (($canEdit) ? '' : 'disabled=""'));
         return $viewModel;
     }
