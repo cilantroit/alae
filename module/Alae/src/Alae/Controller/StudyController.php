@@ -397,13 +397,13 @@ class StudyController extends BaseController
             );
         }
 
-        $query = $this->getEntityManager()->createQuery("
+        /*$query = $this->getEntityManager()->createQuery("
                 SELECT COUNT(b.pkBatch)
                 FROM Alae\Entity\Batch b
                 WHERE
                     b.validFlag IS NOT NULL AND
                     b.fkStudy = " . $Study->getPkStudy());
-        $counter = $query->getSingleScalarResult();
+        $counter = $query->getSingleScalarResult();*/
 
         $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();
@@ -414,7 +414,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('analytes', $Analyte);
         $viewModel->setVariable('units', $Unit);
         $viewModel->setVariable('user', $this->_getSession());
-        $viewModel->setVariable('isDuplicated', $counter > 0 ? true : false);
+        $viewModel->setVariable('isDuplicated', $anaStudy->getFkStudy()->getDuplicate() ? false : true);
         $viewModel->setVariable('disabled', (($canEdit) ? '' : 'disabled=""'));
         return $viewModel;
     }

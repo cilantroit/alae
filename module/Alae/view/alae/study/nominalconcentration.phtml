@@ -21,7 +21,7 @@
                 <li>
                     <input type="submit" class="btn" value="guardar" />
                 </li>
-                    <?php if(count($cs_number) > 0 && count($qc_number) > 0 && !is_null($ldqc_number) && !is_null($hdqc_number)) : ?>
+                    <?php if(count($cs_number) > 1 && count($qc_number) > 1 && !is_null($ldqc_number) && !is_null($hdqc_number)) : ?>
                     <li>
                         <button class="btn" type="button" onclick="changeStatus('/study/approvenc',<?php echo $AnaStudy->getPkAnalyteStudy(); ?>)"><span class="btn-validate"></span>aprobar</button>
                     </li>
