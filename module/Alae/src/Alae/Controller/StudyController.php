@@ -404,7 +404,7 @@ class StudyController extends BaseController
                     b.validFlag IS NOT NULL AND
                     b.fkStudy = " . $Study->getPkStudy());
         $counter = $query->getSingleScalarResult();*/
-        $isDuplicated = !$Study->getDuplicate() && $Study->getApprove();
+        $isDuplicated = $Study->getApprove() && $this->_getSession()->isAdministrador() && !$Study->getCloseFlag();
 
         $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();

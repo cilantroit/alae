@@ -48,7 +48,7 @@
                         </li>
                         <?php endif; ?>
                     <?php endif; ?>
-                    <?php if($isDuplicated && $user->isAdministrador() && !$study->getCloseFlag()) : ?>
+                    <?php if($isDuplicated) : ?>
                     <li>
                         <button class="btn" type="button" onclick="duplicate(<?php echo $study->getPkStudy(); ?>, '/study/duplicate/', '¿Desea duplicar el estudio?')">
                             <span class="btn-validate"></span>
