@@ -50,7 +50,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
     </x:WorksheetOptions>
    </x:ExcelWorksheet>
   </x:ExcelWorksheets>
-  
+
   <x:ProtectStructure>False</x:ProtectStructure>
   <x:ProtectWindows>False</x:ProtectWindows>
  </x:ExcelWorkbook>
@@ -123,7 +123,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 			<td  align="center"  colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Nominal Concentrations</strong> </td>
 			<?php foreach ($cs_values as $key => $value) : ?>
                         <td  align="center"  style="mso-number-format:'#,##0.00';" colspan="2"  style=" border: black 1px solid;padding:2px">
-							<?php echo number_format($value,2,'.',''); ?>
+                            <?php echo number_format($value,2,'.',''); ?>
                         </td>
                         <?php endforeach; ?>
 		    </tr>
@@ -136,31 +136,35 @@ xmlns="http://www.w3.org/TR/REC-html40">
 			<td  align="center"  colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Batch Results Table No.</strong> </td>
 			<td  align="center" colspan="<?php echo ($analyte->getCsNumber() * 2); ?>" style=" border: black 1px solid;padding:2px">Back-Calculated Concentrations (5)</td>
 		    </tr>
-                    <?php foreach($list as $list) : ?>
+                    <?php foreach($elements as $key => $value) : ?>
 		    <tr>
 			<td  align="center"  colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
-                            '<strong><?php echo $list['name']; ?></strong>
+                            '<strong><?php echo $key; ?></strong>
                         </td>
-                        <?php foreach ($list['par'] as $key => $value) : ?>
-                        <td style="mso-number-format:'#,##0.00';" align="center"    style=" border: black 1px solid;padding:2px">
-                            <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
-                        </td>
-                        <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:10px">
-                            <?php echo $value[1]; ?>
-                        </td>
+                        <?php foreach ($value as $k => $v) : ?>
+                            <?php if ($k % 2 == 0): ?>
+                            <td style="mso-number-format:'#,##0.00';" align="center"    style=" border: black 1px solid;padding:2px">
+                                <?php echo $v['calculatedConcentration']; ?>
+                            </td>
+                            <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:10px">
+                                <?php echo $v['error']; ?>
+                            </td>
+                            <?php endif; ?>
                         <?php endforeach; ?>
 		    </tr>
                     <tr>
 			<td  align="center"  colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong></strong>
                         </td>
-                        <?php foreach ($list['impar'] as $key => $value) : ?>
-                        <td style= "mso-number-format:'#,##0.00';" align="center"    style=" border: black 1px solid;padding:2px">
-                            <?php echo ($value[1] != "") ? "RCS" : $value[0]; ?>
-                        </td>
-                        <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:10px">
-                            <?php echo $value[1]; ?>
-                        </td>
+                        <?php foreach ($value as $k => $v) : ?>
+                            <?php if ($k % 2 != 0): ?>
+                            <td style="mso-number-format:'#,##0.00';" align="center"    style=" border: black 1px solid;padding:2px">
+                                <?php echo $v['calculatedConcentration']; ?>
+                            </td>
+                            <td  align="center"    style=" border: black 1px solid;padding:2px;font-size:10px">
+                                <?php echo $v['error']; ?>
+                            </td>
+                            <?php endif; ?>
                         <?php endforeach; ?>
 		    </tr>
                     <?php endforeach; ?>
@@ -169,36 +173,33 @@ xmlns="http://www.w3.org/TR/REC-html40">
 		    </tr>
 		    <tr>
 			<td  align="center"   colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>N</strong> </td>
-			<?php foreach ($calculations as $calculation) : ?>
+                        <?php foreach ($values as $value) : ?>
                         <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
-                            <?php echo $calculation['count']; ?>
+                            =CONTAR(<?php echo implode(";",$value); ?>)
                         </td>
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
 			<td  align="center"   colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>Mean</strong> </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td style= "mso-number-format:'#,##0.000';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
-							<?php echo $calculation['prom']; ?>
+			<?php foreach ($values as $value) : ?>
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
+                            =PROMEDIO(<?php echo implode(";",$value); ?>)
                         </td>
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
 			<td  align="center" colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>SD (±) </strong> </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td  style="mso-number-format:'#,##0.0000';" align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
-                        	<?php
-                        	//$sdvalue = number_format($calculation['values'],2,'.','');
-                        	?>
-                            =REDONDEAR(DESVEST(<?php echo $calculation['values']; ?>);4)
+			<?php foreach ($values as $value) : ?>
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
+                            =REDONDEAR(DESVEST(<?php echo implode(";",$value); ?>);4)
                         </td>
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
 			<td  align="center" colspan="2" style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;"><strong>CV (%)</strong> </td>
-			<?php foreach ($calculations as $calculation) : ?>
-                        <td   align="center"   colspan="2" style=" border: black 1px solid;padding:2px;mso-number-format:'#,##0.00';">
-                            =DESVEST(<?php echo $calculation['values']; ?>)/PROMEDIO(<?php echo $calculation['values']; ?>)
+			<?php foreach ($values as $value) : ?>
+                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
+                            =DESVEST(<?php echo implode(";",$value); ?>)/PROMEDIO(<?php echo implode(";",$value); ?>) * 100
                         </td>
                         <?php endforeach; ?>
 		    </tr>

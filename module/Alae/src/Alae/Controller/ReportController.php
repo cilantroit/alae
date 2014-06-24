@@ -498,91 +498,54 @@ class ReportController extends BaseController
     public function r6Action()
     {
         $request = $this->getRequest();
+
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $query    = $this->getEntityManager()->createQuery("
-                SELECT b
-                FROM Alae\Entity\Batch b
-                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
-                ORDER BY b.fileName ASC");
-            $batch    = $query->getResult();
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb
+                ->select('s', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
+                ->from('Alae\Entity\SampleBatch', 's')
+                ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
+                ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
+                ->innerJoin('Alae\Entity\Batch', 'b', \Doctrine\ORM\Query\Expr\Join::WITH, 's.fkBatch = b.pkBatch')
+                ->where("s.sampleName LIKE 'CS%' AND b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id'))
+                ->groupBy('b.pkBatch, s.pkSampleBatch')
+                ->orderBy('b.fileName, s.sampleName', 'ASC');
+            $elements = $qb->getQuery()->getResult();
 
-            if (count($batch) > 0)
+            $concentration = $properties = array();
+            foreach ($elements as $element)
             {
-                $list    = array();
-                $pkBatch = array();
-                foreach ($batch as $Batch)
-                {
-                    $qb       = $this->getEntityManager()->createQueryBuilder();
-                    $qb
-                            ->select('s.calculatedConcentration', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
-                            ->from('Alae\Entity\SampleBatch', 's')
-                            ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
-                            ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
-                            ->where("s.sampleName LIKE 'CS%' AND s.fkBatch = " . $Batch->getPkBatch())
-                            ->groupBy('s.pkSampleBatch')
-                            ->orderBy('s.sampleName', 'ASC');
-                    $elements = $qb->getQuery()->getResult();
-
-                    $Concentration           = array();
-                    $calculatedConcentration = array();
-                    if (count($elements) > 0)
-                    {
-                        $counter = 0;
-                        foreach ($elements as $temp)
-                        {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
-                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, $temp["codeError"]);
-                            $Concentration[$temp["sampleName"]][]                           = $value;
-                            $counter++;
-                        }
-                    }
-                    list($name, $aux) = explode("_", $Batch->getFileName());
-                    $calculatedConcentration['name'] = $name;
-
-                    $list[]    = $calculatedConcentration;
-                    $pkBatch[] = $Batch->getPkBatch();
-                }
-
-                $query    = $this->getEntityManager()->createQuery("
-                    SELECT SUM(IF(s.validFlag=1, 1, 0)) as counter, SUM(s.calculatedConcentration) as suma, AVG(s.calculatedConcentration) as promedio, SUBSTRING(s.sampleName, 1, 3) as sampleName
-                    FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'CS%' AND s.validFlag = 1 AND s.fkBatch in (" . implode(",", $pkBatch) . ")
-                    GROUP BY sampleName
-                    ORDER By s.sampleName");
-                $elements = $query->getResult();
-
-                $calculations = array();
-                foreach ($elements as $element)
-                {
-                    $calculations[] = array(
-                        "count"  => $element['counter'],
-                        "sum"    => number_format($element['suma'], 2, '.', ''),
-                        "prom"   => number_format($element['promedio'], 3, '.', ''),
-                        "values" => implode(";", $Concentration[$element['sampleName']])
-                    );
-                }
-                $properties = array(
-                    "analyte"      => $analytes[0],
-                    "cs_values"    => explode(",", $analytes[0]->getCsValues()),
-                    "list"         => $list,
-                    "calculations" => $calculations,
-                    "filename"     => "back_calculated_concentration_of_calibration_standard" . date("Ymd-Hi")
+                $error = ($element['codeError'] == '') ? number_format((float)$element[0]->getCalculatedConcentration(), 2, '.', '') : "RCS";
+                $properties[$element[0]->getFkBatch()->getFileName()][] = array(
+                    "sampleName"              => $element[0]->getSampleName(),
+                    "calculatedConcentration" => $error,
+                    "error"                   => $element['codeError']
                 );
 
-                $viewModel = new ViewModel($properties);
-                $viewModel->setTerminal(true);
-                return $viewModel;
+                $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
             }
-            else
-            {
-                return $this->redirect()->toRoute('report', array(
-                            'controller' => 'report',
-                            'action'     => 'index',
-                            'id'         => 1
-                ));
-            }
+
+            $response = array(
+                "analyte"      => $analytes[0],
+                "cs_values"    => explode(",", $analytes[0]->getCsValues()),
+                "elements"     => $properties,
+                "values"       => $concentration,
+                "filename"     => "back_calculated_concentration_of_calibration_standard" . date("Ymd-Hi")
+            );
+
+            $viewModel = new ViewModel($response);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
+        else
+        {
+            return $this->redirect()->toRoute('report', array(
+                'controller' => 'report',
+                'action'     => 'index',
+                'id'         => 1
+            ));
         }
     }
 
@@ -690,99 +653,57 @@ class ReportController extends BaseController
     public function r8Action()
     {
         $request = $this->getRequest();
+
         if ($request->isGet())
         {
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
-            $query    = $this->getEntityManager()->createQuery("
-                SELECT b
-                FROM Alae\Entity\Batch b
-                WHERE b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id') . "
-                ORDER BY b.fileName ASC");
-            $batch    = $query->getResult();
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb
+                ->select('s', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
+                ->from('Alae\Entity\SampleBatch', 's')
+                ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
+                ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
+                ->innerJoin('Alae\Entity\Batch', 'b', \Doctrine\ORM\Query\Expr\Join::WITH, 's.fkBatch = b.pkBatch')
+                ->where("s.sampleName LIKE 'QC%' AND b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id'))
+                ->groupBy('b.pkBatch, s.pkSampleBatch')
+                ->orderBy('b.fileName, s.sampleName', 'ASC');
+            $elements = $qb->getQuery()->getResult();
 
-            if (count($batch) > 0)
+            $concentration = $accuracy = $properties = array();
+            foreach ($elements as $element)
             {
-                $list    = array();
-                $pkBatch = array();
-                foreach ($batch as $Batch)
-                {
-                    $qb       = $this->getEntityManager()->createQueryBuilder();
-                    $qb
-                            ->select('s.pkSampleBatch','s.calculatedConcentration', 's.accuracy', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
-                            ->from('Alae\Entity\SampleBatch', 's')
-                            ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
-                            ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
-                            ->where("s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND s.fkBatch = " . $Batch->getPkBatch())
-                            ->groupBy('s.pkSampleBatch')
-                            ->orderBy('s.sampleName', 'ASC');
-                    $elements = $qb->getQuery()->getResult();
-
-                    $Concentration           = array();
-                    $calculatedConcentration = array();
-                    if (count($elements) > 0)
-                    {
-                        $counter = 0;
-                        foreach ($elements as $temp)
-                        {
-                            $value                                                          = number_format($temp["calculatedConcentration"], 2, '.', '');
-                            $calculatedConcentration[$counter % 2 == 0 ? 'par' : 'impar'][] = array($value, number_format($temp["accuracy"], 2, '.', ''), $temp['codeError']);
-                            $Concentration[$temp["sampleName"]][]                           = $value;
-
-                            if (is_null($temp['codeError']) || $temp['codeError'] == 'O')
-                            {
-                                $pkBatch[] = $temp["pkSampleBatch"];
-                            }
-                            $counter++;
-                        }
-                    }
-
-
-                    list($name, $aux) = explode("_", $Batch->getFileName());
-                    $calculatedConcentration['name'] = $name;
-
-                    $list[] = $calculatedConcentration;
-
-                }
-
-                $query    = $this->getEntityManager()->createQuery("
-                    SELECT COUNT(s.pkSampleBatch) as counter, AVG(s.calculatedConcentration) as promedio, AVG(s.accuracy) as accuracy, SUBSTRING(s.sampleName, 1, 3) as sampleName
-                    FROM Alae\Entity\SampleBatch s
-                    WHERE s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND s.pkSampleBatch in (" . implode(",", $pkBatch) . ")
-                    GROUP BY sampleName
-                    ORDER By s.sampleName");
-
-                $elements = $query->getResult();
-
-                $calculations = array();
-                foreach ($elements as $element)
-                {
-                    $calculations[] = array(
-                        "count"  => $element['counter'],
-                        "prom"   => number_format($element['promedio'], 2, '.', ''),
-                        "accu"   => number_format($element['accuracy'], 2, '.', ''),
-                        "values" => implode(";", $Concentration[$element['sampleName']])
-                    );
-                }
-                $properties = array(
-                    "analyte"      => $analytes[0],
-                    "qc_values"    => explode(",", $analytes[0]->getQcValues()),
-                    "list"         => $list,
-                    "calculations" => $calculations,
-                    "filename"     => "between_run_accuracy_and_precision_of_quality_control_samples " . date("Ymd-Hi")
+                $error = ($element['codeError'] == '' || $element['codeError'] == 'O') ? number_format((float)$element[0]->getCalculatedConcentration(), 2, '.', '') : "NVR";
+                $properties[$element[0]->getFkBatch()->getFileName()][] = array(
+                    "sampleName"              => $element[0]->getSampleName(),
+                    "calculatedConcentration" => $error,
+                    "accuracy"                => number_format((float)$element[0]->getAccuracy(), 2, '.', ''),
+                    "error"                   => $element['codeError']
                 );
 
-                $viewModel = new ViewModel($properties);
-                $viewModel->setTerminal(true);
-                return $viewModel;
+                $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                $accuracy[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][]      = number_format((float)$element[0]->getAccuracy(), 2, '.', '');
             }
-            else
-            {
-                return $this->redirect()->toRoute('report', array(
-                            'controller' => 'report',
-                            'action'     => 'index',
-                            'id'         => 1
-                ));
-            }
+
+            $response = array(
+                "analyte"      => $analytes[0],
+                "qc_values"    => explode(",", $analytes[0]->getQcValues()),
+                "elements"     => $properties,
+                "valuesCon"    => $concentration,
+                "valuesAcc"    => $accuracy,
+                "filename"     => "between_run_accuracy_and_precision_of_quality_control_samples" . date("Ymd-Hi")
+            );
+
+            $viewModel = new ViewModel($response);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
+        else
+        {
+            return $this->redirect()->toRoute('report', array(
+                'controller' => 'report',
+                'action'     => 'index',
+                'id'         => 1
+            ));
         }
     }
 
