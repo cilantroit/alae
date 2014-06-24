@@ -524,7 +524,10 @@ class ReportController extends BaseController
                     "error"                   => $element['codeError']
                 );
 
-                $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                if($element['codeError'] == '')
+                {
+                    $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                }
             }
 
             $response = array(
@@ -680,8 +683,11 @@ class ReportController extends BaseController
                     "error"                   => $element['codeError']
                 );
 
-                $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
-                $accuracy[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][]      = number_format((float)$element[0]->getAccuracy(), 2, '.', '');
+                if($element['codeError'] == '' || $element['codeError'] == 'O')
+                {
+                    $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                }
+                $accuracy[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = number_format((float)$element[0]->getAccuracy(), 2, '.', '');
             }
 
             $response = array(
