@@ -667,7 +667,7 @@ class ReportController extends BaseController
                 ->leftJoin('Alae\Entity\Error', 'e', \Doctrine\ORM\Query\Expr\Join::WITH, 's.pkSampleBatch = e.fkSampleBatch')
                 ->leftJoin('Alae\Entity\Parameter', 'p', \Doctrine\ORM\Query\Expr\Join::WITH, 'e.fkParameter = p.pkParameter')
                 ->innerJoin('Alae\Entity\Batch', 'b', \Doctrine\ORM\Query\Expr\Join::WITH, 's.fkBatch = b.pkBatch')
-                ->where("s.sampleName LIKE 'QC%' AND b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id'))
+                ->where("s.sampleName LIKE 'QC%' AND s.sampleName NOT LIKE '%*%' AND b.validFlag = 1 AND b.fkAnalyte = " . $request->getQuery('an') . " AND b.fkStudy = " . $request->getQuery('id'))
                 ->groupBy('b.pkBatch, s.pkSampleBatch')
                 ->orderBy('b.fileName, s.sampleName', 'ASC');
             $elements = $qb->getQuery()->getResult();
