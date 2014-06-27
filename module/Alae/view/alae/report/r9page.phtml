@@ -19,9 +19,9 @@
             <?php foreach($values as $value) : ?>
             <tr>
                 <td  align="center" bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
-                    <strong>'<?php if($key != $aux) : echo substr($key, 0, -4); $aux = $key; endif; ?></strong>
+                    <strong>'<?php if($key != $aux) : list($key, $aux) = explode("_", $key); echo $key; $aux = $key; endif; ?></strong>
                 </td>
-                <td align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
+                <td style="mso-number-format:'#,##0.00';" align="center"  bgcolor="" colspan="2"  style=" border: black 1px solid;padding:2px">
                     <?php echo $value["calculatedConcentration"]; ?>
                 </td>
                 <td  align="center" bgcolor="" colspan="1" style=" border: black 1px solid;padding:2px;font-size: 11px">
@@ -30,7 +30,7 @@
                 <td  align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
                     <?php echo $value["dilutionFactor"]; ?>
                 </td>
-                <td align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
+                <td style="mso-number-format:'#,##0.00';" align="center"  bgcolor="" colspan="3" style=" border: black 1px solid;padding:2px;font-size: 11px">
                     <?php echo $value["accuracy"]; ?>
                 </td>
             </tr>

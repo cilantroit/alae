@@ -144,7 +144,9 @@ xmlns="http://www.w3.org/TR/REC-html40">
                     <?php foreach($elements as $key => $value) : ?>
 		    <tr>
                         <td  align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
-                            <strong>'<?php echo $key; ?></strong>
+                            <strong>'<?php
+                            list($key, $aux) = explode("_", $key);
+                            echo $key; ?></strong>
                         </td>
                         <?php foreach ($value as $k => $v) : ?>
                             <?php if ($k % 2 == 0): ?>
