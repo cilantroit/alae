@@ -224,11 +224,11 @@ xmlns="http://www.w3.org/TR/REC-html40">
                         <?php endforeach; ?>
 		    </tr>
 		    <tr>
-			<td style ="mso-number-format:'#,##0.00';" align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
+			<td align="center"   colspan="2"  style="color:#000; border: black 1px solid;font-size:14px;padding:10px;font-style:bold;">
                             <strong>CV (%)</strong>
                         </td>
                         <?php foreach ($valuesCon as $key => $value) : ?>
-                        <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
+                        <td style ="mso-number-format:'#,##0.00';"  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
                             =DESVEST(<?php echo implode(";",$value); ?>)/PROMEDIO(<?php echo implode(";",$value); ?>) * 100
                         </td>
                         <td  align="center"   colspan="2" style=" border: black 1px solid;padding:2px;">
