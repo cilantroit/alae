@@ -243,7 +243,7 @@ class ReportController extends BaseController
                                     $row1 .= sprintf('<td style="width:50px;text-align:center;border: black 1px solid;font-size:13px;padding:4px">%s</td>', $value);
                                     break;
                                 case "messageError":
-                                	$value = str_replace(",", "<br>", $value);
+                                	$value = str_replace(",", " // ", $value);
                                     $row1 .= sprintf('<td style="width:150px;text-align:left;border: black 1px solid;font-size:13px;padding:4px">%s</td>', htmlentities($value));
                                     break;
                                 default:
@@ -282,7 +282,7 @@ class ReportController extends BaseController
                         "batch"  => $Batch,
                         "tr1"    => $tr1,
                         "tr2"    => $tr2,
-                        "errors" => implode("<br>", $message)
+                        "errors" => implode(" // ", $message)
                     );
                     $page .= $this->render('alae/report/r2page', $properties);
                 }
