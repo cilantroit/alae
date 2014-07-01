@@ -1,6 +1,9 @@
 <?php
 /**
- * Modulo de gestión de los parámetros a usar en las Verificaciones
+ * Modulo de gestión de los parámetros a usar en las Verificaciones.
+ * En este fichero está creada la clase que se encarga de gestionar y controlar las opciones de parametrización del sistema,
+ * accesibles desde la opción parametrización de menú principal.
+ * También controla la creación del fichero excel exportable.
  *
  * @author Maria Quiroz
  */

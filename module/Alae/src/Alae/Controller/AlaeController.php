@@ -8,6 +8,11 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+/* APLICACION ALAE
+   Fichero de configuración de conexión a la base de datos
+   Autor: María Quiroz
+*/
+
 namespace Alae\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;

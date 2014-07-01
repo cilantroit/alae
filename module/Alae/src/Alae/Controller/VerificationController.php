@@ -27,6 +27,9 @@ class VerificationController extends BaseController
         }
     }
 
+    /*
+     * Función para redirigir a la verificación del batch
+     */
     public function indexAction()
     {
         if ($this->getEvent()->getRouteMatch()->getParam('id'))
@@ -54,6 +57,9 @@ class VerificationController extends BaseController
         }
     }
 
+    /*
+     * Función para verificar los parametros del sistema
+     */
     public function errorAction()
     {
         $request = $this->getRequest();
@@ -141,6 +147,9 @@ class VerificationController extends BaseController
         return $viewModel;
     }
 
+    /*
+     * Función para evaluar el status del lote
+     */
     protected function evaluation(\Alae\Entity\Batch $Batch, $status = true, $parameter = false)
     {
         if (is_null($Batch->getFkParameter()))
@@ -174,6 +183,9 @@ class VerificationController extends BaseController
         return $Batch->getValidFlag();
     }
 
+    /*
+     * Retornar el listado de Reason
+     */
     protected function getReason()
     {
         $elements = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("typeParam" => false));
@@ -220,6 +232,9 @@ class VerificationController extends BaseController
         ));
     }
 
+    /*
+     * Verifica los errores de los lotes
+     */
     protected function error($where, $fkParameter, $parameters = array(), $isValid = true)
     {
         $sql = "

@@ -1,5 +1,8 @@
 <?php
-
+/* APLICACION ALAE
+   Fichero de control de enlaces del sistema
+   Autor: María Quiroz
+*/
 namespace Alae;
 
 return array(

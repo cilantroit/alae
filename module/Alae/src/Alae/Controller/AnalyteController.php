@@ -9,7 +9,8 @@
  */
  
  /**
- * Modulo de gestión de Analitos
+ * Modulo de gestión de Analitos. Este fichero contiene las funciones encargadas
+ * de agregar un analito y de eliminar un analito.
  * @author Maria Quiroz
  */
 

@@ -1,5 +1,9 @@
-<?php
 
+<?php
+/* APLICACION ALAE
+   Este fichero se encarga de configurar los mensajes de error que genera ALAE en la carga de lotes
+   Autor: María Quiroz
+*/
 namespace Alae;
 
 return array(

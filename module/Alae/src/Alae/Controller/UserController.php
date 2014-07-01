@@ -29,6 +29,9 @@ class UserController extends BaseController
 
     }
 
+    /*
+     * Función para crear una nueva cuenta de acceso
+     */
     public function newaccountAction()
     {
 	$request = $this->getRequest();
@@ -106,6 +109,9 @@ class UserController extends BaseController
 	return new ViewModel($error);
     }
 
+    /*
+     * Función para ver las opciones del profile
+     */
     protected function getProfileOptions($pkProfile)
     {
 	$elements = $this->getRepository('\\Alae\\Entity\\Profile')->findAll();
@@ -118,6 +124,9 @@ class UserController extends BaseController
 	return $options;
     }
 
+    /*
+     * Esta función muestra el listado de usuarios
+     */
     public function adminAction()
     {
 	$users = $this->getRepository()->findAll();
@@ -141,6 +150,9 @@ class UserController extends BaseController
 	return $viewModel;
     }
 
+    /*
+     * Esta función se encarga de aprobar el acceso
+     */
     public function approveAction()
     {
 	$request = $this->getRequest();
@@ -180,6 +192,9 @@ class UserController extends BaseController
         return new JsonModel();
     }
 
+    /*
+     * Función para cambiar el perfil de acceso de un usuario
+     */
     public function changeAction()
     {
 	$request = $this->getRequest();
@@ -210,6 +225,9 @@ class UserController extends BaseController
         return new JsonModel();
     }
 
+    /*
+     * Función para registrar un usuario del sistema
+     */
     public function registerAction()
     {
         $request = $this->getRequest();
@@ -267,6 +285,9 @@ class UserController extends BaseController
 	return new ViewModel($data);
     }
 
+    /*
+     * Función para dar de baja un usuario
+     */
     public function rejectAction()
     {
 	$request = $this->getRequest();
@@ -298,6 +319,9 @@ class UserController extends BaseController
 	}
     }
 
+    /*
+     * Función para generar firma electrónica
+     */
     public function sentverificationAction()
     {
 	$request = $this->getRequest();
@@ -326,6 +350,9 @@ class UserController extends BaseController
 	}
     }
 
+    /*
+     * Función para resetear el password del usuario
+     */
     public function resetpassAction()
     {
 	$request = $this->getRequest();
@@ -362,6 +389,9 @@ class UserController extends BaseController
 	));
     }
 
+    /*
+     * Función para asignar el nuevo password del usuario
+     */
     public function newpasswordAction()
     {
 	$Username = "";

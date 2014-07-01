@@ -8,7 +8,7 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 /**
- * Modulo de gestión de estudios:
+ * Modulo de gestión de estudios, este fichero se encarga de:
  * 	1.- Creación y edición de estudios
  * 	2.- Asignación de analitos para el estudio
  * 	3.- Ingreso de concentraciones nominales
@@ -78,6 +78,9 @@ class StudyController extends BaseController
         return $viewModel;
     }
 
+    /*
+     * Esta función se encarga de controlar y crear un estudio.
+     */
     public function createAction()
     {
         $request = $this->getRequest();
@@ -141,6 +144,9 @@ class StudyController extends BaseController
         return $viewModel;
     }
 
+    /*
+     * Esta función se encarga de eliminar los analitos de un estudio
+     */
     public function deleteanastudyAction()
     {
         $request = $this->getRequest();
@@ -172,7 +178,10 @@ class StudyController extends BaseController
             }
         }
     }
-
+    
+/*
+ * Esta función se encarga para editar los datos de un estudio
+ */
     public function editAction()
     {
         $request = $this->getRequest();
@@ -420,6 +429,9 @@ class StudyController extends BaseController
         return $viewModel;
     }
 
+    /*
+     * Función que se encarga de la eliminación de estudios
+     */
     public function deleteAction()
     {
         $request = $this->getRequest();
@@ -453,6 +465,9 @@ class StudyController extends BaseController
         }
     }
 
+    /*
+     * Función que se encarga de la aprobación del estudio
+     */
     public function approveAction()
     {
         $request = $this->getRequest();
@@ -488,6 +503,9 @@ class StudyController extends BaseController
 	}
     }
 
+    /*
+     * Esta función se encarga de cerrar el estudio
+     */
     public function closeAction()
     {
         $request = $this->getRequest();
@@ -520,6 +538,9 @@ class StudyController extends BaseController
         }
     }
 
+    /*
+     * Esta función se encarga de duplicar el estudio
+     */
     public function duplicateAction()
     {
         $request = $this->getRequest();
@@ -595,7 +616,7 @@ class StudyController extends BaseController
     }
 
     /**
-     * Approve: Nominal Concentration
+     * Función para aprobar las concentraciones nominales
      */
     public function approvencAction()
     {
@@ -639,6 +660,9 @@ class StudyController extends BaseController
 	}
     }
 
+    /*
+     * Función para desbloquear las concentraciones nominales
+     */
     public function unlockAction()
     {
         $request = $this->getRequest();
@@ -681,6 +705,9 @@ class StudyController extends BaseController
 	}
     }
 
+    /*
+     * Función para ingresar las concentraciones nominacionales
+     */
      public function nominalconcentrationAction()
     {
         $request = $this->getRequest();
@@ -739,6 +766,7 @@ class StudyController extends BaseController
         return $viewModel;
     }
 
+    //función para contar los analitos en un estudio
     protected function counterAnalyte($pkStudy)
     {
         $query = $this->getEntityManager()->createQuery("

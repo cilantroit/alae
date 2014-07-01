@@ -1,4 +1,8 @@
 <?php
+/* APLICACION ALAE
+   Variables de control de rutas del sistema
+   Autor: María Quiroz
+*/
 namespace Alae;
 
 return array(

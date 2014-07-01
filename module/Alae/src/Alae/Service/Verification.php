@@ -1,10 +1,16 @@
 <?php
-
+/**
+ * Proceso de verificación de lotes
+ *
+ * @author Maria Quiroz
+ */
 namespace Alae\Service;
 
 class Verification
 {
-
+    /*
+     * Actualiza el lote
+     */
     public static function updateBatch($where, $fkParameter)
     {
         return "
@@ -13,6 +19,9 @@ class Verification
             WHERE $where";
     }
 
+    /*
+     * obtiene el parametro
+     */
     public static function getPkParameter($fkParameter)
     {
         return "(
@@ -22,6 +31,9 @@ class Verification
         )";
     }
 
+    /*
+     * actualiza el sampleBatch
+     */
     public static function update($where, $fkParameter, $set = array())
     {
         $query = "

@@ -10,6 +10,10 @@
 
   /**
  * Modulo de reportes del sistema
+   * En este fichero la clase reportController se encarga de preparar la información necesaria
+   * para generar los diferentes reports del sistema. La clase contiene las funciones identificadas como:
+   * r#action donde el número corresponde a cada uno de los reportes existentes.
+   * Cada una de estas funciones enviará a formato excel o formato pdf el resultado.
  * @author Maria Quiroz
  */
 

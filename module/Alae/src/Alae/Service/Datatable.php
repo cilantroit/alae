@@ -2,6 +2,8 @@
 
 /**
  * Servicio encargado de la configuración de tablas del sistema
+ * y la configuración de estas tablas con los grid del sistema
+ *
  *
  * @author Maria Quiroz
  */

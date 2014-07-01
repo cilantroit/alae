@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Description of Datatable
+ * Descarga de archivos excel y pdf
  *
  * @author Maria Quiroz
  */
@@ -12,6 +12,9 @@ require_once "vendor/autoload.php";
 
 class Download
 {
+    /*
+     * Descarga de archivos excel
+     */
     public static function excel($filename, $json)
     {
         $data = json_decode($json);
@@ -26,6 +29,9 @@ class Download
         exit;
     }
 
+    /*
+     * Descarga de archivos pdf
+     */
     public static function pdf($filename, $json)
     {
         $rendererName        = \PHPExcel_Settings::PDF_RENDERER_DOMPDF;

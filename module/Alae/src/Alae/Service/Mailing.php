@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * Envío de correos
+ *
+ * @author Maria Quiroz
+ */
 namespace Alae\Service;
 
 use Zend\Mail,
@@ -10,6 +14,9 @@ use Zend\Mail,
 class Mailing
 {
 
+    /*
+     * Configuración de opciones de correo
+     */
     private function options()
     {
 	$options = new \Zend\Mail\Transport\SmtpOptions(array(
@@ -27,6 +34,9 @@ class Mailing
 	return $options;
     }
 
+    /*
+     * función para enviar correos
+     */
     public function send($emails, $view, $subject)
     {
 	$html = new MimePart($view);

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * Clase para funciones como:
+ * Obtener las variables de configuración del sistema
+ * Obtener mensajes, obtener errores
+ * Obtener el usuario actual del sistema
+ *  Conversor de cifras significativas
  * @author Maria Quiroz
  */
  
@@ -13,6 +18,9 @@ class Helper
     protected static $_message;
     protected static $_errors;
 
+    /*
+     * obtener las variables de configuración del sistema
+     */
     public static function getVarsConfig($var)
     {
         if (is_null(self::$_varsConfig))
@@ -23,6 +31,9 @@ class Helper
 	return self::$_varsConfig[$var];
     }
 
+    /*
+     * obtener mensajes
+     */
     public static function getMessage($message)
     {
 	if (is_null(self::$_message))
@@ -33,6 +44,9 @@ class Helper
 	return self::$_message[$message];
     }
 
+    /*
+     * obtener errores
+     */
     public static function getError($error)
     {
 	if (is_null(self::$_errors))
@@ -43,6 +57,9 @@ class Helper
 	return self::$_errors[$error];
     }
 
+    /*
+     * obtener el usuario actual
+     */
     public static function getUserSession()
     {
 	$session = new \Zend\Session\Container('user');
@@ -55,6 +72,9 @@ class Helper
         return false;
     }
 
+    /*
+     * conversor de cifras significativas pdf
+     */
     public static function getformatDecimal($value)
     {
     	switch ($value)
@@ -80,7 +100,9 @@ class Helper
     	}
 	return $decimal;
     }
-    
+    /*
+     * conversor de cifras significativas excel
+     */
     public static function getformatDecimal2($value)
     {
     	switch ($value)

@@ -12,6 +12,7 @@
  * Modulo encargado del procesamiento de lotes.
  * En este modulo se comprueban las 3 primeras verificaciones,
  * además, se asigna cada lote al estudio y analito que corresponde
+   * Limpia los enlaces.
  * @author Maria Quiroz
  */
 
@@ -263,6 +264,9 @@ class CronController extends BaseController
         return $orderHeader;
     }
 
+    /*
+     * Función que se encarga del almacenamiento del batch
+     */
     private function saveBatch($fileName)
     {
         $response = $this->explodeFile($fileName);
@@ -277,6 +281,9 @@ class CronController extends BaseController
         return $Batch;
     }
 
+    /*
+     * Actualiza la tabla bacth
+     */
     private function updateBatch($Batch, $Analyte, $Study)
     {
         $header = $this->getHeaderInfo($Analyte);
@@ -308,6 +315,7 @@ class CronController extends BaseController
         $this->getEntityManager()->flush();
     }
 
+    //obtención de información de cabeceras del fichero
     private function getHeaderInfo($Analyte)
     {
         $header   = array();
@@ -352,6 +360,9 @@ class CronController extends BaseController
         return $header;
     }
 
+    /*
+     * Registra errores detectados en el fichero export
+     */
     protected function error($where, $fkParameter, $parameters = array(), $isValid = true)
     {
         $sql = "
@@ -386,6 +397,9 @@ class CronController extends BaseController
         }
     }
 
+    /*
+     * Verifica que el fichero haya superado las verificaciones 2 y 3
+     */
     private function batchVerify($Batch, $Analyte, $fileName)
     {
         $response = $this->explodeFile($fileName);
@@ -400,6 +414,9 @@ class CronController extends BaseController
         $this->error($where, $fkParameter[0], array(), false);
     }
 
+    /*
+     * Función para almacenar información en la tabla sampleBatch
+     */
     private function saveSampleBatch($headers, $data, $Batch)
     {
         $setters = $this->setter($headers, $this->getSampleBatch());
@@ -426,6 +443,9 @@ class CronController extends BaseController
         }
     }
 
+    /*
+     * Tabla de correspondencia de columnas del fichero export
+     */
     private function getSampleBatch()
     {
         return array(

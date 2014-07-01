@@ -1,7 +1,9 @@
 <?php
 
  /**
- * Controlador padre con funciones comunes.
+ * Controlador padre con funciones comunes. Este fichero contiene clases abstractas encargadas de
+  * generar funciones generales dentro del sistema.
+  * Esas funciones son: Control de sesiones, control de entidades, control de las transacciones audit
  * @author Maria Quiroz
  */
 

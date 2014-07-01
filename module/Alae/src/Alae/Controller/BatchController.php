@@ -1,6 +1,9 @@
 <?php
 /**
- * Modulo de gestión de lotes 
+ * Modulo de gestión de lotes.
+ * Este fichero se encarga de controlar la carga de lotes importados en Alae.
+ * Controla la aprobación o rechazo manual de lotes.
+ * Controla el listado de lotes sin asignar.
  * @author Maria Quiroz
  */
 

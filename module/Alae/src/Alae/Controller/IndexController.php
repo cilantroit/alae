@@ -8,6 +8,12 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+/* APLICACION ALAE
+   Fichero que se encarga de control del login y logout del usuario, además de mostrar
+ * las opciones de menú correspondiente de cada perfil.
+   Autor: María Quiroz
+*/
+
 namespace Alae\Controller;
 
 use Zend\View\Model\ViewModel,
