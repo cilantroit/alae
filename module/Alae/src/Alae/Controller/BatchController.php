@@ -5,6 +5,7 @@
  * Controla la aprobación o rechazo manual de lotes.
  * Controla el listado de lotes sin asignar.
  * @author Maria Quiroz
+ * Fecha de creación: 16/05/2014
  */
 
 namespace Alae\Controller;
@@ -27,6 +28,7 @@ class BatchController extends BaseController
         }
     }
 
+    //RETORNA LOS ANALITOS NULOS
     public function unfilledAction()
     {
         $data     = array();
@@ -68,6 +70,7 @@ class BatchController extends BaseController
         return json_encode($data);
     }
 
+    //ENVIA A EXCEL LOS LOTES SIN ASIGNAR
     public function excelAction()
     {
         \Alae\Service\Download::excel("lotes_sin_asignar", $this->download());
@@ -95,6 +98,7 @@ class BatchController extends BaseController
                         {
                             try
                             {
+                                //APROBACIÓN MANUAL DE LOS LOTES
                                 $Batch->setValidFlag((bool) $updateAcceptedFlag[$key]);
                                 $Batch->setAcceptedFlag((bool) $updateAcceptedFlag[$key]);
                                 $Batch->setJustification($updateJustification[$key]);
@@ -141,6 +145,7 @@ class BatchController extends BaseController
                 ORDER BY b.fileName ASC");
         $elements = $query->getResult();
 
+        //MUESTRA LOS LOTES EN PANTALLA
         foreach ($elements as $batch)
         {
             $modify = $validation = "";

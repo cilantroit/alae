@@ -7,6 +7,7 @@
  * Obtener el usuario actual del sistema
  *  Conversor de cifras significativas
  * @author Maria Quiroz
+ * Fecha de creación: 11/05/2014
  */
  
 namespace Alae\Service;
@@ -80,6 +81,7 @@ class Helper
     	switch ($value)
     	{
     		case $value >= 0.1 && $value <= 0.9:
+                    //FORMATO HTML
     			$decimal = number_format($value, 3, '.', '');
     			break;
     		case $value >= 0.01 && $value <= 0.09:
@@ -108,6 +110,7 @@ class Helper
     	switch ($value)
     	{
     		case $value >= 0.1 && $value <= 0.9:
+                    //FORMATO EXCEL
     			$decimal = "mso-number-format:'#,##0.000'";
     			break;
     		case $value >= 0.01 && $value <= 0.09:

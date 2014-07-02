@@ -2,9 +2,10 @@
 /* APLICACION ALAE
    Fichero de control de enlaces del sistema
    Autor: María Quiroz
+   Fecha de creación: 10/05/2014
 */
 namespace Alae;
-
+// Controladores
 return array(
     'controllers' => array(
 	'invokables' => array(
@@ -20,7 +21,7 @@ return array(
 	    'Alae\Controller\Report' => 'Alae\Controller\ReportController',
 	),
     ),
-    // The following section is new and should be added to your file
+    // Secciones de las rutas
     'router' => array(
 	'routes' => array(
 	    'cron' => array(

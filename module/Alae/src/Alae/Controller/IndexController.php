@@ -12,6 +12,7 @@
    Fichero que se encarga de control del login y logout del usuario, además de mostrar
  * las opciones de menú correspondiente de cada perfil.
    Autor: María Quiroz
+ * Fecha de creación: 20/05/2014
 */
 
 namespace Alae\Controller;
@@ -33,9 +34,11 @@ class IndexController extends BaseController
         $User = $this->_getSession();
         if(!$User)
         {
+            //SI SE PIERDE LA SESSION SE MUESTRA LA PANTALLA DEL LOGIN
             return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
         }
 
+        //INDICA EL FIN DE SESSION EN AUDIT TRAIL
         $this->transaction(
             "Fin de sesión",
             sprintf("El usuario %s ha cerrado sesión", $User->getUsername()),
@@ -68,6 +71,7 @@ class IndexController extends BaseController
     {
         if (!$this->isLogged())
         {
+            //MUESTRA EL MENU
             return $this->forward()->dispatch('alae/Controller/index', array('action' => 'login'));
         }
         return new ViewModel(array("user" => $this->_getSession()));
@@ -77,6 +81,7 @@ class IndexController extends BaseController
     {
         if ($this->isLogged())
         {
+            // SI ESTÁ LOGUINADO MUESTRA LA PANTALLA DEL MENU
             header('Location: ' . \Alae\Service\Helper::getVarsConfig("base_url")."/index/menu");
             exit;
         }
@@ -97,21 +102,25 @@ class IndexController extends BaseController
 
 	    if ((!empty($elements)))
 	    {
+                //CUANDO PRESIONA EL BOTON DE LOGIN REALIZA LAS VERIFICACIONES DE USUARIO
 		foreach ($elements as $element)
 		{
 		    if (!$element->isCron() && $element->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG)
 		    {
+                        //SI LA VERIFICACION ES CORRECTA MUESTRA EL MENU
 			$this->_setSession($element);
 			return $this->redirect()->toRoute('index', array('controller' => 'index', 'action' => 'menu'));
 		    }
 		    else
 		    {
+                        //SI LA VERIFICACION NO ES CORRECTA DEVUELVE UN VALOR INACTIVO
                         $error['inactive'] = true;
 		    }
 		}
 	    }
 	    else
 	    {
+                //DEVUELVE UN VALOR PARA INDICAR QUE EL USUARIO NO HA INGRESADO DATOS EN EL LOGIN
                 $error['incorrect'] = true;
 	    }
 	}
@@ -126,9 +135,11 @@ class IndexController extends BaseController
 
         if ($request->isPost())
 	{
+            //REALIZA LA AUTENTICACIÓN DEL USUARIO
 	    $User = $this->_getSession();
             if ($User->getActiveFlag() == \Alae\Entity\User::USER_ACTIVE_FLAG && $User->getVerification() == $request->getPost('password'))
             {
+                //INGRESA EN AUDIT TRANSACTION LA FIRMA DIGITAL
                 $response = true;
                 $this->transaction(
                     "Firma digital",

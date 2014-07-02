@@ -6,6 +6,7 @@
  * También controla la creación del fichero excel exportable.
  *
  * @author Maria Quiroz
+ * Fecha de creación: 12/05/2014
  */
 
 namespace Alae\Controller;
@@ -51,6 +52,7 @@ class ParameterController extends BaseController
                 {
                     try
                     {
+                        
                         $older = sprintf('Valores antiguos -> Descripción: %1$s, Min: %2$s, Max: %3$s, Motivo: %4$s, Mensaje de error: %5$s',
                             $Parameter->getVerification(),
                             $Parameter->getMinValue(),
@@ -59,6 +61,7 @@ class ParameterController extends BaseController
                             $Parameter->getMessageError()
                         );
 
+                        //EDITA LOS PARAMETROS DEL SISTEMA
                         $Parameter->setVerification($updateVerification[$key]);
                         $Parameter->setMinValue($updateMin[$key]);
                         $Parameter->setMaxValue($updateMax[$key]);
@@ -88,6 +91,7 @@ class ParameterController extends BaseController
             }
         }
 
+        //MUESTRA LOS PARAMETROS EN PANTALLA
         $data     = array();
         $elements = $this->getRepository()->findBy(array("typeParam" => true));
 
@@ -132,6 +136,7 @@ class ParameterController extends BaseController
                 {
                     try
                     {
+                        //CREA CODIGOS DE ERROR NO AUTOMATIZABLES
                         $Parameter = new \Alae\Entity\Parameter();
                         $Parameter->setRule($value);
                         $Parameter->setCodeError($createCode[$key]);
@@ -167,6 +172,7 @@ class ParameterController extends BaseController
                     {
                         try
                         {
+                            //EDITA LOS CODIGOS DE ERROR NO AUTOMATIZABLES
                             $older = sprintf('Valores antiguos -> Motivo: %1$s, Mensaje de error: %2$s',
                                 $Parameter->getCodeError(),
                                 $Parameter->getMessageError()
@@ -195,6 +201,7 @@ class ParameterController extends BaseController
             }
         }
 
+        //MUESTRA LOS TIPOS DE PARAMETROS EN PANTALLA
         $data     = array();
         $elements = $this->getRepository()->findBy(array("typeParam" => false));
 
@@ -256,7 +263,7 @@ class ParameterController extends BaseController
 
     public function excelAction()
     {
-
+        //EXCEL DE VERIFICACION DE LOTES DE ANALITOS
         $json = ($this->params('param') == "1") ? "" : $this->downloadreason();
         $filename = ($this->params('param') == "1") ? "verificaciones_de_lotes_de_analitos" : "codigos_de_error_no_automatizables";
 

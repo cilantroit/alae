@@ -3,9 +3,10 @@
 /* APLICACION ALAE
    Este fichero se encarga de configurar los mensajes de error que genera ALAE en la carga de lotes
    Autor: María Quiroz
+   Fecha de creación: 10/05/2014
 */
 namespace Alae;
-
+//MENSAJES DE ERROR
 return array(
     'Invalid_file_name_in_the_export_process_batches_of_analytes' => array(
         'section' => 'Verificacion de ficheros de exportación de lotes analitos',

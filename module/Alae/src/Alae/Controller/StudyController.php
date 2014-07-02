@@ -15,6 +15,7 @@
  * 	4.- Aprobación, duplicación y cierre de estudios
  * 	5.- Aprobación y desbloqueo de concentraciones nominales
  * @author Maria Quiroz
+   Fecha de creación: 16/05/2014
  */
 
 namespace Alae\Controller;
@@ -49,18 +50,21 @@ class StudyController extends BaseController
             switch ($this->_getSession()->getFkProfile()->getName())
             {
                 case "Administrador":
+                    //CASO DIRECTOR DE ESTUDIO MOSTRAR BOTONES DE VER Y EDITAR
                 case "Director Estudio":
                     $buttons = ($study->getCloseFlag()) ?
                         '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>' :
                         '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-change"></span></a>';
                     break;
                 case "Laboratorio":
+                    //CASO UGC MOSTRAR BOTON DE VER
                 case "UGC":
                     $buttons = '<a href="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/study/edit/' . $study->getPkStudy() . '"><span class="form-datatable-lupa"></span></a>';
                     break;
             }
 
             $counterAnalyte = $this->counterAnalyte($study->getPkStudy());
+            //MUESTRA LOS DATOS EN PANTALLA
             $data[]         = array(
                 "code"        => $study->getCode(),
                 "description" => $study->getDescription(),
@@ -93,6 +97,7 @@ class StudyController extends BaseController
 
             if(count($elements) > 0)
             {
+                //VERIFICA QUE EL ESTUDIO YA EXISTE
                 $viewModel->setVariable('error', "<li>Este estudio ya existe. Intente con otro código, por favor<li>");
             }
             else
@@ -102,6 +107,7 @@ class StudyController extends BaseController
                  */
                 try
                 {
+                    //CREA EL ESTUDIO
                     $Study = new \Alae\Entity\Study();
                     $Study->setCode($request->getPost('code'));
                     $Study->setDescription($request->getPost('description'));
@@ -158,6 +164,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //BORRA EL ESTUDIO
                     $this->getEntityManager()->remove($AnaStudy);
                     $this->getEntityManager()->flush();
                     $this->transaction(
@@ -209,6 +216,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //EDITA EL ESTUDIO
                     $older = sprintf('Valores antes del cambio -> Usuario: %1$s Código: %2$s, Descripción: %3$s, Observaciones: %4$s, Fecha de creación: %5$s',
                         $Study->getFkUser()->getUsername(),
                         $Study->getCode(),
@@ -406,13 +414,6 @@ class StudyController extends BaseController
             );
         }
 
-        /*$query = $this->getEntityManager()->createQuery("
-                SELECT COUNT(b.pkBatch)
-                FROM Alae\Entity\Batch b
-                WHERE
-                    b.validFlag IS NOT NULL AND
-                    b.fkStudy = " . $Study->getPkStudy());
-        $counter = $query->getSingleScalarResult();*/
         $isDuplicated = $Study->getApprove() && $this->_getSession()->isAdministrador() && !$Study->getCloseFlag();
 
         $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
@@ -442,6 +443,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //BORRAR ESTUDIO
                     $User = $this->_getSession();
                     $Study->setStatus(false);
                     $Study->setFkUser($User);
@@ -480,6 +482,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //APROBAR ESTUDIO
                     $User = $this->_getSession();
                     $Study->setApprove(true);
                     $Study->setFkUserApprove($User);
@@ -518,6 +521,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //CERRAR ESTUDIO
                     $User = $this->_getSession();
                     $Study->setCloseFlag(true);
                     $Study->setFkUserClose($User);
@@ -553,6 +557,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //DUPLICAR ESTUDIO
                     $User  = $this->_getSession();
                     $code  = explode("-", $Study->getCode());
                     $query = $this->getEntityManager()->createQuery("
@@ -630,6 +635,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //APROBAR CONCENTRACIONES NOMINALES
                     $User = $this->_getSession();
                     $AnaStudy->setStatus(true);
                     $AnaStudy->setFkUserApprove($User);
@@ -675,6 +681,7 @@ class StudyController extends BaseController
             {
                 try
                 {
+                    //DESBLOQUEA LAS CONCENTRACIONES NOMINALES
                     $User = $this->_getSession();
                     $AnaStudy->setStatus(false);
                     $AnaStudy->setFkUser($User);
@@ -719,6 +726,7 @@ class StudyController extends BaseController
 
         if ($request->isPost())
         {
+            //INGRESAR LAS CONCENTRACIONES NOMINALES
             $AnaStudy = $this->getRepository("\\Alae\\Entity\\AnalyteStudy")->find($request->getPost('id'));
             $AnaStudy->setCsValues(implode(",", $request->getPost("cs_number")));
             $AnaStudy->setQcValues(implode(",", $request->getPost("qc_number")));

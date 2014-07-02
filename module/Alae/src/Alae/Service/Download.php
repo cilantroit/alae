@@ -4,6 +4,7 @@
  * Descarga de archivos excel y pdf
  *
  * @author Maria Quiroz
+ * Fecha de creación: 15/05/2014
  */
 
 namespace Alae\Service;
@@ -21,6 +22,7 @@ class Download
         // Create new PHPExcel object
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getActiveSheet()->fromArray($data);
+        //HEADER DE EXCEL
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
         header('Cache-Control: max-age=0');
@@ -38,6 +40,7 @@ class Download
         $rendererLibrary     = 'dompdf';
         $rendererLibraryPath = $_SERVER['DOCUMENT_ROOT'] . '/alae/vendor/codeplex/phpexcel/PHPExcel/Writer/' . $rendererLibrary;
         $data = json_decode($json);
+        //HEADER PDF
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getActiveSheet()->fromArray($data);
         $objPHPExcel->getActiveSheet()->setShowGridLines(false);

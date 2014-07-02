@@ -12,6 +12,7 @@
  * Modulo de gestión de Analitos. Este fichero contiene las funciones encargadas
  * de agregar un analito y de eliminar un analito.
  * @author Maria Quiroz
+   Fecha de creación: 15/05/2014
  */
 
 namespace Alae\Controller;
@@ -55,10 +56,12 @@ class AnalyteController extends BaseController
                 {
                     $findByName       = $this->getRepository()->findBy(array("name" => $value));
                     $findByShortnames = $this->getRepository()->findBy(array("shortening" => $createShortnames[$key]));
+                    //VERIFICA QUE EL ANALITO YA ESTÉ REGISTRADO
                     if (count($findByName) > 0)
                     {
                         $error .= sprintf('<li>El analito %s ya está registrado. Por favor, intente de nuevo<li>', $value);
                     }
+                    //VERIFICA QUE LA ABREVIATURA YA ESTÉ AGREGADA
                     elseif (count($findByShortnames) > 0)
                     {
                         $error .= sprintf('<li>La abreviatura %s ya está registrada. Por favor, intente de nuevo<li>', $createShortnames[$key]);
@@ -67,6 +70,7 @@ class AnalyteController extends BaseController
                     {
                         try
                         {
+                            //AGREGA A LA TABLA ANALYTE
                             $Analyte = new \Alae\Entity\Analyte();
                             $Analyte->setName($value);
                             $Analyte->setShortening($createShortnames[$key]);
@@ -91,6 +95,7 @@ class AnalyteController extends BaseController
 
             }
 
+            //ACTUALIZA EL NOMBRE Y SHORTNAME SI ESTOS NO EXISTEN
             if (!empty($updateNames))
             {
                 $User = $this->_getSession();
@@ -106,7 +111,7 @@ class AnalyteController extends BaseController
                             FROM Alae\Entity\AnalyteStudy a
                             WHERE a.fkAnalyte = " . $Analyte->getPkAnalyte() . " OR a.fkAnalyteIs = " . $Analyte->getPkAnalyte());
                         $counter = $query->getSingleScalarResult();
-
+                        //VERIFICA QUE EL ANALITO NO ESTÉ ASOCIADO A UN ESTUDIO
                         if($counter > 0)
                         {
                             $error .= sprintf('<li>El analito %s está asociado a un estudio<li>', $value);
@@ -125,6 +130,7 @@ class AnalyteController extends BaseController
                                 $this->getEntityManager()->persist($Analyte);
                                 $this->getEntityManager()->flush();
 
+                                //INGRESO A AUDIT TRANSACTION
                                 $this->transaction(
                                     "Editar analito",
                                     sprintf('%1$s<br> Valores nuevos -> %2$s(%3$s)',
@@ -148,6 +154,7 @@ class AnalyteController extends BaseController
         $data     = array();
         $elements = $this->getRepository()->findBy(array("status" => true));
 
+        //MOSTRAR LOS DATOS
         foreach ($elements as $analyte)
         {
             $query = $this->getEntityManager()->createQuery("
@@ -204,6 +211,7 @@ class AnalyteController extends BaseController
                 {
                     try
                     {
+                        //ELIMINA EL ANALITO SI EXISTE
                         $User = $this->_getSession();
                         $Analyte->setStatus(false);
                         $Analyte->setFkUser($User);

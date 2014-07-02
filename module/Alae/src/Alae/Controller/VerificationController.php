@@ -5,6 +5,7 @@
  * Verificaciones de 4 - 24
  *
  * @author Maria Quiroz
+ * Fecha de creación: 18/05/2014
  */
 
 namespace Alae\Controller;
@@ -552,20 +553,6 @@ class VerificationController extends BaseController
             $where = "s.pkSampleBatch in ($ids) AND s.fkBatch = " . $Batch->getPkBatch();
             $this->error($where, $parameters[0], array(), false);
         }
-
-        /**
-        $query    = $this->getEntityManager()->createQuery("
-            SELECT SUBSTRING(s.sampleName,5,1) as dilutionFactor
-            FROM Alae\Entity\SampleBatch s
-            WHERE s.sampleName LIKE '%DQC%' AND SUBSTRING(s.sampleName,5,1) <> s.dilutionFactor AND s.fkBatch = " . $Batch->getPkBatch());
-        $elements = $query->getResult();
-
-        foreach($elements as $factor)
-        {
-            $where = "s.dilutionFactor = " . $factor['dilutionFactor'] . " AND s.sampleType = 'Unknown' AND s.fkBatch = " . $Batch->getPkBatch();
-            $this->error($where, $parameters[0], array(), false);
-        }
-        **/
     }
 
     /**

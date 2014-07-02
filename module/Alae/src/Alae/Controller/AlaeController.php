@@ -11,6 +11,7 @@
 /* APLICACION ALAE
    Fichero de configuración de conexión a la base de datos
    Autor: María Quiroz
+   Fecha de creación: 11/05/2014
 */
 
 namespace Alae\Controller;
@@ -29,9 +30,11 @@ class AlaeController extends AbstractActionController
 	mysql_select_db('alae', $enlace);
 	if (!$enlace)
 	{
+            //SI NO EXISTE LA CONEXION, NO SE PUEDE CONECTAR
 	    die('No pudo conectarse: ' . mysql_error());
 	}
 
+        //RETORNA LA TABLA ALAE PROFILE
 	$resultado = mysql_query("select * from alae_profile");
 	var_dump($resultado);
 	echo 'Conectado satisfactoriamente';

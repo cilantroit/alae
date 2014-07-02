@@ -15,6 +15,7 @@
    * r#action donde el número corresponde a cada uno de los reportes existentes.
    * Cada una de estas funciones enviará a formato excel o formato pdf el resultado.
  * @author Maria Quiroz
+   Fecha de creación: 19/05/2014
  */
 
 namespace Alae\Controller;
@@ -44,6 +45,7 @@ class ReportController extends BaseController
         {
             $from = $request->getPost('from');
 
+            //PARAMETROS DE FECHA INICIO Y FECHA FIN
             if ($request->getPost('from') != "" && $request->getPost('to') != "")
             {
                 $to = $request->getPost('to');
@@ -62,6 +64,7 @@ class ReportController extends BaseController
             ORDER BY a.createdAt DESC");
         $elements = $query->getResult();
 
+        //MUESTRA LOS DATOS DE LAS TRANSACCIONES FILTRADAS POR FECHA INICIO Y FECHA FIN EN PANTALLA
         $data     = array();
         foreach ($elements as $AuditTransaction)
         {
@@ -81,6 +84,7 @@ class ReportController extends BaseController
 
     public function ajxstudyAction()
     {
+        //MUESTRA EL LISTADO DE ANALITOS
         $request  = $this->getRequest();
         $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array(
             "fkStudy" => $request->getQuery('id')));
@@ -94,6 +98,7 @@ class ReportController extends BaseController
 
     public function ajxbatchAction()
     {
+        //MUESTRA EL LISTADO DE LOTES
         $request  = $this->getRequest();
         $query    = $this->getEntityManager()->createQuery("
             SELECT b
@@ -118,6 +123,7 @@ class ReportController extends BaseController
 
     protected function counterAnalyte($pkStudy)
     {
+        //CUENTA LOS ANALITOS
         $query    = $this->getEntityManager()->createQuery("
             SELECT COUNT(a.fkAnalyte)
             FROM \Alae\Entity\AnalyteStudy a
@@ -133,6 +139,7 @@ class ReportController extends BaseController
      */
     public function r1Action()
     {
+        //REPORTE 1 PDF
         $request = $this->getRequest();
         if ($request->isGet())
         {
@@ -143,6 +150,7 @@ class ReportController extends BaseController
             $qc_values      = array();
             foreach ($analytes as $anaStudy)
             {
+                //OBTIENE LOS VALORES CS Y QC
                 $cs_values[] = explode(",", $anaStudy->getCsValues());
                 $qc_values[] = explode(",", $anaStudy->getQcValues());
             }
@@ -170,10 +178,12 @@ class ReportController extends BaseController
      */
     public function r2Action()
     {
+        //REPORTE 2 PDF
         $request = $this->getRequest();
         $page    = "";
         if ($request->isGet())
         {
+            //GENERA LOS DATOS DEL REPORTE
             ini_set('max_execution_time', 300000);
             $Batch = $this->getRepository('\\Alae\\Entity\\Batch')->find($request->getQuery('ba'));
             if ($Batch && $Batch->getPkBatch())
@@ -261,6 +271,7 @@ class ReportController extends BaseController
 
                     }
 
+                    //GENERA LOS ERRORES
                     $query  = $this->getEntityManager()->createQuery("
                         SELECT DISTINCT(p.pkParameter) as pkParameter, p.messageError
                         FROM Alae\Entity\Error e, Alae\Entity\SampleBatch s, Alae\Entity\Parameter p
@@ -323,6 +334,7 @@ class ReportController extends BaseController
      */
     public function r3Action()
     {
+        //REPORTE 3 PDF
         $request = $this->getRequest();
         if ($request->isGet())
         {
@@ -340,6 +352,7 @@ class ReportController extends BaseController
             {
                 $properties = array();
 
+                //OBTIENE LOS DATOS DEL REPORTE
                 foreach ($elements as $Batch)
                 {
                     $query    = $this->getEntityManager()->createQuery("
@@ -396,6 +409,7 @@ class ReportController extends BaseController
      */
     public function r4Action()
     {
+        //REPORTE 4 PDF
         $request = $this->getRequest();
         if ($request->isGet())
         {
@@ -418,6 +432,7 @@ class ReportController extends BaseController
                 {
                     $em   = $this->getEntityManager();
                     $db   = $em->getConnection();
+                    //LLAMAR AL STORED PROCEDURE PROC_ALAE_SAMPLE_ERRORS
                     $stmt = $db->prepare('call proc_alae_sample_errors(:pk_batch)');
                     $stmt->bindValue('pk_batch', $Batch->getPkBatch());
 
@@ -463,10 +478,11 @@ class ReportController extends BaseController
      */
     public function r5Action()
     {
+        //REPORTE 5 EXCEL
         $request = $this->getRequest();
         if ($request->isGet())
         {
-
+            //OBTIENE LOS DATOS DEL REPORTE
             $query = $this->getEntityManager()->createQuery("
                 SELECT b
                 FROM Alae\Entity\Batch b
@@ -501,10 +517,12 @@ class ReportController extends BaseController
      */
     public function r6Action()
     {
+        //REPORTE 6 EXCEL
         $request = $this->getRequest();
 
         if ($request->isGet())
         {
+            //OBTIENE LOS DATOS DEL REPORTE
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb
@@ -563,9 +581,11 @@ class ReportController extends BaseController
      */
     public function r7Action()
     {
+        //REPORTE 7 EXCEL
         $request = $this->getRequest();
         if ($request->isGet())
         {
+            
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
             $query    = $this->getEntityManager()->createQuery("
                 SELECT b
@@ -580,7 +600,7 @@ class ReportController extends BaseController
                 $pkBatch = array();
                 foreach ($batch as $Batch)
                 {
-
+                    //OBTIENE LOS DATOS DEL REPORTE
                     $qb       = $this->getEntityManager()->createQueryBuilder();
                     $qb
                             ->select('s.accuracy', 'SUBSTRING(s.sampleName, 1, 3) as sampleName', 'GROUP_CONCAT(DISTINCT p.codeError) as codeError')
@@ -659,10 +679,12 @@ class ReportController extends BaseController
      */
     public function r8Action()
     {
+        //REPORTE 8 EXCEL
         $request = $this->getRequest();
 
         if ($request->isGet())
         {
+            //OBTIENE LOS DATOS DEL REPORTE
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb
@@ -724,10 +746,12 @@ class ReportController extends BaseController
      */
     public function r9Action()
     {
+        //REPORTE 9 EXCEL
         $request = $this->getRequest();
 
         if ($request->isGet())
         {
+            //OBTIENE LOS DATOS DEL REPORTE
             $analytes = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkAnalyte" => $request->getQuery('an'), "fkStudy" => $request->getQuery('id')));
             $query    = $this->getEntityManager()->createQuery("
                 SELECT s.sampleName, GROUP_CONCAT(DISTINCT s.pkSampleBatch) as values

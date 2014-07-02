@@ -10,6 +10,7 @@
  /**
  * Modulo de gestión de usuarios
  * @author Maria Quiroz
+   Fecha de creacion: 17/05/2014
  */
 
 namespace Alae\Controller;
@@ -57,6 +58,7 @@ class UserController extends BaseController
 	    {
                 try
                 {
+                    //CREA NUEVA CUENTA
                     $Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
                     $password = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
 
@@ -87,6 +89,7 @@ class UserController extends BaseController
                     $elements = $this->getRepository()->findBy(array('fkProfile' => $Profile, 'activeFlag' => 1));
 		    foreach ($elements as $Admin)
 		    {
+                        //ENVIA EL CORREO ELECTRONICO
 			$mail->send(
                             array($Admin->getEmail()),
                             $this->render('alae/user/template_new_account_admin',
@@ -114,6 +117,7 @@ class UserController extends BaseController
      */
     protected function getProfileOptions($pkProfile)
     {
+        //LISTADO DE PERFILES
 	$elements = $this->getRepository('\\Alae\\Entity\\Profile')->findAll();
 	$options = '';
 	foreach ($elements as $profile)
@@ -131,6 +135,7 @@ class UserController extends BaseController
     {
 	$users = $this->getRepository()->findAll();
 
+        //MUESTRA LOS DATOS EN PANTALLA
 	$data = array();
 	foreach ($users as $user)
 	{
@@ -163,6 +168,7 @@ class UserController extends BaseController
             $User = $this->getRepository()->find($request->getQuery('id'));
             try
             {
+                //APROBAR EL ACCESO
                 $User->setActiveFlag(\Alae\Entity\User::USER_ACTIVE_FLAG);
                 $User->setFkProfile($Profile);
                 $this->getEntityManager()->persist($User);
@@ -205,6 +211,7 @@ class UserController extends BaseController
             $User = $this->getRepository()->find($request->getQuery('id'));
             try
             {
+                //CAMBIAR EL PERFIL DEL USUARIO
                 $User->setFkProfile($Profile);
                 $this->getEntityManager()->persist($User);
                 $this->getEntityManager()->flush();
@@ -260,6 +267,7 @@ class UserController extends BaseController
             $User = $this->getRepository()->find($request->getPost('id'));
             try
             {
+                //REGISTRAR EL USUARIO
                 $User->setPassword($request->getPost('password'));
                 $User->setName($request->getPost('name'));
                 $User->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
@@ -297,6 +305,7 @@ class UserController extends BaseController
             $User = $this->getRepository()->find($request->getQuery('id'));
             try
             {
+                //DAR DE BAJA AL USUARIO
                 $Profile = $this->getRepository("\\Alae\\Entity\\Profile")->findBy(array("name" => "Sin asignar"));
                 $User->setFkProfile($Profile[0]);
                 $User->setActiveFlag(\Alae\Entity\User::USER_INACTIVE_FLAG);
@@ -328,6 +337,7 @@ class UserController extends BaseController
 
 	if ($request->isGet())
 	{
+            //GENERA LA FIRMA ELECTRONICA DEL USUARIO
             $verification = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8);
 
 	    $User = $this->getRepository()->find($request->getQuery('id'));
@@ -364,6 +374,7 @@ class UserController extends BaseController
 
 	    if ($User && $User[0]->getPkUser())
 	    {
+                //RESETEA EL PASSWORD
 		$User[0]->setActiveCode(substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ9879"), 0, 8));
 		$this->getEntityManager()->persist($User[0]);
 		$this->getEntityManager()->flush();

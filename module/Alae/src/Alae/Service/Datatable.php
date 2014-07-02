@@ -6,6 +6,7 @@
  *
  *
  * @author Maria Quiroz
+ * Fecha de creación: 13/05/2014
  */
 
 namespace Alae\Service;
@@ -44,6 +45,7 @@ class Datatable
 	return $this->_data;
     }
 
+    //CREA LAS COLUMNAS DEL GRID DE ANALITOS
     protected function getAnalyteColumns()
     {
 	$header = array("id", "name", "shortname");
@@ -63,6 +65,7 @@ class Datatable
 	);
     }
 
+    //CREA LAS COLUMNAS DEL GRID DE ESTUDIOS
     protected function getStudyColumns()
     {
 	$header = array("code", "description", "date", "analyte", "observation", "closed");
@@ -85,6 +88,7 @@ class Datatable
 	);
     }
 
+    //CREA LAS COLUMNAS DE LOS PARAMETROS
     protected function getParameterColumns()
     {
 	$header = array("rule", "verification", "min_value", "max_value", "code_error", "message_error");
@@ -107,6 +111,7 @@ class Datatable
 	);
     }
 
+    //CREA LAS COLUMNAS DE REASON
     protected function getReasonColumns()
     {
 	$header = array("rule", "code_error", "message_error");
@@ -126,6 +131,7 @@ class Datatable
 	);
     }
 
+    //CREA LAS COLUMNAS DE UNFILLED
     protected function getUnfilledColumns()
     {
 	$header = array("batch", "filename", "create_at", "reason");
@@ -145,6 +151,7 @@ class Datatable
 	);
     }
 
+    //COLUMNAS DE ADMINISTRACION
     protected function getAdminColumns()
     {
 	$header = array("username", "email", "profile", "password", "status");
@@ -166,6 +173,7 @@ class Datatable
 	);
     }
 
+    //COLUMNAS DEL ESTUDIO DE ANALITO
     protected function getAnaStudyColumns()
     {
         $header = array("analyte", "analyte_is", "cs_number", "qc_number", "unit", "is", "use");
@@ -189,6 +197,7 @@ class Datatable
         );
     }
 
+    //COLUMNAS DEL LOTE
     protected function getBatchColumns()
     {
         $header = array("batch", "filename", "create_at", "valid_flag", "validation_date", "result", "modify", "accepted_flag", "justification");
@@ -213,6 +222,7 @@ class Datatable
         );
     }
 
+    //COLUMNAS DEL SAMPLE
     protected function getSampleBatchColumns()
     {
         $header = array("filename", "sample_name", "accuracy", "use_record","reason");
@@ -234,6 +244,7 @@ class Datatable
         );
     }
 
+    //COLUMNAS DEL AUDIT
     protected function getAuditColumns()
     {
         $header = array("created_at", "user", "section", "audit_description");

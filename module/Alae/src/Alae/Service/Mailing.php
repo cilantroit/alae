@@ -3,6 +3,7 @@
  * Envío de correos
  *
  * @author Maria Quiroz
+ * Fecha de creación: 20/05/2014
  */
 namespace Alae\Service;
 
@@ -39,12 +40,14 @@ class Mailing
      */
     public function send($emails, $view, $subject)
     {
+        //CREA LOS ENCABEZADOS MIME
 	$html = new MimePart($view);
 	$html->type = "text/html";
 
 	$body = new MimeMessage();
 	$body->setParts(array($html));
 
+        //ZEND MAIL
 	$message = new \Zend\Mail\Message();
 	$message->setBody($body);
 	$message->setFrom(Helper::getVarsConfig("mail_admin_email"));

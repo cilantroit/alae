@@ -5,6 +5,7 @@
   * generar funciones generales dentro del sistema.
   * Esas funciones son: Control de sesiones, control de entidades, control de las transacciones audit
  * @author Maria Quiroz
+  * Fecha de creación: 10/05/2014
  */
 
 namespace Alae\Controller;
@@ -30,6 +31,7 @@ abstract class BaseController extends AbstractActionController
 
     protected function sendResponse($data)
     {
+        //ENVIA RESPUESTA DE JQUERY
 	$jsonModel = new JsonModel($data);
 	if ($this->getRequest()->getQuery('callback'))
 	    $jsonModel->setJsonpCallback($this->getRequest()->getQuery('callback'));
@@ -57,6 +59,7 @@ abstract class BaseController extends AbstractActionController
 
     protected function _setSession(\Alae\Entity\User $user)
     {
+        //INGRESA EL USUARIO A LAS VARIABLES DE SESSION
         $config = new \Zend\Session\Config\StandardConfig();
         $config->setOptions(array(
             'remember_me_seconds' => 900000,
@@ -68,6 +71,7 @@ abstract class BaseController extends AbstractActionController
 	$session->name = $user->getName();
 	$session->profile = $user->getFkProfile()->getName();
 
+        //INDICA EN EL AUDIT TRAIL EL INICIO DE SESIÓN
         $this->transaction(
             "Inicio de sesión",
             sprintf("El usuario %s ha iniciado sesión", $user->getUsername()),
@@ -77,6 +81,7 @@ abstract class BaseController extends AbstractActionController
 
     protected function _getSession()
     {
+        //OBTIENE EL INICIO DE SESION
 	$session = new \Zend\Session\Container('user');
         if ($session->offsetExists('id'))
 	{
@@ -87,6 +92,7 @@ abstract class BaseController extends AbstractActionController
 
     protected function transaction($section, $description, $system = false)
     {
+        //OBTIENE LA TRANSACCION
         $user = $system ? $this->_getSystem() : $this->_getSession();
 	$audit = new \Alae\Entity\AuditTransaction();
         $audit->setSection($section);
@@ -109,6 +115,7 @@ abstract class BaseController extends AbstractActionController
 
     protected function transactionError($data, $system = false)
     {
+        //OBTIENE LOS ERRORES DE TRANSACCION
 	$user = $system ? $this->_getSystem() : $this->_getSession();
 
 	$audit = new \Alae\Entity\AuditTransactionError();
@@ -128,6 +135,7 @@ abstract class BaseController extends AbstractActionController
 
     protected function isLogged()
     {
+        //VERIFICA EL USUARIO LOGUINADO
         $session = new \Zend\Session\Container('user');
         return $session->id ? true : false;
     }
