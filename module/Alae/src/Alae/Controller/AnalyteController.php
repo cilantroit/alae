@@ -164,7 +164,10 @@ class AnalyteController extends BaseController
             $counter = $query->getSingleScalarResult();
 
             $buttons = "";
-            if($counter == 0)
+            
+            //QUITAR BOTONES DE MODIFICACIÓN
+            //25/07/14->Autor Victor Baca, Pasamos el control de los analitos a ACUA
+            /*if($counter == 0)
             {
                 if($this->_getSession()->isSustancias() || $this->_getSession()->isAdministrador())
                 {
@@ -174,7 +177,7 @@ class AnalyteController extends BaseController
                 {
                     $buttons .= '<span class="form-datatable-delete" onclick="removeElement(this, ' . $analyte->getPkAnalyte() . ');"></span>';
                 }
-            }
+            }*/
 
             $data[] = array(
                 "id"        => str_pad($analyte->getPkAnalyte(), 4, '0', STR_PAD_LEFT),

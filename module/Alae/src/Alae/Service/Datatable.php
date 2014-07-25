@@ -388,7 +388,10 @@ class Datatable
         switch ($this->_datatable)
 	{
 	    case Datatable::DATATABLE_ANALYTE:
-		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><input value="" type="submit"/>';
+		$elements = '<span class="form-download-excel" onclick="excel(1);">';
+                //QUITAR BOTONES DE AGREGAR Y GUARDAR EN ANALITOS
+                //25/07/14->Autor Victor Baca, Pasamos el control de los analitos a ACUA
+                //$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><input value="" type="submit"/>';
                 break;
 	    case Datatable::DATATABLE_STUDY:
 		$elements = '<a href="' . $this->_base_url . '/study/create" class="form-datatable-new"></a><span class="form-download-excel" onclick="excel(2);"></span>';
@@ -490,7 +493,10 @@ class Datatable
         switch ($this->_datatable)
 	{
             case Datatable::DATATABLE_ANALYTE:
-		$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><input value="" type="submit"/>';
+		$elements = '<span class="form-download-excel" onclick="excel(1);"></span>';
+                //QUITAR BOTONES DE AGREGAR Y GUARDAR EN ANALITOS
+                //25/07/14->Autor Victor Baca, Pasamos el control de los analitos a ACUA
+                //$elements = '<span class="form-datatable-new"></span><span class="form-download-excel" onclick="excel(1);"></span><input value="" type="submit"/>';
                 break;
             default :
                 $elements = "";
