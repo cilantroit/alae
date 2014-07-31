@@ -1,3 +1,4 @@
+<script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
 <div id="logo">
     <img src="<?php echo $this->basePath() ?>/img/alaepeq.png">
 </div>
@@ -11,16 +12,32 @@
         </div>
         <div id="top" style="font-size:0.85em;">
             <ul id="errorBox"><?php echo isset($error) ? $error : ""?></ul>
+            <form action="" method="post" id="paso1">
+                <input type="hidden" name="op" value="paso1">
+                <input type="hidden" name="studyMig" id="studyMig" value="">
+                <input type="hidden" name="studyCode" id="studyCode" value="">
+            </form>
+            <form action="" method="post" id="migracion">
+                <input type="hidden" name="op" value="migracion">
+                <input type="hidden" name="studyMig2" id="studyMig2" value="<?php echo $studyMig; ?>">
+                <input type="hidden" name="studyCode2" id="studyCode2" value="<?php echo $studyCode; ?>">
+                <input type="hidden" name="dilutionTree2" id="dilutionTree2" value="">
+            </form>
             <form id="study-form" action="" method="POST">
+                <input type="hidden" name="op" value="normal">
+                <p>
+                    <label>Estudio:</label>
+                    <?php echo $studyList; ?>
+                    <a onclick="studyImportPrev();"><img src="<?php echo $this->basePath() ?>/img/add.png"></a>
+                    <label>Arbol de Dilución:</label>
+                    <?php echo $dilutionTreeList; ?>
+                    <?php echo $studyImportButton; ?>
+                </p>
                 <p>
                     <label>Código:</label>
                     <input type="text" name="code" value="">
                     <label>Fecha creación:</label>
                     <input class="centro" type="date" name="create_at" value="<?php echo date("Y-m-d"); ?>">
-                    <label>Arbol de Dilución:</label>
-                    <select name="dilution_tree">
-                        <option>1</option>
-                    </select>
                 </p>
                 <p>
                     <label>Descripción:</label>
@@ -33,7 +50,7 @@
                 <ul>
                     <?php if ($user->isAdministrador() || $user->isDirectorEstudio()) : ?>
                         <li>
-                            <input type="submit" class="btn" value="guardar" />
+                            <input type="submit" id="studySave" name="studySave" class="btn" value="guardar" />
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -89,4 +106,7 @@
             }
         }
     });
+</script>
+<script>
+    $('#studySave').hide("slow");
 </script>

@@ -156,6 +156,11 @@ class Study
     {
         $this->createdAt = new \DateTime($createdAt);//$createdAt;
     }
+    
+    public function setCreatedAt2(\DateTime $createdAt2)
+    {
+        $this->createdAt = $createdAt2;
+    }
 
     public function getUpdatedAt()
     {

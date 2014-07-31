@@ -246,6 +246,17 @@ class Study extends \Alae\Entity\Study implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function setCreatedAt2(\DateTime $createdAt2)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setCreatedAt2', array($createdAt2));
+
+        return parent::setCreatedAt2($createdAt2);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getUpdatedAt()
     {
 

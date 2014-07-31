@@ -36,17 +36,27 @@
                     <textarea <?php echo $disabled; ?> name="observation" rows="2" cols="50"><?php echo $study->getObservation(); ?></textarea>
                 </p>
                 <ul>
+                    
                     <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
                         <?php if(!$study->getApprove()) : ?>
                         <li>
                             <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> confirmar</button>
                         </li>
                         <?php endif; ?>
-                        <?php if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isLaboratorio()) : ?>
-                        <li>
-                            <input type="submit" class="btn" value="guardar" />
-                        </li>
-                        <?php endif; ?>
+                        
+                        <?php
+                        //SI ES UN ESTUDIO IMPORTADO
+                        if($study->getDescription() != 'Estudio importado de ACUA')
+                        {
+                            if ($user->isAdministrador() || $user->isDirectorEstudio() || $user->isLaboratorio()) : 
+                            ?>
+                                <li>
+                                    <input type="submit" class="btn" value="guardar" />
+                                </li>
+                            <?php 
+                            endif;
+                        }
+                        ?>
                     <?php endif; ?>
                     <?php if($isDuplicated) : ?>
                     <li>

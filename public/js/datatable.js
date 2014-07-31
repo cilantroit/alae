@@ -377,3 +377,34 @@ function utf8_encode (argString) {
 
   return utftext;
 }
+
+function studyImportPrev() 
+{
+    if(document.getElementById('study').value==0)
+    {
+        $('#studySave').show("slow");
+    }
+    else
+    {
+        if(confirm('¿Desea realizar la migración de los árboles de dilución del estudio?'))
+	{
+            $('#studySave').hide("slow");
+            document.getElementById('studyMig').value = document.getElementById('study').value;
+            combo = document.getElementById('study');
+            document.getElementById('studyCode').value = combo.options[combo.selectedIndex].text;
+            
+            document.getElementById('paso1').submit();
+        }
+    }
+}
+
+function studyImport() 
+{
+    if(confirm('¿Desea realizar la migración de los datos del árboles de dilución seleccionado?'))
+    {
+        $('#studySave').hide("slow");
+        
+        document.getElementById('dilutionTree2').value = document.getElementById('dilution_tree').value;
+        document.getElementById('migracion').submit();
+    }
+}
