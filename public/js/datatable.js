@@ -386,6 +386,7 @@ function studyImportPrev()
         $('#dilution_tree').show("slow");
         $('#studySave').show("slow");
         $('#labelfcreacion').show("slow");
+        $('#create_at').show("slow");
         $('#labeldesc').show("slow");
         $('#description').show("slow");
         $('#labelobs').show("slow");
@@ -412,6 +413,7 @@ function studyImportPrev()
             $('#dilution_tree').hide("slow");
             $('#studySave').hide("slow");
             $('#labelfcreacion').hide("slow");
+            $('#create_at').hide("slow");
             $('#labeldesc').hide("slow");
             $('#description').hide("slow");
             $('#labelobs').hide("slow");
