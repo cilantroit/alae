@@ -383,16 +383,32 @@ function studyImportPrev()
     if(document.getElementById('study').value==0)
     {
         $('#studySave').show("slow");
+        $('#dilution_tree').show("slow");
+        $('#importStudyB').hide("slow");
+        
+        $('#dilution_tree')
+            .find('option')
+            .remove()
+            .end()
+            .append('<option value="1">1</option>')
+            .val('whatever')
+        ;
+        
+        document.getElementById('dilution_tree').value = 1;
+        
     }
     else
     {
         if(confirm('¿Desea realizar la migración de los árboles de dilución del estudio?'))
 	{
             $('#studySave').hide("slow");
-            document.getElementById('studyMig').value = document.getElementById('study').value;
-            combo = document.getElementById('study');
-            document.getElementById('studyCode').value = combo.options[combo.selectedIndex].text;
+            $('#dilution_tree').hide("slow");
+            $('#importStudyB').show("slow");
             
+            document.getElementById('studyMig').value = document.getElementById('study').value;
+            //combo = document.getElementById('study');
+            //document.getElementById('studyCode').value = combo.options[combo.selectedIndex].text;
+            document.getElementById('studyCode').value = document.getElementById('code').value;
             document.getElementById('paso1').submit();
         }
     }
@@ -403,8 +419,16 @@ function studyImport()
     if(confirm('¿Desea realizar la migración de los datos del árboles de dilución seleccionado?'))
     {
         $('#studySave').hide("slow");
-        
         document.getElementById('dilutionTree2').value = document.getElementById('dilution_tree').value;
-        document.getElementById('migracion').submit();
+        
+        if(document.getElementById('code').value)
+        {
+            document.getElementById('studyCode2').value = document.getElementById('code').value;
+            document.getElementById('migracion').submit();
+        }
+        else
+        {
+            alert('El código es requerido');
+        }
     }
 }

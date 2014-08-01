@@ -148,170 +148,179 @@ class StudyController extends BaseController
                     }
                 }
             }
+            
+            //PROCESO DE MIGRACION ARBOLES DE DILUCION
             if($request->getPost('op') == 'paso1')
             {
-                
                 $dilutionTreeList = '<select class="valid" id="dilution_tree" name="dilution_tree">' . $this->getdilutionTreeOptions($request->getPost('studyMig')) . '</select>';
-                $studyImportButton = '<a onclick="studyImport();"><img src="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/img/add.png"></a>';
-                
+                $studyImportButton = '<a id="importStudyB" name="importStudyB" onclick="studyImport();"><img title="Proceso de migración" src="' . \Alae\Service\Helper::getVarsConfig("base_url") . '/img/add.png"></a>';
+
                 $orderStudy1= $request->getPost('studyMig');
             }
             
+            //PROCESO DE MIGRACION ANALITOS
             if($request->getPost('op') == 'migracion')
             {   
-                //OBTENER EL USUARIO
-                $User = $this->_getSession();
-                
-                //CREA EL ESTUDIO
-                $Study = new \Alae\Entity\Study();
-                $Study->setCode($request->getPost('studyCode2'));
-                $Study->setDescription('Estudio importado de ACUA');
-                $Study->setCreatedAt2(new \DateTime('now'));
-                $Study->setFkDilutionTree($request->getPost('dilutionTree2'));
-                $Study->setStatus(true);
-                $Study->setCloseFlag(false);
-                $Study->setApprove(True);
-                $Study->setDuplicate(false);
-                $Study->setFkUser($User);
-                $Study->setFkUserApprove($User);
-                $this->getEntityManager()->persist($Study);
-                $this->getEntityManager()->flush();
-                $this->transaction(
-                    "Creación de estudio",
-                    sprintf('El usuario %1$s ha importado el estudio %2$s - Código: %2$s, Descripción: %3$s, Fecha de creación: %4$s',
-                        $User->getUsername(),
-                        $Study->getCode(),
-                        $Study->getDescription(),
-                        $Study->getCreatedAt()
-                    ),
-                    false
-                );
-                
-                $acuaAnalyteStudy = $this->getAcuaAnalyteStudy($request->getPost('studyMig2'), $request->getPost('dilutionTree2'));
-                
-                
-                foreach ($acuaAnalyteStudy as $key => $value)
+                //VERIFICA SI EXISTE
+                $elements = $this->getRepository()->findBy(array("code" => $request->getPost('studyCode2')));
+                if(count($elements) > 0)
                 {
-                    $acuaConcentrationsCS = array();
-                    $CSvalues = "";
-                    $acuaConcentrationsCS = $this->getAcuaConcentrations($request->getPost('studyMig2'), $request->getPost('dilutionTree2'), $value['pk_breadcrumb'], 'CS');
-                    $x = 1;
-                    foreach ($acuaConcentrationsCS as $key1 => $value1)
-                    {
-                        if($x==1)
-                        {
-                            $CSvalues .= $value1['conc'];
-                        }
-                        else
-                        {
-                            $CSvalues .= ",".$value1['conc'];
-                        }
-                        
-                        $x = $x + 1;
-                        
-                    }
-                    
-                    $acuaConcentrationsQC = array();
-                    $QCvalues = "";
-                    $acuaConcentrationsQC = $this->getAcuaConcentrations($request->getPost('studyMig2'), $request->getPost('dilutionTree2'), $value['pk_breadcrumb'], 'QC');
-                    $y = 1;
-                    foreach ($acuaConcentrationsQC as $key2 => $value2)
-                    {
-                        if($y==1)
-                        {
-                            $QCvalues .= $value2['conc'];
-                        }
-                        else
-                        {
-                            $QCvalues .= ",".$value2['conc'];
-                        }
-                        
-                        $y = $y + 1;
-                        
-                        $units = $value2['units'];
-                    }
-                    
-                    $acuaHDLDQC = array();
-                    $acuaHDLDQC = $this->getAcuaHDLDQC($request->getPost('studyMig2'), $request->getPost('dilutionTree2'), $value['pk_breadcrumb']);
-                
-                    foreach ($acuaHDLDQC as $key3 => $value3)
-                    {
-                        
-                        if($value3['sample_id'] == 'HDQC')
-                        {
-                            $hdqc = $value3['conc'];
-                        }
-                        if($value3['sample_id'] == 'LDQC')
-                        {
-                            $ldqc = $value3['conc'];
-                        }
-                    }
-                    
-                    $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($value['fk_analyte']);
-                    $AnalyteIs   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($value['fk_is']);
-                    $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->find($units);
-                    $Study1   = $this->getRepository('\\Alae\\Entity\\Study')->find($Study->getPkStudy());
-                    
-                    try
-                    {
-                        $AnaStudy = new \Alae\Entity\AnalyteStudy();
-                        $AnaStudy->setFkAnalyte($Analyte);
-                        $AnaStudy->setFkAnalyteIs($AnalyteIs);
-                        $AnaStudy->setFkStudy($Study1);
-                        $AnaStudy->setCsNumber($x-1);
-                        $AnaStudy->setQcNumber($y-1);
-                        $AnaStudy->setCsValues($CSvalues);
-                        $AnaStudy->setQcValues($QCvalues);
-                        $AnaStudy->setHdqcValues($hdqc);
-                        $AnaStudy->setLdqcValues($ldqc);
-                        $AnaStudy->setFkUnit($Unit);
-                        $AnaStudy->setInternalStandard(0);
-                        $AnaStudy->setStatus(true);
-                        $AnaStudy->setIsUsed(true);
-                        $AnaStudy->setFkUser($User);
-                        $AnaStudy->setFkUserApprove($User);
-                        $this->getEntityManager()->persist($AnaStudy);
-                        $this->getEntityManager()->flush();
-                        $this->transaction(
-                            "Importar analitos a estudio",
-                            sprintf('El usuario %1$s ha importado el analito %2$s(%3$s) al estudio %4$s.<br>Patrón Interno (IS): %5$s, Núm CS: %6$s, Núm QC: %7$s, Unidades: %8$s, % var IS: %9$s, usar: %10$s'
-                                    . '<br>Concentración Nominal de los Estándares de Calibración: %11$s'
-                                    . '<br>Concentración Nominal de los Controles de Calidad: %12$s'
-                                    . '<br>Concentración Nominal de los LDQC y HDQC, respectivamente: %13$s, %14$s',
-                                $User->getUsername(),
-                                $Analyte->getName(),
-                                $Analyte->getShortening(),
-                                $Study->getCode(),
-                                $AnalyteIs->getName(),
-                                $x-1,
-                                $y-1,
-                                $Unit->getName(),
-                                true,
-                                true,
-                                $CSvalues,
-                                $QCvalues,
-                                $hdqc,
-                                $ldqc
-                            ),
-                            false
-                        );
-                    } 
-                    catch (Exception $ex) 
-                    {
-                        exit;
-                    }
+                    //VERIFICA QUE EL ESTUDIO YA EXISTE
+                    $viewModel->setVariable('error', "<li>Este estudio ya existe. Intente con otro código, por favor<li>");
                 }
-                
-                
-                return $this->redirect()->toRoute('study', array(
-                    'controller' => 'study',
-                    'action'     => 'edit',
-                    'id'         => $Study->getPkStudy()
-                ));
-                
-                
-              
-                
+                else
+                {
+                    //OBTENER EL USUARIO
+                    $User = $this->_getSession();
+
+                    //CREA EL ESTUDIO
+                    $Study = new \Alae\Entity\Study();
+                    $Study->setCode($request->getPost('studyCode2'));
+                    $Study->setDescription('Estudio importado de ACUA');
+                    $Study->setCreatedAt2(new \DateTime('now'));
+                    $Study->setFkDilutionTree($request->getPost('dilutionTree2'));
+                    $Study->setStatus(true);
+                    $Study->setCloseFlag(false);
+                    $Study->setApprove(True);
+                    $Study->setDuplicate(false);
+                    $Study->setFkUser($User);
+                    $Study->setFkUserApprove($User);
+                    $this->getEntityManager()->persist($Study);
+                    $this->getEntityManager()->flush();
+                    $this->transaction(
+                        "Creación de estudio",
+                        sprintf('El usuario %1$s ha importado el estudio %2$s - Código: %2$s, Descripción: %3$s, Fecha de creación: %4$s',
+                            $User->getUsername(),
+                            $Study->getCode(),
+                            $Study->getDescription(),
+                            $Study->getCreatedAt()
+                        ),
+                        false
+                    );
+
+                    $acuaAnalyteStudy = $this->getAcuaAnalyteStudy($request->getPost('studyMig2'), $request->getPost('dilutionTree2'));
+
+
+                    foreach ($acuaAnalyteStudy as $key => $value)
+                    {
+                        $acuaConcentrationsCS = array();
+                        $CSvalues = "";
+                        $acuaConcentrationsCS = $this->getAcuaConcentrations($request->getPost('studyMig2'), $request->getPost('dilutionTree2'), $value['pk_breadcrumb'], 'CS');
+                        $x = 1;
+                        foreach ($acuaConcentrationsCS as $key1 => $value1)
+                        {
+                            if($x==1)
+                            {
+                                $CSvalues .= $value1['conc'];
+                            }
+                            else
+                            {
+                                $CSvalues .= ",".$value1['conc'];
+                            }
+
+                            $x = $x + 1;
+
+                        }
+
+                        $acuaConcentrationsQC = array();
+                        $QCvalues = "";
+                        $acuaConcentrationsQC = $this->getAcuaConcentrations($request->getPost('studyMig2'), $request->getPost('dilutionTree2'), $value['pk_breadcrumb'], 'QC');
+                        $y = 1;
+                        foreach ($acuaConcentrationsQC as $key2 => $value2)
+                        {
+                            if($y==1)
+                            {
+                                $QCvalues .= $value2['conc'];
+                            }
+                            else
+                            {
+                                $QCvalues .= ",".$value2['conc'];
+                            }
+
+                            $y = $y + 1;
+
+                            $units = $value2['units'];
+                        }
+
+                        $acuaHDLDQC = array();
+                        $acuaHDLDQC = $this->getAcuaHDLDQC($request->getPost('studyMig2'), $request->getPost('dilutionTree2'), $value['pk_breadcrumb']);
+
+                        foreach ($acuaHDLDQC as $key3 => $value3)
+                        {
+
+                            if($value3['sample_id'] == 'HDQC')
+                            {
+                                $hdqc = $value3['conc'];
+                            }
+                            if($value3['sample_id'] == 'LDQC')
+                            {
+                                $ldqc = $value3['conc'];
+                            }
+                        }
+
+                        $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($value['fk_analyte']);
+                        $AnalyteIs   = $this->getRepository('\\Alae\\Entity\\Analyte')->find($value['fk_is']);
+                        $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->find($units);
+                        $Study1   = $this->getRepository('\\Alae\\Entity\\Study')->find($Study->getPkStudy());
+
+                        try
+                        {
+                            $AnaStudy = new \Alae\Entity\AnalyteStudy();
+                            $AnaStudy->setFkAnalyte($Analyte);
+                            $AnaStudy->setFkAnalyteIs($AnalyteIs);
+                            $AnaStudy->setFkStudy($Study1);
+                            $AnaStudy->setCsNumber($x-1);
+                            $AnaStudy->setQcNumber($y-1);
+                            $AnaStudy->setCsValues($CSvalues);
+                            $AnaStudy->setQcValues($QCvalues);
+                            $AnaStudy->setHdqcValues($hdqc);
+                            $AnaStudy->setLdqcValues($ldqc);
+                            $AnaStudy->setFkUnit($Unit);
+                            $AnaStudy->setInternalStandard(0);
+                            $AnaStudy->setStatus(true);
+                            $AnaStudy->setIsUsed(true);
+                            $AnaStudy->setFkUser($User);
+                            $AnaStudy->setFkUserApprove($User);
+                            $this->getEntityManager()->persist($AnaStudy);
+                            $this->getEntityManager()->flush();
+                            $this->transaction(
+                                "Importar analitos a estudio",
+                                sprintf('El usuario %1$s ha importado el analito %2$s(%3$s) al estudio %4$s.<br>Patrón Interno (IS): %5$s, Núm CS: %6$s, Núm QC: %7$s, Unidades: %8$s, % var IS: %9$s, usar: %10$s'
+                                        . '<br>Concentración Nominal de los Estándares de Calibración: %11$s'
+                                        . '<br>Concentración Nominal de los Controles de Calidad: %12$s'
+                                        . '<br>Concentración Nominal de los LDQC y HDQC, respectivamente: %13$s, %14$s',
+                                    $User->getUsername(),
+                                    $Analyte->getName(),
+                                    $Analyte->getShortening(),
+                                    $Study->getCode(),
+                                    $AnalyteIs->getName(),
+                                    $x-1,
+                                    $y-1,
+                                    $Unit->getName(),
+                                    true,
+                                    true,
+                                    $CSvalues,
+                                    $QCvalues,
+                                    $hdqc,
+                                    $ldqc
+                                ),
+                                false
+                            );
+                        } 
+                        catch (Exception $ex) 
+                        {
+                            exit;
+                        }
+                    }
+
+
+                    return $this->redirect()->toRoute('study', array(
+                        'controller' => 'study',
+                        'action'     => 'edit',
+                        'id'         => $Study->getPkStudy()
+                    ));
+
+                }
             }
         }
         
@@ -322,6 +331,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('dilutionTreeList', $dilutionTreeList);
         $viewModel->setVariable('studyImportButton', $studyImportButton);
         $viewModel->setVariable('studyMig', $request->getPost('studyMig'));
+        $viewModel->setVariable('studyCode2', $request->getPost('studyCode'));
         $viewModel->setVariable('studyCode', $request->getPost('studyCode'));
         return $viewModel;
     }
