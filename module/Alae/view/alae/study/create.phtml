@@ -39,16 +39,16 @@
                     <?php echo $studyImportButton; ?>
                 </p>
                 <p>
-                    <label>Fecha creación:</label>
-                    <input class="centro" type="date" name="create_at" value="<?php echo date("Y-m-d"); ?>">
+                    <label id="labelfcreacion" name="labelfcreacion">Fecha creación:</label>
+                    <input class="centro" type="date" id="create_at" name="create_at" value="<?php echo date("Y-m-d"); ?>">
                 </p>
                 <p>
-                    <label>Descripción:</label>
-                    <textarea name="description" rows="2" cols="50"></textarea>
+                    <label id="labeldesc" name="labeldesc">Descripción:</label>
+                    <textarea id="description" name="description" rows="2" cols="50"></textarea>
                 </p>
                 <p>
-                    <label>Observaciones:</label>
-                    <textarea name="observation" rows="2" cols="50"></textarea>
+                    <label id="labelobs" name="labelobs">Observaciones:</label>
+                    <textarea id="observation" name="observation" rows="2" cols="50"></textarea>
                 </p>
                 <ul>
                     <?php if ($user->isAdministrador() || $user->isDirectorEstudio()) : ?>
@@ -119,4 +119,10 @@
 </script>
 <script>
     $('#studySave').hide("slow");
+    $('#labelfcreacion').hide("slow");
+    $('#create_at').hide("slow");
+    $('#labeldesc').hide("slow");
+    $('#description').hide("slow");
+    $('#labelobs').hide("slow");
+    $('#observation').hide("slow");
 </script>

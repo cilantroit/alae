@@ -384,6 +384,13 @@ function studyImportPrev()
     {
         $('#studySave').show("slow");
         $('#dilution_tree').show("slow");
+        $('#studySave').show("slow");
+        $('#labelfcreacion').show("slow");
+        $('#labeldesc').show("slow");
+        $('#description').show("slow");
+        $('#labelobs').show("slow");
+        $('#observation').show("slow");
+        
         $('#importStudyB').hide("slow");
         
         $('#dilution_tree')
@@ -403,6 +410,12 @@ function studyImportPrev()
 	{
             $('#studySave').hide("slow");
             $('#dilution_tree').hide("slow");
+            $('#studySave').hide("slow");
+            $('#labelfcreacion').hide("slow");
+            $('#labeldesc').hide("slow");
+            $('#description').hide("slow");
+            $('#labelobs').hide("slow");
+            $('#observation').hide("slow");
             $('#importStudyB').show("slow");
             
             document.getElementById('studyMig').value = document.getElementById('study').value;
