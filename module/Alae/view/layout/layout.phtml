@@ -2,6 +2,16 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style>
+            footer {
+            position:fixed; 
+            bottom:0; 
+            left:0; 
+            background:#eee;; 
+            height:100px; 
+            width:100%;
+        }
+        </style>
 	<?php echo $this->headTitle('ALAE')->setSeparator(' - ')->setAutoEscape(false) ?>
 	<?php
 	echo $this->headMeta()
@@ -39,17 +49,18 @@
         <script src="http://malsup.github.com/jquery.form.js"></script>
     </head>
     <body>
-        <div id="container">
+        <div id="container" style="margin-bottom:120px;">
 	    <?php echo $this->content; ?>
-	    <div id="pie">
-                <p>
-		    <?php echo Alae\Service\Helper::getUserSession(); ?>
-                </p>
-                <p>
-                    ALAE Software. Copyright © Anapharm Europe, V.1.0 <?php echo "16-06-2014"; ?>
-                </p>
-            </div>
+	    
 	</div>
+        <footer>
+            <p>
+                <?php echo Alae\Service\Helper::getUserSession(); ?>
+            </p>
+            <p>
+                ALAE Software. Copyright © Anapharm Europe, V.1.0 <?php echo "16-06-2014"; ?>
+            </p>
+        </footer>
         <?php if (Alae\Service\Helper::getUserSession()) : ?>
             <script>
             var close;
