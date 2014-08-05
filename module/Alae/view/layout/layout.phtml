@@ -8,7 +8,7 @@
             bottom:0; 
             left:0; 
             background:#eee;; 
-            height:100px; 
+            height:50px; 
             width:100%;
         }
         </style>
@@ -49,16 +49,13 @@
         <script src="http://malsup.github.com/jquery.form.js"></script>
     </head>
     <body>
-        <div id="container" style="margin-bottom:120px;">
+        <div id="container" style="margin-bottom:70px;">
 	    <?php echo $this->content; ?>
 	    
 	</div>
         <footer>
             <p>
-                <?php echo Alae\Service\Helper::getUserSession(); ?>
-            </p>
-            <p>
-                ALAE Software. Copyright © Anapharm Europe, V.1.0 <?php echo "16-06-2014"; ?>
+                <?php echo Alae\Service\Helper::getUserSession(); ?>&nbsp;ALAE Software. Copyright © Anapharm Europe, V.1.0 <?php echo "16-06-2014"; ?>
             </p>
         </footer>
         <?php if (Alae\Service\Helper::getUserSession()) : ?>
