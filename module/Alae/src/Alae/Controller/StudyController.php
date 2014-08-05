@@ -976,7 +976,7 @@ class StudyController extends BaseController
     {
         $em   = $this->getEntityManager();
         $db   = $em->getConnection();
-        //LLAMAR AL STORED PROCEDURE PROC_ALAE_SAMPLE_ERRORS
+        //LLAMAR AL STORED PROCEDURE PROC_LISTAESTUDIOSACUA
         $stmt = $db->prepare('call proc_listaestudiosacua()');
         
         $stmt->execute();
@@ -993,25 +993,6 @@ class StudyController extends BaseController
                 $selected="";
             }
 	    $options .= sprintf('<option value="%s" %s>%s</option>', $row['pk_study'], $selected, $row['CodEstudio']);
-	}
-	return $options;
-    }
-    
-    protected function getPruebaOptions()
-    {
-        $em1   = $this->getEntityManager();
-        $db1   = $em1->getConnection();
-        //LLAMAR AL STORED PROCEDURE PROC_ALAE_SAMPLE_ERRORS
-        $stmt1 = $db1->prepare('call proc_acua_alae_paso1()');
-        $stmt1 = $db1->prepare('call proc_acua_alae_paso1(:codeStudy)');
-                $stmt1->bindValue('codeStudy', '13ANE-2174V02');
-        
-        $stmt1->execute();
-        $em1->flush();
-	$options = '';
-	while ($row1 = $stmt1->fetch())
-        {
-	    $options .= sprintf('<option value="%s" %s>%s</option>', $row1['dilution_number'], $selected, $row1['dilution_number']);
 	}
 	return $options;
     }
@@ -1052,7 +1033,7 @@ class StudyController extends BaseController
     {
         $em1   = $this->getEntityManager();
         $db1   = $em1->getConnection();
-        //LLAMAR AL STORED PROCEDURE proc_dilutionTree
+        //LLAMAR AL STORED PROCEDURE proc_AcuaAnalyteStudy
         $stmt1 = $db1->prepare('call proc_AcuaAnalyteStudy(:Study,:DilutionTree)');
                 $stmt1->bindValue('Study', $Study);
                 $stmt1->bindValue('DilutionTree', $DilutionTree);
@@ -1068,9 +1049,7 @@ class StudyController extends BaseController
             $acuaAnalyteStudy[] = array(
                 "pk_breadcrumb"   => $row1['pk_breadcrumb'],
                 "fk_analyte"   => $row1['fk_analyte'],
-                "fk_is"   => $row1['fk_is'],
-                "NumCS"   => $row1['NumCS'],
-                "NumQC"   => $row1['NumQC']
+                "fk_is"   => $row1['fk_is']
             );
         }
         
