@@ -110,7 +110,7 @@ class CronController extends BaseController
             {
                 if(!$this->isRepeatedBatch($file))
                 {
-                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}(-[0-9]+)?)\+(M|O|R)[0-9]*\_[a-zA-Z0-9]+\.txt$/i", $file))
+                    if (preg_match("/^([a-zA-Z0-9]+-\d{4}(-[0-9]+)?)\+(M|O|R)[0-9]*\_(([a-zA-Z0-9](-|\.|,)?\s*)+|(\((\+|-)\)-[a-zA-Z0-9]+))\.txt$/i", $file))
                     {
                         $this->validateFile($file);
                     }
@@ -138,26 +138,14 @@ class CronController extends BaseController
     protected function explodeFile($file)
     {
         $string = substr($file, 0, -4);
-        $array = explode("-", $string);
+        $studyBatch = preg_replace("/(\+(M|O|R)[0-9]*\_(([a-zA-Z0-9](-|\.|,)?\s*)+|(\((\+|-)\)-[a-zA-Z0-9]+)))/", "", $string);
+        $array = explode("-", $studyBatch);
 
-        if (count($array) == 3)
-        {
-            $return = array(
-                "batch"   => $array[0],
-                "study"   => $array[1],
-                "analyte" => preg_replace("/[0-9]+\+(M|O|R)[0-9]*\_/", "", $array[2])
-            );
-        }
-        else
-        {
-            $return = array(
-                "batch"   => $array[0],
-                "study"   => preg_replace("/\+(M|O|R)[0-9]*\_[a-zA-Z0-9]+/", "", $array[1]),
-                "analyte" => preg_replace("/[0-9]+\+(M|O|R)[0-9]*\_/", "", $array[1])
-            );
-        }
-
-        return $return;
+        return array(
+            "batch"   => $array[0],
+            "study"   => preg_replace("/(\+(M|O|R)[0-9]*\_)/", "", $array[1]),
+            "analyte" => preg_replace("/(([a-zA-Z0-9]+-\d{4}(-[0-9]+)?)\+(M|O|R)[0-9]*\_)/", "", $string)
+        );
     }
 
     /**
@@ -321,9 +309,10 @@ class CronController extends BaseController
         $header   = array();
         $continue = false;
         $count    = 0;
+
         foreach ($this->_other as $line)
         {
-            if (strstr($line, $Analyte->getShortening()))
+            if (strtolower(preg_replace("/\s+/i", "", $line)) == strtolower(sprintf("peakname:%s",$Analyte->getShortening())))
             {
                 $continue = true;
                 continue;

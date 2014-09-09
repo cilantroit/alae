@@ -377,6 +377,7 @@ class StudyController extends BaseController
  */
     public function editAction()
     {
+        $MostrarConfirmar="N";
         $request = $this->getRequest();
 
         if ($this->getEvent()->getRouteMatch()->getParam('id'))
@@ -387,6 +388,7 @@ class StudyController extends BaseController
 
         if ($request->isPost())
         {
+            $MostrarConfirmar="S";
             $User    = $this->_getSession();
             $Study   = $this->getRepository()->find($request->getPost('study_id'));
             $canEdit = ($this->_getSession()->isAdministrador() || $this->_getSession()->isDirectorEstudio()) && !$Study->getCloseFlag() && !$Study->getApprove();
@@ -613,6 +615,7 @@ class StudyController extends BaseController
         $viewModel->setVariable('user', $this->_getSession());
         $viewModel->setVariable('isDuplicated',  $isDuplicated);
         $viewModel->setVariable('disabled', (($canEdit) ? '' : 'disabled=""'));
+        $viewModel->setVariable('MostrarConfirmar', $MostrarConfirmar);
         return $viewModel;
     }
 

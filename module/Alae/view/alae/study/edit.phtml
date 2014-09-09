@@ -39,9 +39,13 @@
                     
                     <?php if (($user->isAdministrador() || $user->isDirectorEstudio()) && !$study->getCloseFlag()) : ?>
                         <?php if(!$study->getApprove()) : ?>
-                        <li>
-                            <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> confirmar</button>
-                        </li>
+                        <?php if($MostrarConfirmar=="S")
+                        {                        
+                        ?>
+                            <li>
+                                <button class="btn" type="button" onclick="changeStatus('/study/approve',<?php echo $study->getPkStudy(); ?>, 2)"><span class="btn-validate"></span> confirmar</button>
+                            </li>
+                        <?php } ?>
                         <?php endif; ?>
                         
                         <?php
