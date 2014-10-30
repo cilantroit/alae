@@ -39,4 +39,19 @@
         var filtersHtml = '<?php echo $filters; ?>';
     </script>
     <script type="text/javascript" src="<?php echo $this->basePath() ?>/js/datatable.js"></script>
+    <script>
+
+        function validar(url){
+
+            $("#datatable-form tr td button").each(function(){
+
+                $(this).attr("disabled", "disabled");
+
+            });
+
+            window.location.href = url;
+
+        }
+
+    </script>
 </div>
