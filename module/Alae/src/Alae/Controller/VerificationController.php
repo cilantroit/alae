@@ -438,7 +438,7 @@ class VerificationController extends BaseController
         var_dump($elements);
         echo "<br>";
         
-        echo "$query<br><br>";
+        echo $query;
 
         if (count($elements) > 0)
         {
