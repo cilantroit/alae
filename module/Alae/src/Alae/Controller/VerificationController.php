@@ -435,8 +435,8 @@ class VerificationController extends BaseController
             ORDER BY s.sampleName ASC");
         $elements = $query->getResult();
         
-        var_dump($elements);
-        echo "<br>";
+        //var_dump($elements);
+        //echo "<br>";
         
         echo $query;
 
