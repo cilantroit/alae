@@ -447,9 +447,6 @@ class VerificationController extends BaseController
 
             $sampleName    = array_unique($original);
             $pkSampleBatch = array_keys(array_unique($replicated));
-
-            echo "prueba";
-            die();
             
             error_log(  
 sprintf("Date: %s\nId Batch: %d\nData: %s", date("M d Y H:i:s"), $Batch->getPkBatch(), json_encode($sampleName),
