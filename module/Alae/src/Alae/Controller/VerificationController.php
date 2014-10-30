@@ -441,20 +441,34 @@ class VerificationController extends BaseController
             $original   = array();
             foreach ($elements as $temp)
             {
-                $replicated[$temp["pkSampleBatch"]] = preg_replace('/R[0-9]+/', 'R', $temp["sampleName"]);
-                $original[] = preg_replace('/R[0-9]+/', '', "'".$temp["sampleName"]."'");
+                $ids[preg_replace('/R[0-9]+/', '', $temp["sampleName"])][] = $temp["pkSampleBatch"];
             }
 
-            $sampleName    = array_unique($original);
-            $pkSampleBatch = array_keys(array_unique($replicated));
+            foreach ($ids as $key => $values){
+                array_pop($values);
+                if(!empty($values)){
+                    $replicated[] = implode(",", $values);
+                }
+
+                $original[] = sprintf("'%s'", $key);
+            }
+
+            $pkSampleBatch = "";
+            if(!empty($replicated)){
+                 $where = "(s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") OR
+                     (s.sampleName in (" . implode(",", $original) . ") AND s.sampleName NOT LIKE  '%R%' AND s.sampleName NOT LIKE  '%\*%')
+                 )";
+            }
+            else
+            {
+                $where = "s.sampleName in (" . implode(",", $original) . ") AND s.sampleName NOT LIKE  '%R%' AND s.sampleName NOT LIKE  '%\*%'";
+            }
 
             $sql = "
                UPDATE Alae\Entity\SampleBatch s
                SET s.isUsed = 0, s.validFlag = 0
-               WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND (
-                s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") OR
-                s.sampleName in (" . implode(",", $sampleName) . ")
-                )";
+               WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND $where";
+            
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
         }
