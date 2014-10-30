@@ -49,11 +49,11 @@ class VerificationController extends BaseController
             }
             else
             {
-                /*return $this->redirect()->toRoute('verification', array(
+                return $this->redirect()->toRoute('verification', array(
                     'controller' => 'verification',
                     'action'     => 'error',
                     'id'         => $Batch->getPkBatch()
-                ));*/
+                ));
             }
         }
     }
@@ -226,11 +226,11 @@ class VerificationController extends BaseController
             "fkStudy" => $Batch->getFkStudy()
         ));
 
-        /*return $this->redirect()->toRoute('batch', array(
+        return $this->redirect()->toRoute('batch', array(
             'controller' => 'batch',
             'action'     => 'list',
             'id'         => $AnaStudy[0]->getPkAnalyteStudy()
-        ));*/
+        ));
     }
 
     /*
@@ -434,10 +434,7 @@ class VerificationController extends BaseController
             WHERE s.sampleName LIKE  '%R%' AND s.sampleName NOT LIKE  '%\*%' AND  s.fkBatch = " . $Batch->getPkBatch() . "
             ORDER BY s.sampleName ASC");
         $elements = $query->getResult();
-        
-        var_dump($elements);
-        echo "<br><br>";
-        
+
         if (count($elements) > 0)
         {
             $replicated = array();
@@ -450,7 +447,7 @@ class VerificationController extends BaseController
 
             $sampleName    = array_unique($original);
             $pkSampleBatch = array_keys(array_unique($replicated));
-            
+
             $sql = "
                UPDATE Alae\Entity\SampleBatch s
                SET s.isUsed = 0, s.validFlag = 0
@@ -458,9 +455,6 @@ class VerificationController extends BaseController
                 s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") OR
                 s.sampleName in (" . implode(",", $sampleName) . ")
                 )";
-            
-            echo "$sql<br><br>";
-
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
         }
