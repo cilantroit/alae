@@ -452,10 +452,15 @@ class VerificationController extends BaseController
             $pkSampleBatch = array_keys(array_unique($replicated));
             
             $sql = "
-                UPDATE Alae\Entity\SampleBatch s
-                SET s.isUsed = 0, s.validFlag = 0
-                WHERE s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") OR s.sampleName in (" . implode(",", $sampleName) . ")";
+               UPDATE Alae\Entity\SampleBatch s
+               SET s.isUsed = 0, s.validFlag = 0
+               WHERE s.fkBatch = " . $Batch->getPkBatch() . " AND (
+                s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") OR
+                s.sampleName in (" . implode(",", $sampleName) . ")
+                )";
+            
             echo "$sql<br><br>";
+
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
         }
