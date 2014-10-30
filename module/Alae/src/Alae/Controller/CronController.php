@@ -156,11 +156,14 @@ class CronController extends BaseController
     {
         $data  = $this->getData(Helper::getVarsConfig("batch_directory") . "/" . $fileName, $Study, $Analyte);
         $Batch = $this->saveBatch($fileName);
+        //BATCH DOUBLECHECK
+        $BatchDoublecheck = $this->saveBatchDoubleCheck($fileName, $Batch);
 
         if(count($data["data"]) > 0)
         {
-            $this->saveSampleBatch($data["headers"], $data['data'], $Batch);
-
+            $this->saveSampleBatch($data["headers"], $data['data'], $Batch, $BatchDoublecheck);
+            
+            
             if (!is_null($Analyte) && !is_null($Study))
             {
                 $this->batchVerify($Batch, $Analyte, $fileName);
@@ -267,6 +270,24 @@ class CronController extends BaseController
         $this->getEntityManager()->flush();
 
         return $Batch;
+    }
+    
+    /*
+     * Función que se encarga del almacenamiento del batchdoublecheck
+     */
+    private function saveBatchDoubleCheck($fileName, $Batch)
+    {
+        $response = $this->explodeFile($fileName);
+
+        $BatchDoublecheck = new \Alae\Entity\BatchDoublecheck();
+        $BatchDoublecheck->setPkBatch($Batch);
+        $BatchDoublecheck->setSerial((string) $response['batch']);
+        $BatchDoublecheck->setFileName($fileName);
+        $BatchDoublecheck->setFkUser($this->_getSystem());
+        $this->getEntityManager()->persist($BatchDoublecheck);
+        $this->getEntityManager()->flush();
+
+        return $BatchDoublecheck;
     }
 
     /*
@@ -427,6 +448,48 @@ class CronController extends BaseController
                 $SampleBatch->setAnalyteConcentrationUnits($this->_analyteConcentrationUnits);
                 $SampleBatch->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
                 $this->getEntityManager()->persist($SampleBatch);
+                $this->getEntityManager()->flush();
+                
+                //DOUBLECHECK SAMPLEBATCH
+                $SampleBatchDoublecheck = new \Alae\Entity\SampleBatchDoublecheck();
+                
+                foreach ($row as $key => $value)
+                {
+                    if (isset($setters[$key]))
+                    {
+                        $SampleBatchDoublecheck->$setters[$key]($value);
+                    }
+                }
+                $SampleBatchDoublecheck->setFkBatch($Batch);
+                $SampleBatchDoublecheck->setAnalyteConcentrationUnits($this->_analyteConcentrationUnits);
+                $SampleBatchDoublecheck->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
+                $this->getEntityManager()->persist($SampleBatchDoublecheck);
+                $this->getEntityManager()->flush();
+            }
+        }
+    }
+    
+    private function saveSampleBatchDoublecheck($headers, $data, $Batch)
+    {
+        $setters = $this->setter($headers, $this->getSampleBatch());
+
+        foreach ($data as $row)
+        {
+            $SampleBatchDoublecheck = new \Alae\Entity\SampleBatchDoublecheck();
+
+            if (count($row) > 1)
+            {
+                foreach ($row as $key => $value)
+                {
+                    if (isset($setters[$key]))
+                    {
+                        $SampleBatchDoublecheck->$setters[$key]($value);
+                    }
+                }
+                $SampleBatchDoublecheck->setFkBatch($Batch);
+                $SampleBatchDoublecheck->setAnalyteConcentrationUnits($this->_analyteConcentrationUnits);
+                $SampleBatchDoublecheck->setCalculatedConcentrationUnits($this->_calculatedConcentrationUnits);
+                $this->getEntityManager()->persist($SampleBatchDoublecheck);
                 $this->getEntityManager()->flush();
             }
         }
