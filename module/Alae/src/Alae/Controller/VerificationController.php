@@ -438,8 +438,9 @@ class VerificationController extends BaseController
         //var_dump($elements);
         //echo "<br>";
         
-        echo $query;
-
+        var_dump($query);
+        echo "<br>";
+        
         if (count($elements) > 0)
         {
             $replicated = array();
