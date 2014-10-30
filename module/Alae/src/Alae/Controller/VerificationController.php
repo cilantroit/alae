@@ -438,9 +438,6 @@ class VerificationController extends BaseController
         var_dump($elements);
         echo "<br><br>";
         
-        print_r($query);
-        echo "<br>";
-        
         if (count($elements) > 0)
         {
             $replicated = array();
@@ -458,6 +455,7 @@ class VerificationController extends BaseController
                 UPDATE Alae\Entity\SampleBatch s
                 SET s.isUsed = 0, s.validFlag = 0
                 WHERE s.pkSampleBatch in (" . implode(",", $pkSampleBatch) . ") OR s.sampleName in (" . implode(",", $sampleName) . ")";
+            echo "$sql<br><br>";
             $query = $this->getEntityManager()->createQuery($sql);
             $query->execute();
         }
