@@ -49,11 +49,11 @@ class VerificationController extends BaseController
             }
             else
             {
-                return $this->redirect()->toRoute('verification', array(
+                /*return $this->redirect()->toRoute('verification', array(
                     'controller' => 'verification',
                     'action'     => 'error',
                     'id'         => $Batch->getPkBatch()
-                ));
+                ));*/
             }
         }
     }
@@ -226,11 +226,11 @@ class VerificationController extends BaseController
             "fkStudy" => $Batch->getFkStudy()
         ));
 
-        return $this->redirect()->toRoute('batch', array(
+        /*return $this->redirect()->toRoute('batch', array(
             'controller' => 'batch',
             'action'     => 'list',
             'id'         => $AnaStudy[0]->getPkAnalyteStudy()
-        ));
+        ));*/
     }
 
     /*
@@ -434,6 +434,11 @@ class VerificationController extends BaseController
             WHERE s.sampleName LIKE  '%R%' AND s.sampleName NOT LIKE  '%\*%' AND  s.fkBatch = " . $Batch->getPkBatch() . "
             ORDER BY s.sampleName ASC");
         $elements = $query->getResult();
+        
+        var_dump($elements);
+        echo "<br>";
+        
+        echo "$sql<br><br>";
 
         if (count($elements) > 0)
         {
@@ -447,11 +452,6 @@ class VerificationController extends BaseController
 
             $sampleName    = array_unique($original);
             $pkSampleBatch = array_keys(array_unique($replicated));
-            
-            error_log("prueba",
-3,
-" /var/tmp/alae_error_log.log"
-);
             
             $sql = "
                 UPDATE Alae\Entity\SampleBatch s
