@@ -448,16 +448,9 @@ class VerificationController extends BaseController
             $sampleName    = array_unique($original);
             $pkSampleBatch = array_keys(array_unique($replicated));
             
-            error_log(  
-sprintf("Date: %s\nId Batch: %d\nData: %s", date("M d Y H:i:s"), $Batch->getPkBatch(), json_encode($sampleName)),
+            error_log("prueba",
 3,
-" /var/tmp/alae_error_log"
-);
-            
-            error_log(
-sprintf("Date: %s\nId Batch: %d\nData: %s", date("M d Y H:i:s"), $Batch->getPkBatch(), json_encode($pkSampleBatch)),
-3,
-" /var/tmp/alae_error_log"
+" /var/tmp/alae_error_log.log"
 );
             
             $sql = "
