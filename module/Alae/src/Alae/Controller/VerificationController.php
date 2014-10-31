@@ -243,10 +243,7 @@ class VerificationController extends BaseController
             SELECT s
             FROM Alae\Entity\SampleBatch s
             WHERE $where";
-        if($fkParameter=31)
-        {
-            echo $sql;die();
-        }
+        
         $query = $this->getEntityManager()->createQuery($sql);
         if(count($parameters) > 0)
             foreach ($parameters as $key => $value)
@@ -958,6 +955,7 @@ class VerificationController extends BaseController
             
             $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V22"));
             $where = "s.sampleType = 'Unknown' AND s.isPeakArea NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
+            echo $where;die();
             $this->error($where, $parameters[0], array(), false);
         }
     }
