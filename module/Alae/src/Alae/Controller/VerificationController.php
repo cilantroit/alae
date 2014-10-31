@@ -950,9 +950,10 @@ class VerificationController extends BaseController
             $varIs = $Batch->getIsCsQcAcceptedAvg() * ($AnaStudy[0]->getInternalStandard() / 100);
             $min   = $Batch->getIsCsQcAcceptedAvg() - $varIs;
             $max   = $Batch->getIsCsQcAcceptedAvg() + $varIs;
-            echo $varIs." ".$min." ".$max;die();
+            
             $parameters = $this->getRepository("\\Alae\\Entity\\Parameter")->findBy(array("rule" => "V22"));
             $where = "s.sampleType = 'Unknown' AND s.isPeakArea NOT BETWEEN $min AND $max AND s.fkBatch = " . $Batch->getPkBatch();
+            echo $parameters[0];die();
             $this->error($where, $parameters[0], array(), false);
         }
     }
