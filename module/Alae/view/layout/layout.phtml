@@ -47,11 +47,25 @@
         
         <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
         <script src="http://malsup.github.com/jquery.form.js"></script>
+        
+        <script>
+            function Verificar()
+            {
+                var tecla=window.event.keyCode;
+                if (tecla==116) { event.keyCode=0;
+                event.returnValue=false;}
+            
+                if(event.ctrlKey) {
+		//Bloquear Ctrl
+                event.keyCode=0;
+                event.returnValue=false;
+                }
+            }
+        </script>
     </head>
-    <body>
+    <body onKeyDown="javascript:Verificar()">
         <div id="container" style="margin-bottom:70px;">
-	    <?php echo $this->content; ?>
-	    
+	    <?php echo $this->content; ?>	    
 	</div>
         <footer>
             <p>
