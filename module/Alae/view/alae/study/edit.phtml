@@ -268,7 +268,9 @@
             {
                 if (data.status)
                 {
-                    location.reload();
+                    url1 = basePath+"/study/edit/"+$( "#element_id" ).val();
+                    //location.reload();
+                    location.assign(url1);
                 }
                 else
                 {
