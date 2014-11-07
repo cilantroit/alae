@@ -52,6 +52,7 @@ div#datatable
     width: 16px;
     background:url(../img/add.png) no-repeat top left;
     float: left;
+    cursor:pointer;
 }
 #datatable table tbody tr .form-datatable-edit .form-download-excel{
     height: 16px;
