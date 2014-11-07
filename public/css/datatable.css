@@ -24,11 +24,12 @@ div#datatable
     background-repeat: no-repeat;
     font-family: Calibri;
     font-size: 1.5em;
+    
 }
 #datatable table tbody tr td{
     border: 1px solid #008B8B;
     vertical-align: top;
-    height: 28px;
+    height: 20px;
     font-size: 1.0em;
 }
 #datatable table tbody tr .form-datatable-edit,
