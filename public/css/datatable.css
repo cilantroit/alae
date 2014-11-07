@@ -23,12 +23,13 @@ div#datatable
     background-position: right;
     background-repeat: no-repeat;
     font-family: Calibri;
-    font-size: 1.1em;
+    font-size: 1.5em;
 }
 #datatable table tbody tr td{
     border: 1px solid #008B8B;
     vertical-align: top;
-    height: 35px;
+    height: 28px;
+    font-size: 1.0em;
 }
 #datatable table tbody tr .form-datatable-edit,
 #datatable table tbody tr .yui3-datatable-col-edit{
@@ -301,6 +302,18 @@ div#datatable
     text-align: center;
 }
 
+.yui3-datatable-col-date{
+    text-align: center;
+}
+
+.yui3-datatable-col-analyte{
+    text-align: center;
+}
+
+.yui3-datatable-col-closed{
+    text-align: center;
+}
+
 .yui3-datatable-col-profile .form-datatable-profile{
     width: 100%; 
 }
@@ -311,10 +324,13 @@ div#datatable
     width: 10em;
 }
 .yui3-datatable-col-email{
-    width: 40em;
+    width: 18em;
+}
+.yui3-datatable-col-profile{
+    width: 7em;
 }
 .yui3-datatable-col-name{
-    width: 50em;
+    width: 30em;
 }
 .yui3-datatable-col-id{
     width: 8em;
