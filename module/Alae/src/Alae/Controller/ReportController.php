@@ -537,6 +537,7 @@ class ReportController extends BaseController
             $elements = $qb->getQuery()->getResult();
 
             $concentration = $properties = array();
+            
             foreach ($elements as $element)
             {
                 $error = ($element['codeError'] == '') ? number_format((float)$element[0]->getCalculatedConcentration(), 2, '.', '') : "RCS";
@@ -548,10 +549,30 @@ class ReportController extends BaseController
 
                 if($element['codeError'] == '')
                 {
-                    $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
-                }
-            }
+                    //VERIFICAR QUE NO VAYAN AL RESUMEN DEL PIE LOS INYECTADOS
+                    $cadena = $element[0]->getSampleName(); 
+                    $cadena1 = substr($cadena,-2);
+                    
+                    $digito1 = $cadena1[0];
+                    $digito2 = $cadena1[1];
 
+                    if($digito1 == "R" && ($digito2 == '*' || ctype_digit($digito2)))
+                    {
+                        $centi = "N";
+                    }
+                    else
+                    {
+                        $centi = "S";
+                    }
+                    
+                    IF($centi == "S")
+                    {
+                        $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                    }
+                    
+                }    
+            }
+            
             $response = array(
                 "analyte"      => $analytes[0],
                 "cs_values"    => explode(",", $analytes[0]->getCsValues()),
@@ -711,7 +732,26 @@ class ReportController extends BaseController
 
                 if($element['codeError'] == '' || $element['codeError'] == 'O')
                 {
-                    $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                    //VERIFICAR QUE NO VAYAN AL RESUMEN DEL PIE LOS INYECTADOS
+                    $cadena = $element[0]->getSampleName(); 
+                    $cadena1 = substr($cadena,-2);
+                    
+                    $digito1 = $cadena1[0];
+                    $digito2 = $cadena1[1];
+
+                    if($digito1 == "R" && ($digito2 == '*' || ctype_digit($digito2)))
+                    {
+                        $centi = "N";
+                    }
+                    else
+                    {
+                        $centi = "S";
+                    }
+                    
+                    IF($centi == "S")
+                    {
+                        $concentration[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = $error;
+                    }
                 }
                 $accuracy[preg_replace('/-\d+/i', '', $element[0]->getSampleName())][] = number_format((float)$element[0]->getAccuracy(), 2, '.', '');
             }
