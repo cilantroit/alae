@@ -569,8 +569,15 @@ class StudyController extends BaseController
         }
 
         $data     = array();
-        $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $Study->getPkStudy()));
+        //$elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $Study->getPkStudy()));
 
+        $query    = $this->getEntityManager()->createQuery("
+                                SELECT s
+                                FROM Alae\Entity\AnalyteStudy s, Alae\Entity\Analyte a
+                                WHERE s.fkAnalyte = a.pkAnalyte AND s.fkStudy = " .$Study->getPkStudy() ." 
+                                ORDER BY a.shortening ASC");
+                                $elements = $query->getResult();
+        
         foreach ($elements as $anaStudy)
         {
             $buttons = "";
