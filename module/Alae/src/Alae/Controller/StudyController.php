@@ -569,14 +569,7 @@ class StudyController extends BaseController
         }
 
         $data     = array();
-        //$elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $Study->getPkStudy()));
-
-        $query    = $this->getEntityManager()->createQuery("
-                                SELECT s
-                                FROM Alae\Entity\AnalyteStudy s, Alae\Entity\Analyte a
-                                WHERE s.fkAnalyte = a.pkAnalyte AND s.fkStudy = " .$Study->getPkStudy() ." 
-                                ORDER BY a.shortening ASC");
-                                $elements = $query->getResult();
+        $elements = $this->getRepository('\\Alae\\Entity\\AnalyteStudy')->findBy(array("fkStudy" => $Study->getPkStudy()));
         
         foreach ($elements as $anaStudy)
         {
@@ -611,7 +604,7 @@ class StudyController extends BaseController
 
         $isDuplicated = $Study->getApprove() && $this->_getSession()->isAdministrador() && !$Study->getCloseFlag();
 
-        $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true));
+        $Analyte   = $this->getRepository('\\Alae\\Entity\\Analyte')->findBy(array("status" => true), array('shortening' => 'ASC'));
         $Unit      = $this->getRepository('\\Alae\\Entity\\Unit')->findAll();
         $datatable = new Datatable($data, Datatable::DATATABLE_ANASTUDY, $this->_getSession()->getFkProfile()->getName());
         $viewModel = new ViewModel($datatable->getDatatable());
