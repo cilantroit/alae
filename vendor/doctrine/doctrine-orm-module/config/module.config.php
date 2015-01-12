@@ -38,9 +38,9 @@ return array(
                     'host'     => 'localhost',
                     'port'     => '3306',
                     'user' => 'alae',
-					'password' => 'Alae1',
-					'dbname' => 'alae',
-					'charset' => 'utf8',
+                    'password' => 'Alae1',
+                    'dbname' => 'alae',
+                    'charset' => 'utf8',
                 )
             ),
         ),

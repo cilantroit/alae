@@ -47,6 +47,7 @@ div#datatable
     background:url(../img/save.png) no-repeat top left;
     float: left;
     border: 0 none;
+    cursor:pointer;
 }
 #datatable table tbody tr .form-datatable-edit .form-datatable-new,
 #datatable table tbody tr .form-datatable-edit .form-datatable-add{
